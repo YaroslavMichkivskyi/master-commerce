@@ -1,0 +1,20 @@
+project_name: "master-commerce"
+default_status: "To Do"
+statuses: ["To Do", "In Progress", "Done"]
+labels: ["mvp", "speckit-full", "speckit-light", "no-spec", "process", "backend", "web", "infra", "events", "data", "quality", "cloud"]
+date_format: yyyy-mm-dd
+max_column_width: 20
+auto_open_browser: false
+default_port: 6420
+remote_operations: true
+auto_commit: false
+filesystem_only: false
+bypass_git_hooks: false
+check_active_branches: true
+active_branch_days: 30
+task_prefix: "task"
+definition_of_done:
+  - Acceptance criteria checked with evidence (tests, run output, screenshots)
+  - Tests added / updated and green locally and in CI
+  - Docs updated (ADR, docs/technologies.md, README / runbook) where needed
+  - PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
