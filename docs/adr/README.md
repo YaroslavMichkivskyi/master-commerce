@@ -19,3 +19,4 @@ Decisions that outlive a single feature. Format: MADR (`template.md`); how and w
 | [0013](0013-process-tooling.md) | Process tooling: spec-kit for specs, Backlog.md for tasks | accepted |
 | [0014](0014-openapi-swagger-for-every-api.md) | OpenAPI with Swagger UI for every HTTP API | accepted |
 | [0015](0015-backlog-update-commits-on-dev.md) | Backlog-only changes are committed directly on dev as `Update #N` | accepted |
+| [0016](0016-shared-contracts-folder.md) | Shared contracts in a top-level `shared/` folder | accepted |

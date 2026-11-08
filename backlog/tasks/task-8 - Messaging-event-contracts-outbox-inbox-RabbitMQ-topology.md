@@ -21,7 +21,7 @@ ordinal: 8000
 Reliable events between services (ADR 0006).
 
 Scope:
-- `packages/contracts` (versioned event types), `packages/outbox`: outbox table + relay, publishing to RabbitMQ; inbox table for consumer idempotency; retries with backoff, dead-letter queue; exchange / queue topology as code
+- `shared/events` (versioned event types, ADR 0016), `packages/outbox`: outbox table + relay, publishing to RabbitMQ; inbox table for consumer idempotency; retries with backoff, dead-letter queue; exchange / queue topology as code
 - a demo `product.changed` event from catalog-service
 
 Spec: `specs/008-messaging/`

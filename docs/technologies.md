@@ -49,6 +49,8 @@ task), not applied yet. A planned row turns `in use` when its task lands, with t
 | Choreography saga | planned (TASK-11) | stock reservation without distributed transactions | ADR [0007](adr/0007-choreography-saga.md) |
 | [OpenAPI](https://www.openapis.org/) 3 + [Swagger UI](https://swagger.io/tools/swagger-ui/) via [`@nestjs/swagger`](https://docs.nestjs.com/openapi/introduction) | planned (TASK-3) | every HTTP API documented from code, browsable at `/docs`, input for contract tests | ADR [0014](adr/0014-openapi-swagger-for-every-api.md) |
 | [pino](https://getpino.io/), [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) Problem Details | planned (TASK-3) | structured logs, one error format | — |
+| Shared contracts packages (`shared/dto`, `shared/events`) with [class-validator](https://github.com/typestack/class-validator) | planned (TASK-2, TASK-8) | one definition of DTOs and events for every app | [`shared/`](../shared/README.md), ADR [0016](adr/0016-shared-contracts-folder.md) |
+| [Protocol Buffers](https://protobuf.dev/) + [gRPC](https://grpc.io/) | optional — not adopted | typed service-to-service calls; `.proto` files would live in `shared/proto` | ADR [0016](adr/0016-shared-contracts-folder.md) |
 | JWT, [argon2](https://github.com/ranisalt/node-argon2) | planned (TASK-7) | authentication and password hashing | — |
 
 ## Frontend

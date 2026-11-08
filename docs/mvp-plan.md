@@ -141,8 +141,11 @@ master-commerce/
     identity-service/  catalog-service/  order-service/  cloud-bridge/
   lambdas/
     notify/  thumbnails/  revalidate/  sitemap/
-  packages/
-    contracts/            — event types and DTOs shared by services
+  shared/                 — contracts only (ADR 0016, shared/README.md)
+    dto/                  — HTTP DTOs, shared interfaces and enums
+    events/               — versioned event envelopes and payloads
+    proto/                — Protocol Buffers for gRPC, if adopted
+  packages/               — runtime libraries
     outbox/               — shared outbox + publishing implementation
     observability/        — metrics, logs, health
   infra/                  — AWS CDK
@@ -152,7 +155,7 @@ master-commerce/
   docs/                   — mvp-plan.md, roadmap.md, technologies.md, adr/, playbooks/
 ```
 
-pnpm workspaces + Turborepo.
+pnpm workspaces (`apps/*`, `lambdas/*`, `shared/*`, `packages/*`, `tools/*`) + Turborepo.
 
 ## 9. MVP stages
 

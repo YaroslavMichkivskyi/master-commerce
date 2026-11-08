@@ -1,6 +1,6 @@
 # 0006. RabbitMQ with Transactional Outbox / Inbox
 
-- Status: accepted
+- Status: accepted; event types moved to `shared/events` by [0016](0016-shared-contracts-folder.md)
 - Date: 2026-11-08
 - Deciders: project owner
 
