@@ -1,6 +1,6 @@
 # 0012. Git workflow: dev → main, task / bug branches, PRs, tags
 
-- Status: accepted
+- Status: accepted; amended by [0015](0015-backlog-update-commits-on-dev.md)
 - Date: 2026-11-08
 - Deciders: project owner
 

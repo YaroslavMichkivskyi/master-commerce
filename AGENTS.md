@@ -14,6 +14,12 @@ read by every agent runtime.
   its own branch from `dev`: `task-<N>`, or `bug-<N>` for a task of type bug, where
   `<N>` is the task number — never invented. Changes reach `dev` only through a PR;
   `main` gets only stable parts, merged from `dev` (ADR 0012).
+- **Exception — backlog-only changes** (create / edit / re-prioritise / archive tasks,
+  nothing outside `backlog/`) are committed directly on `dev`, no branch, titled
+  `Update #<N>: <what changed>` (ADR 0015).
+- **Every HTTP API is documented with OpenAPI and served with Swagger UI**
+  (`/docs`, `@nestjs/swagger`, ADR 0014): each endpoint has a summary, DTO schemas,
+  status codes incl. errors, auth. An endpoint without it is not done.
 - **Push, PRs, merges, tags and any other write to GitHub need the owner's explicit
   approval of the exact payload.** One approval = one action.
 - The MVP is an ordinary e-commerce system; write it as a real shop would be
@@ -61,7 +67,8 @@ procedure complete.
 ## Backlog.md quick reference
 
 - `backlog task list --plain`, `backlog task view TASK-<N> --plain` — read.
-- `backlog task create "<title>" [--type bug] -l <labels> --ac "<criterion>"` — add.
+- `backlog task create "<title>" [--type bug] -l <labels> --priority medium --ac "<criterion>"` — add
+  (priority `medium` unless the owner says otherwise).
 - `backlog task edit TASK-<N> -s "In Progress"` / `--check-ac 1` /
   `--final-summary "…" -s Done` — update.
 - Workflow guides: `backlog instructions overview | task-creation | task-execution | task-finalization`.

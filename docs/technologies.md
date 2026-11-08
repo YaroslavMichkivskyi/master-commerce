@@ -29,6 +29,7 @@ task), not applied yet. A planned row turns `in use` when its task lands, with t
 | Git, [GitHub](https://github.com) | in use | version control, PRs, hosting | whole repo; branch model in ADR [0012](adr/0012-git-workflow.md) |
 | `dev` → `main` + `task-<N>` / `bug-<N>` branches | in use | every change traceable to a task and a PR; stable `main` | [`docs/playbooks/start-task.md`](playbooks/start-task.md), [`close-task.md`](playbooks/close-task.md), [`release.md`](playbooks/release.md) |
 | [Conventional Commits](https://www.conventionalcommits.org/) | in use | readable history; input for automated releases | commit and PR titles — ADR [0012](adr/0012-git-workflow.md) |
+| `Update #<N>:` commits | in use | backlog-only edits straight on `dev`, no branch | ADR [0015](adr/0015-backlog-update-commits-on-dev.md), [`create-task.md`](playbooks/create-task.md) |
 | GitHub PR template | in use | the same PR body for every task: task link, verification, docs | [`.github/pull_request_template.md`](../.github/pull_request_template.md) |
 | [`.gitattributes`](https://git-scm.com/docs/gitattributes) (LF) | in use | identical line endings on Windows, macOS, Linux | [`.gitattributes`](../.gitattributes) |
 | [release-please](https://github.com/googleapis/release-please) | planned (TASK-19) | versions, changelog and tags from Conventional Commits | — |
@@ -46,7 +47,8 @@ task), not applied yet. A planned row turns `in use` when its task lands, with t
 | PostgreSQL full-text search | planned (TASK-6) | product search without a separate search engine | ADR [0009](adr/0009-postgres-fts-no-elasticsearch.md) |
 | [RabbitMQ](https://www.rabbitmq.com/) 4 + Transactional Outbox / Inbox | planned (TASK-8) | reliable domain events between services | ADR [0006](adr/0006-rabbitmq-outbox-inbox.md) |
 | Choreography saga | planned (TASK-11) | stock reservation without distributed transactions | ADR [0007](adr/0007-choreography-saga.md) |
-| [pino](https://getpino.io/), [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) Problem Details, OpenAPI | planned (TASK-3) | structured logs, one error format, API docs from code | — |
+| [OpenAPI](https://www.openapis.org/) 3 + [Swagger UI](https://swagger.io/tools/swagger-ui/) via [`@nestjs/swagger`](https://docs.nestjs.com/openapi/introduction) | planned (TASK-3) | every HTTP API documented from code, browsable at `/docs`, input for contract tests | ADR [0014](adr/0014-openapi-swagger-for-every-api.md) |
+| [pino](https://getpino.io/), [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) Problem Details | planned (TASK-3) | structured logs, one error format | — |
 | JWT, [argon2](https://github.com/ranisalt/node-argon2) | planned (TASK-7) | authentication and password hashing | — |
 
 ## Frontend

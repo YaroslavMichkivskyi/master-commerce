@@ -67,7 +67,7 @@ AWS (TASK-15) is deliberately late: the 6 months of the AWS free plan start when
 account is created. The local parts of TASK-16 / TASK-17 can be done earlier, with
 MinIO and Mailpit.
 
-## ADR — the initial set (TASK-1)
+## ADRs
 
 | No. | Decision |
 |---|---|
@@ -84,3 +84,5 @@ MinIO and Mailpit.
 | 0011 | Deployment: VM + Docker Compose, web on Amplify |
 | 0012 | Git workflow: `dev` → `main`, `task-N` / `bug-N` branches, PRs, version tags |
 | 0013 | Process tooling: spec-kit for specs, Backlog.md for tasks |
+| 0014 | OpenAPI with Swagger UI for every HTTP API |
+| 0015 | Backlog-only changes committed directly on `dev` as `Update #N` |
