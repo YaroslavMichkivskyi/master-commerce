@@ -4,6 +4,7 @@ title: 'Quality gates: e2e, contract tests, k6 smoke, Lighthouse'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:38:00Z'
+updated_date: '2026-11-08T15:32:00Z'
 labels:
   - mvp
   - speckit-light
@@ -11,6 +12,7 @@ labels:
 dependencies:
   - TASK-11
   - TASK-12
+priority: medium
 ordinal: 14000
 ---
 

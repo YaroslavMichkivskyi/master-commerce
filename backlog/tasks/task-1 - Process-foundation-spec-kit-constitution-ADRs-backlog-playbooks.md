@@ -5,12 +5,13 @@ status: Done
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-08T14:44:00Z'
+updated_date: '2026-11-08T15:32:00Z'
 labels:
   - mvp
   - no-spec
   - process
 dependencies: []
+priority: medium
 ordinal: 1000
 ---
 

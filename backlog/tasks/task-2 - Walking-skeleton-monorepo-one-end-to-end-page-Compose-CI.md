@@ -4,12 +4,14 @@ title: 'Walking skeleton: monorepo, one end-to-end page, Compose, CI'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:38:00Z'
+updated_date: '2026-11-08T15:32:00Z'
 labels:
   - mvp
   - speckit-light
   - infra
 dependencies:
   - TASK-1
+priority: medium
 ordinal: 2000
 ---
 

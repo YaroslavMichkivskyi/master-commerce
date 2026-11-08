@@ -4,12 +4,14 @@ title: 'Data generator: deterministic, skewed hardware catalog'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:38:00Z'
+updated_date: '2026-11-08T15:32:00Z'
 labels:
   - mvp
   - speckit-light
   - data
 dependencies:
   - TASK-4
+priority: medium
 ordinal: 5000
 ---
 

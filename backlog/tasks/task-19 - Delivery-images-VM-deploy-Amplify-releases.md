@@ -4,6 +4,7 @@ title: 'Delivery: images, VM deploy, Amplify, releases'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:39:00Z'
+updated_date: '2026-11-08T15:32:00Z'
 labels:
   - mvp
   - speckit-light
@@ -12,6 +13,7 @@ labels:
 dependencies:
   - TASK-14
   - TASK-15
+priority: medium
 ordinal: 19000
 ---
 

@@ -4,6 +4,7 @@ title: 'Catalog model: brands, categories, attributes, products, admin API'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:38:00Z'
+updated_date: '2026-11-08T15:32:00Z'
 labels:
   - mvp
   - speckit-full
@@ -11,6 +12,7 @@ labels:
   - data
 dependencies:
   - TASK-3
+priority: medium
 ordinal: 4000
 ---
 

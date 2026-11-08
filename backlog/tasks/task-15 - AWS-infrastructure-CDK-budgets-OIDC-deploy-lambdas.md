@@ -4,6 +4,7 @@ title: 'AWS infrastructure: CDK, budgets, OIDC, deploy-lambdas'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:39:00Z'
+updated_date: '2026-11-08T15:32:00Z'
 labels:
   - mvp
   - speckit-light
@@ -11,6 +12,7 @@ labels:
   - infra
 dependencies:
   - TASK-2
+priority: medium
 ordinal: 15000
 ---
 

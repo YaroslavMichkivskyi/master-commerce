@@ -4,6 +4,7 @@ title: 'SEO automation: on-demand ISR and sitemap Lambda'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:39:00Z'
+updated_date: '2026-11-08T15:32:00Z'
 labels:
   - mvp
   - speckit-light
@@ -12,6 +13,7 @@ labels:
 dependencies:
   - TASK-6
   - TASK-17
+priority: medium
 ordinal: 18000
 ---
 

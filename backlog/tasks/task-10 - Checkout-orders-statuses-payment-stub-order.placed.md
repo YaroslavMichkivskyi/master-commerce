@@ -4,6 +4,7 @@ title: 'Checkout: orders, statuses, payment stub, order.placed'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:38:00Z'
+updated_date: '2026-11-08T15:32:00Z'
 labels:
   - mvp
   - speckit-full
@@ -13,6 +14,7 @@ labels:
 dependencies:
   - TASK-8
   - TASK-9
+priority: medium
 ordinal: 10000
 ---
 

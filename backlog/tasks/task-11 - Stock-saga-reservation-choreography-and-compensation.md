@@ -4,6 +4,7 @@ title: 'Stock saga: reservation choreography and compensation'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:38:00Z'
+updated_date: '2026-11-08T15:32:00Z'
 labels:
   - mvp
   - speckit-full
@@ -11,6 +12,7 @@ labels:
   - events
 dependencies:
   - TASK-10
+priority: medium
 ordinal: 11000
 ---
 

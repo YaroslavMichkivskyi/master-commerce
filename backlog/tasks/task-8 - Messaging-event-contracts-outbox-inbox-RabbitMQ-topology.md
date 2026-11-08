@@ -4,12 +4,14 @@ title: 'Messaging: event contracts, outbox / inbox, RabbitMQ topology'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:38:00Z'
+updated_date: '2026-11-08T15:32:00Z'
 labels:
   - mvp
   - speckit-light
   - events
 dependencies:
   - TASK-3
+priority: medium
 ordinal: 8000
 ---
 
