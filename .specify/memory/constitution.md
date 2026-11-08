@@ -29,9 +29,10 @@ Every slice adds unit, integration and API-contract tests for its behaviour; tog
 they form the regression suite. Tests run in CI and locally via Docker Compose. If the
 stack cannot be started, say so — never report a fabricated green run.
 
-### V. Observable by default
+### V. Observable and documented by default
 Every service exposes `/health` and `/metrics`, logs structured JSON with a correlation
-id and uses the shared service chassis once it exists (TASK-3).
+id and uses the shared service chassis once it exists (TASK-3). Every HTTP endpoint is
+described in OpenAPI and visible in Swagger UI (ADR 0014).
 
 ### VI. No scope creep, decisions recorded
 Implement the spec's requirements and its Out of Scope boundaries exactly. A decision
@@ -41,7 +42,8 @@ that outlives the feature (technology, pattern, convention) is recorded as an AD
 ### VII. Git workflow and approval
 Work happens on a task branch `task-<N>` (bug: `bug-<N>`) cut from `dev`, where `<N>`
 is the Backlog.md task number — never invented. Commits follow Conventional Commits.
-The change reaches `dev` only through a PR (`docs/playbooks/close-task.md`). Push and
+The change reaches `dev` only through a PR (`docs/playbooks/close-task.md`); only
+backlog-only edits are committed directly on `dev` as `Update #<N>: …` (ADR 0015). Push and
 PR creation need the owner's explicit approval.
 
 ## Quality Gates
@@ -52,6 +54,8 @@ PR creation need the owner's explicit approval.
   assumptions in `plan.md`.
 - Versions of new dependencies and images are pinned; everything works on Windows,
   macOS and Linux.
+- Every new or changed endpoint has its OpenAPI description (Swagger UI) in the plan and
+  the tasks.
 - A newly applied technology has its row in `docs/technologies.md`.
 - Everything is written in English.
 
@@ -61,4 +65,4 @@ This constitution supports `AGENTS.md` and the ADRs; on conflict they win, and t
 conflict is fixed by amending this file (bump the version, note the date). Complexity
 must be justified against Principles I and VI.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-08
+**Version**: 1.1.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-08

@@ -15,5 +15,7 @@ Decisions that outlive a single feature. Format: MADR (`template.md`); how and w
 | [0009](0009-postgres-fts-no-elasticsearch.md) | Search on PostgreSQL FTS, no Elasticsearch | accepted |
 | [0010](0010-lambda-async-only-cdk.md) | AWS Lambda for asynchronous work only; IaC with AWS CDK | accepted |
 | [0011](0011-deploy-vm-compose-amplify.md) | Deployment: VM with Docker Compose, web on Amplify | accepted |
-| [0012](0012-git-workflow.md) | Git workflow: dev → main, task / bug branches, PRs, tags | accepted |
+| [0012](0012-git-workflow.md) | Git workflow: dev → main, task / bug branches, PRs, tags | accepted, amended by 0015 |
 | [0013](0013-process-tooling.md) | Process tooling: spec-kit for specs, Backlog.md for tasks | accepted |
+| [0014](0014-openapi-swagger-for-every-api.md) | OpenAPI with Swagger UI for every HTTP API | accepted |
+| [0015](0015-backlog-update-commits-on-dev.md) | Backlog-only changes are committed directly on dev as `Update #N` | accepted |

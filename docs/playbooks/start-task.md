@@ -32,7 +32,8 @@
 7. A decision that outlives the task → ADR (`write-adr.md`) in the same branch.
 
 ## Limits
-- No work directly on `dev` or `main`.
+- No work directly on `dev` or `main` — except backlog-only `Update #<N>` commits on
+  `dev` (ADR 0015).
 - No push and no PR here — that is `close-task.md`, behind the owner's approval.
 - Scope = the task's description and ACs; anything else → suggest a new task.
 

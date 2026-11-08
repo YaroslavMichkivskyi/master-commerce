@@ -20,7 +20,8 @@
    An unprovable AC → fix it, or ask the owner to change / move it — never tick it.
 5. **spec-kit tasks:** every item in `specs/<NNN>-*/tasks.md` is `[X]`; spec, plan and
    code agree (spec first if they diverged); `.specify/feature.json` points at this spec.
-6. **Docs in the same PR:** ADRs for lasting decisions, `docs/technologies.md` for
+6. **Docs in the same PR:** OpenAPI / Swagger UI for every new or changed endpoint
+   (open `/docs` and check it — ADR 0014), ADRs for lasting decisions, `docs/technologies.md` for
    every newly applied technology, README / runbook for changed commands.
 7. **Close the task in the branch:**
    `backlog task edit TASK-<N> --final-summary "<what changed, why, how verified, risks>" -s Done`.

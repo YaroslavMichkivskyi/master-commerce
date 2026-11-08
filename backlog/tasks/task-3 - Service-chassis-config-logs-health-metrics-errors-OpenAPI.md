@@ -4,7 +4,7 @@ title: 'Service chassis: config, logs, health, metrics, errors, OpenAPI'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-08T15:32:00Z'
+updated_date: '2026-11-08T15:36:00Z'
 labels:
   - mvp
   - speckit-light
@@ -32,6 +32,7 @@ Spec: `specs/003-service-chassis/`
 - [ ] #1 Every service exposes the same health, metrics, error format and OpenAPI
 - [ ] #2 A new service adopts the chassis with one module import
 - [ ] #3 A request's correlation id appears in the logs of gateway and service
+- [ ] #4 Swagger UI at /docs shows every endpoint with schemas, status codes and auth (ADR 0014)
 <!-- AC:END -->
 
 ## Definition of Done

@@ -84,4 +84,5 @@ Name the services / apps it touches (catalog-service, web, …).]
 - [ ] Scope is bounded; Out of Scope names the owning task where relevant
 - [ ] Matches the backlog task's acceptance criteria
 - [ ] No speculative features or extension points (mvp-plan.md §2)
+- [ ] Every new / changed endpoint is listed — it gets an OpenAPI description and Swagger UI (ADR 0014)
 - [ ] No `[NEEDS CLARIFICATION]` markers remain

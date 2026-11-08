@@ -12,6 +12,7 @@ Spec: `specs/<NNN>-<name>/` <!-- or "no-spec" -->
 ## Verification
 - [ ] lint / typecheck / unit tests: <command and result>
 - [ ] integration / e2e: <command and result, or "not run: reason">
+- [ ] every new / changed endpoint is in OpenAPI and visible in Swagger UI (`/docs`), or "no API changes"
 - [ ] every acceptance criterion of TASK-<N> checked with evidence
 - [ ] task closed in this branch (`Done`, final summary)
 
