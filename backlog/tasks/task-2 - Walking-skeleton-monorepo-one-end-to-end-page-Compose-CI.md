@@ -21,7 +21,8 @@ ordinal: 2000
 Pull one thin thread through the whole system so every later slice plugs into a working app.
 
 Scope:
-- pnpm workspaces + Turborepo; shared tsconfig / ESLint / Prettier
+- pnpm workspaces (`apps/*`, `shared/*`, `packages/*`, …) + Turborepo; shared tsconfig / ESLint / Prettier
+- `shared/dto` package with the DTO of the skeleton endpoint (ADR 0016)
 - `catalog-service` (NestJS) with one endpoint and one table; `api-gateway` proxying to it
 - `web` (Next.js) page that renders that data on the server
 - `docker-compose.yml`: Postgres x3, RabbitMQ; `pnpm dev` starts everything

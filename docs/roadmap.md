@@ -49,7 +49,7 @@ Done in order, the tasks give the MVP, frozen by the `mvp-v1` tag.
 | TASK-5 | datagen — deterministic skewed hardware data | speckit-light | 4 |
 | TASK-6 | storefront-browse — filters, facets, FTS, SSR / ISR pages, SEO | speckit-full | 5 |
 | TASK-7 | identity — sign-up, sign-in, JWT, roles, addresses | speckit-full | 3 |
-| TASK-8 | messaging — contracts, outbox / inbox, RabbitMQ topology | speckit-light | 3 |
+| TASK-8 | messaging — `shared/events`, outbox / inbox, RabbitMQ topology | speckit-light | 3 |
 | TASK-9 | cart — guest and user cart, merge on sign-in | speckit-full | 6, 7 |
 | TASK-10 | checkout — orders, statuses, payment stub, `order.placed` | speckit-full | 8, 9 |
 | TASK-11 | stock-saga — reservation choreography, compensation | speckit-full | 10 |
@@ -86,3 +86,4 @@ MinIO and Mailpit.
 | 0013 | Process tooling: spec-kit for specs, Backlog.md for tasks |
 | 0014 | OpenAPI with Swagger UI for every HTTP API |
 | 0015 | Backlog-only changes committed directly on `dev` as `Update #N` |
+| 0016 | Shared contracts in a top-level `shared/` folder |

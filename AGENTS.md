@@ -42,6 +42,7 @@ read by every agent runtime.
 | `docs/technologies.md` | every technology applied: link, where used, why |
 | `docs/roadmap.md` | order of work, task modes, ADR list |
 | `docs/adr/` | architecture decisions (MADR), index in its `README.md` |
+| `shared/` | contracts shared by apps: DTOs / interfaces, events, protobuf (ADR 0016) — types only, no logic |
 | `docs/playbooks/` | procedures for agents and people (below) |
 | `backlog/` | Backlog.md: numbered tasks (`backlog task list --plain`) |
 | `specs/<NNN>-<name>/` | spec-kit features; `NNN` = task number |
