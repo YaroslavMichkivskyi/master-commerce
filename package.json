@@ -8,6 +8,9 @@
     "node": ">=22.12"
   },
   "scripts": {
+    "dev": "node tools/scripts/preflight.mjs && docker compose up -d --wait && turbo run dev",
+    "stop": "docker compose down",
+    "reset": "docker compose down -v",
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",

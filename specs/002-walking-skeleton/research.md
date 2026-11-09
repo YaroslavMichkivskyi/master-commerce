@@ -83,21 +83,24 @@ Versions were checked against the npm registry and Docker Hub on 2026-11-09.
 
 - **Decision:** `docker-compose.yml` runs only the infrastructure:
   - `postgres-identity`, `postgres-catalog`, `postgres-orders` — `postgres:17.11-alpine`,
-    host ports 5433 / 5434 / 5435, `mem_limit` 256m each;
+    host ports 55432 / 55433 / 55434, `mem_limit` 256m each;
   - `rabbitmq` — `rabbitmq:4.3.7-management-alpine`, ports 5672 / 15672, `mem_limit`
     384m.
 
   Every service has a health check. Root scripts:
-  - `pnpm dev` = `node tools/scripts/ensure-env.mjs && docker compose up -d --wait && turbo run dev`;
+  - `pnpm dev` = `node tools/scripts/preflight.mjs && docker compose up -d --wait && turbo run dev`;
   - `pnpm stop` = `docker compose down`;
   - `pnpm reset` = `docker compose down -v`.
 
-  `ensure-env.mjs` copies `.env.example` → `.env` if `.env` is missing. App ports:
-  web 3000, gateway 3001, catalog 3002. Every port is a variable in `.env`.
+  `preflight.mjs` copies `.env.example` → `.env` if `.env` is missing, and stops with
+  the name of any port taken by another process. App ports: web 3000, gateway 3001,
+  catalog 3002. Every port is a variable in `.env`.
 - **Rationale:** Clarification of 2026-11-09 (apps on the host). `up --wait` blocks
-  until the health checks pass, and Docker's own error names a busy port (edge
-  case). Ports start at 5433, so a Postgres already on 5432 does not clash. The
-  whole stack stays under 4 GB (NFR-002): 3 × 256m + 384m for the infrastructure, plus
+  until the health checks pass. Postgres host ports are 55432–55434, away from the
+  5432–5434 range that native installs use. On Windows Docker can publish a port that a
+  native service already listens on, and connections then reach the wrong server. That
+  happened on the owner's machine with a native PostgreSQL on 5434, so the port check
+  runs in `preflight.mjs` before Compose starts (edge case). The whole stack stays under 4 GB (NFR-002): 3 × 256m + 384m for the infrastructure, plus
   the Node processes. RabbitMQ 4.3 rather than 4.4: 4.4.0 is a fresh `.0` release.
 - **Alternatives:** Apps in Compose with bind mounts (slow file watching on Windows
   and macOS). A Node orchestrator such as `concurrently` (Turborepo already runs
