@@ -1,6 +1,6 @@
 # 0012. Git workflow: dev → main, task / bug branches, PRs, tags
 
-- Status: accepted; amended by [0015](0015-backlog-update-commits-on-dev.md)
+- Status: accepted; amended by [0015](0015-backlog-update-commits-on-dev.md), [0017](0017-commit-merge-and-review-conventions.md) (merge commits instead of squash, commit format, per-commit review)
 - Date: 2026-11-08
 - Deciders: project owner
 

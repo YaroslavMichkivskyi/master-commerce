@@ -10,9 +10,10 @@
    free-form list, an issue tracker or a TODO comment instead.
 2. **Priority `medium` by default** (`--priority medium`); `high` / `low` only when the
    owner says so.
-3. **Commit it directly on `dev`** as `Update #<N>: create task` (ADR 0015) — no branch,
-   no PR; push after the owner's approval. The same for later backlog-only edits
-   (re-prioritise, reword, archive): `Update #<N>: <what changed>`.
+3. **Commit it directly on `dev`** as `chore(backlog): create TASK-<N>` (ADR 0017) — no
+   branch, no PR; the owner reviews the commit and approves the push. The same for
+   later backlog-only edits: `chore(backlog): <what changed>`, e.g.
+   `chore(backlog): set TASK-22 priority to low`.
 4. **Numbering is automatic and shared:** create through the CLI only
    (`backlog task create`), never by copying a file. The id is `TASK-<N>`; tasks and
    bugs share one counter, so `<N>` is unique across both.
@@ -40,5 +41,5 @@
 
 ## Done when
 - `backlog task view TASK-<N> --plain` shows the description, ACs, labels, dependencies.
-- The new task file is committed on `dev` as `Update #<N>: …`, or together with the
+- The new task file is committed on `dev` as `chore(backlog): …`, or together with the
   change that motivated it when it is created inside a task branch.

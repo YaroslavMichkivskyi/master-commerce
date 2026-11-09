@@ -13,10 +13,19 @@ read by every agent runtime.
 - **Every change belongs to a backlog task** (`backlog/`, Backlog.md) and is made on
   its own branch from `dev`: `task-<N>`, or `bug-<N>` for a task of type bug, where
   `<N>` is the task number — never invented. Changes reach `dev` only through a PR;
-  `main` gets only stable parts, merged from `dev` (ADR 0012).
-- **Exception — backlog-only changes** (create / edit / re-prioritise / archive tasks,
-  nothing outside `backlog/`) are committed directly on `dev`, no branch, titled
-  `Update #<N>: <what changed>` (ADR 0015).
+  `main` gets only stable parts, merged from `dev` (ADR 0012, ADR 0017).
+- **Exceptions, committed directly on `dev` without a branch** (ADR 0017):
+  backlog-only changes (`chore(backlog): …`) and changes to the repo's own rules —
+  `AGENTS.md`, `CLAUDE.md`, `docs/playbooks/`, process ADRs, the PR template,
+  `.claude/skills/`, the constitution (`docs(process): …`).
+- **The owner reviews every commit before it is made.** Work in small steps; after
+  each one stop with only that step's changes in the working tree, report the files,
+  what and why, how it was verified, and the proposed commit message; commit only
+  after the owner approves, then continue. Never commit several unreviewed steps.
+- **Conventional Commits for every commit** (`feat(catalog): …`, `fix(order): …`,
+  `docs: …`, `chore(backlog): …`), no task id in branch commits. PRs into `dev` are
+  merged with a **merge commit** titled `Merge TASK-<N>: <PR title> (#<PR>)` (ADR 0017).
+  Write task ids as `TASK-<N>`, never `#<N>` (on GitHub that is a PR / issue).
 - **Every HTTP API is documented with OpenAPI and served with Swagger UI**
   (`/docs`, `@nestjs/swagger`, ADR 0014): each endpoint has a summary, DTO schemas,
   status codes incl. errors, auth. An endpoint without it is not done.

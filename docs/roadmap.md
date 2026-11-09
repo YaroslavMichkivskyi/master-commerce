@@ -85,5 +85,6 @@ MinIO and Mailpit.
 | 0012 | Git workflow: `dev` → `main`, `task-N` / `bug-N` branches, PRs, version tags |
 | 0013 | Process tooling: spec-kit for specs, Backlog.md for tasks |
 | 0014 | OpenAPI with Swagger UI for every HTTP API |
-| 0015 | Backlog-only changes committed directly on `dev` as `Update #N` |
+| 0015 | Backlog-only changes committed directly on `dev` as `Update #N` (superseded by 0017) |
+| 0017 | Commit, merge and review conventions: per-commit review, Conventional Commits, merge commits |
 | 0016 | Shared contracts in a top-level `shared/` folder |

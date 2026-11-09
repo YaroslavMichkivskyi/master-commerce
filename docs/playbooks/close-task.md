@@ -27,20 +27,23 @@
    `backlog task edit TASK-<N> --final-summary "<what changed, why, how verified, risks>" -s Done`.
    The status lands on `dev` together with the code when the PR is merged. If the PR
    is rejected, set it back to `In Progress`.
-8. **Final commit**, Conventional Commits, English. Working tree clean afterwards.
+8. **Final commit** after the owner's review (`start-task.md` step 6), Conventional
+   Commits, English. Working tree clean afterwards.
 9. **Push and open the PR — only after the owner approves the exact payload**
    (branch, PR title, body). One approval = one push + one PR.
    - Push: `git push -u origin task-<N>`.
-   - PR: base `dev`, head `task-<N>`; title = Conventional Commit with the task id,
-     e.g. `feat(catalog): product attributes (TASK-4)` / `fix(order): stale price (TASK-23)`;
-     body = `.github/pull_request_template.md` filled in.
-10. **After the merge** (squash, done by the owner): `git checkout dev`,
-    `git pull --ff-only`, delete the branch locally (`git branch -d task-<N>`) and on the
-    remote if GitHub did not. Report the next ready task.
+   - PR: base `dev`, head `task-<N>`; title = a Conventional Commit summarising the
+     task, e.g. `feat(catalog): product attributes` / `fix(order): stale price`;
+     body = `.github/pull_request_template.md` filled in (its Task section names TASK-<N>).
+10. **Merge — only with the owner's approval** (ADR 0017): merge method **merge commit**
+    (never squash or rebase), title `Merge TASK-<N>: <PR title> (#<PR>)` (`BUG-<N>` for
+    a bug), body = the PR summary.
+11. **After the merge:** `git checkout dev`, `git pull --ff-only`, delete the branch
+    locally (`git branch -d task-<N>`) and on the remote. Report the next ready task.
 
 ## Limits
-- Never merge the PR yourself, never push to `dev` / `main` directly, never force-push
-  a branch someone else has pulled.
+- Never merge without the owner's approval, never squash, never push code to `dev` /
+  `main` directly, never force-push a branch someone else has pulled.
 - Never tick an AC or DoD item without evidence; never mark `Done` with failing checks.
 - No new follow-up tasks without approval — list them in the PR body instead.
 

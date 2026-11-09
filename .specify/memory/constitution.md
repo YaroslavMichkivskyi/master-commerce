@@ -41,10 +41,11 @@ that outlives the feature (technology, pattern, convention) is recorded as an AD
 
 ### VII. Git workflow and approval
 Work happens on a task branch `task-<N>` (bug: `bug-<N>`) cut from `dev`, where `<N>`
-is the Backlog.md task number — never invented. Commits follow Conventional Commits.
-The change reaches `dev` only through a PR (`docs/playbooks/close-task.md`); only
-backlog-only edits are committed directly on `dev` as `Update #<N>: …` (ADR 0015). Push and
-PR creation need the owner's explicit approval.
+is the Backlog.md task number — never invented. Every commit is a Conventional Commit
+and is reviewed by the owner before it is made. The change reaches `dev` only through
+a PR merged with a merge commit (`docs/playbooks/close-task.md`); only backlog-only
+edits and the repo's own rules are committed directly on `dev` (ADR 0017). Push, PR
+creation and merges need the owner's explicit approval.
 
 ## Quality Gates
 
@@ -65,4 +66,4 @@ This constitution supports `AGENTS.md` and the ADRs; on conflict they win, and t
 conflict is fixed by amending this file (bump the version, note the date). Complexity
 must be justified against Principles I and VI.
 
-**Version**: 1.1.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-08
+**Version**: 1.2.0 | **Ratified**: 2026-11-08 | **Last Amended**: 2026-11-09

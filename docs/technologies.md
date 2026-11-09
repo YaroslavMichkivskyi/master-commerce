@@ -28,8 +28,9 @@ task), not applied yet. A planned row turns `in use` when its task lands, with t
 |---|---|---|---|
 | Git, [GitHub](https://github.com) | in use | version control, PRs, hosting | whole repo; branch model in ADR [0012](adr/0012-git-workflow.md) |
 | `dev` → `main` + `task-<N>` / `bug-<N>` branches | in use | every change traceable to a task and a PR; stable `main` | [`docs/playbooks/start-task.md`](playbooks/start-task.md), [`close-task.md`](playbooks/close-task.md), [`release.md`](playbooks/release.md) |
-| [Conventional Commits](https://www.conventionalcommits.org/) | in use | readable history; input for automated releases | commit and PR titles — ADR [0012](adr/0012-git-workflow.md) |
-| `Update #<N>:` commits | in use | backlog-only edits straight on `dev`, no branch | ADR [0015](adr/0015-backlog-update-commits-on-dev.md), [`create-task.md`](playbooks/create-task.md) |
+| [Conventional Commits](https://www.conventionalcommits.org/) | in use | readable history; input for automated releases | every commit and PR title — ADR [0017](adr/0017-commit-merge-and-review-conventions.md) |
+| Merge commits into `dev` (`Merge TASK-<N>: …`) | in use | keeps every reviewed step; one line per task in `git log --first-parent dev` | ADR [0017](adr/0017-commit-merge-and-review-conventions.md), [`close-task.md`](playbooks/close-task.md) |
+| Per-commit review by the owner | in use | every commit is seen before it is made; small, focused diffs | ADR [0017](adr/0017-commit-merge-and-review-conventions.md), [`start-task.md`](playbooks/start-task.md) |
 | GitHub PR template | in use | the same PR body for every task: task link, verification, docs | [`.github/pull_request_template.md`](../.github/pull_request_template.md) |
 | [`.gitattributes`](https://git-scm.com/docs/gitattributes) (LF) | in use | identical line endings on Windows, macOS, Linux | [`.gitattributes`](../.gitattributes) |
 | [release-please](https://github.com/googleapis/release-please) | planned (TASK-19) | versions, changelog and tags from Conventional Commits | — |

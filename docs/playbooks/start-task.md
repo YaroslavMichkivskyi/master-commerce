@@ -26,14 +26,19 @@
      `specs/<NNN>-<short-name>/` with `NNN` = task number zero-padded to 3;
    - `no-spec` / `bug` → implement directly; write the plan into the task
      (`--plan`), notes with `--append-notes`.
-6. **Commit as you go** on the task branch, Conventional Commits
-   (`feat(catalog): …`, `fix(order): …`, `test: …`, `docs: …`, `chore: …`), each commit
-   leaves the build green. The first commit may carry only the status change.
+6. **Commit step by step, each step reviewed by the owner** (ADR 0017). One step is one
+   reviewable change (a spec, a plan, one layer of code, CI, docs) that leaves the
+   build green. After each step: stop with only that step's changes in the working
+   tree (stash unrelated work), report the changed files, what and why, how it was
+   verified (commands and results) and the proposed message; commit only after the
+   owner approves, then start the next step. Messages: Conventional Commits
+   (`feat(catalog): …`, `fix(order): …`, `test: …`, `docs: …`, `chore: …`), no task id.
+   The first commit may carry only the status change.
 7. A decision that outlives the task → ADR (`write-adr.md`) in the same branch.
 
 ## Limits
-- No work directly on `dev` or `main` — except backlog-only `Update #<N>` commits on
-  `dev` (ADR 0015).
+- No work directly on `dev` or `main` — except backlog-only (`chore(backlog): …`) and
+  repo-rule (`docs(process): …`) commits on `dev` (ADR 0017).
 - No push and no PR here — that is `close-task.md`, behind the owner's approval.
 - Scope = the task's description and ACs; anything else → suggest a new task.
 

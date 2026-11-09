@@ -1,6 +1,6 @@
 # 0015. Backlog-only changes are committed directly on dev as `Update #N`
 
-- Status: accepted (amends [0012](0012-git-workflow.md))
+- Status: superseded by [0017](0017-commit-merge-and-review-conventions.md); backlog-only commits are now `chore(backlog): …`
 - Date: 2026-11-08
 - Deciders: project owner
 

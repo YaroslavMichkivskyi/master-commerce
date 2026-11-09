@@ -39,7 +39,7 @@
    independent items marked `[P]` may be given to parallel subagents in separate git
    worktrees.
 8. **Implement** (`speckit-implement`) phase by phase, ticking `[X]` in `tasks.md`,
-   committing per phase on the task branch. Tests with every phase.
+   committing per phase on the task branch after the owner reviews it (`start-task.md` step 6). Tests with every phase.
 9. Finish with `close-task.md`.
 
 ## Upgrading spec-kit
