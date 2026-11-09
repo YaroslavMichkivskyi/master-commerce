@@ -1,10 +1,11 @@
 ---
 id: TASK-2
 title: 'Walking skeleton: monorepo, one end-to-end page, Compose, CI'
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-08T15:32:00Z'
+updated_date: '2026-11-09T00:09:00Z'
 labels:
   - mvp
   - speckit-light
@@ -45,3 +46,9 @@ Spec: `specs/002-walking-skeleton/`
 - [ ] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
 - [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+speckit-light: spec specs/002-walking-skeleton -> plan -> tasks -> implement
+<!-- SECTION:PLAN:END -->
