@@ -4,7 +4,7 @@
 **Spec folder**: `specs/002-walking-skeleton/`
 **Task**: TASK-2 — `backlog/tasks/task-2 - Walking-skeleton-monorepo-one-end-to-end-page-Compose-CI.md`
 **Mode**: speckit-light
-**Status**: Draft
+**Status**: Approved (2026-11-09)
 **Created**: 2026-11-09
 **Input**: "Walking skeleton: monorepo, one end-to-end page, Compose, CI"
 
@@ -102,7 +102,8 @@ the plumbing again.
 - **FR-052** Automated dependency-update PRs MUST be configured for the workspace
   packages and the GitHub Actions used.
 - **FR-053** `main` MUST accept changes only through pull requests with a green CI
-  status, where the GitHub plan allows it (see Assumptions).
+  status. This is a documented rule of the git workflow, not a GitHub setting (see
+  Assumptions).
 
 ### Non-functional
 - **NFR-001** A warm start of the stack (images and dependencies already present)
@@ -141,14 +142,19 @@ the plumbing again.
 - Apps run on the host with hot reload. Only the infrastructure (Postgres, RabbitMQ)
   runs in containers. This is the fastest dev loop on every OS. Containerised apps
   come with TASK-19.
-- Branch protection on a **private** repo needs a paid GitHub plan. If the account's
-  plan does not allow it, FR-053 is recorded as a manual rule in the docs and is not
-  enforced by GitHub. The owner decides on plan or visibility.
+- Branch protection on a **private** repo needs a paid GitHub plan. The repo stays
+  private on the free plan, so FR-053 is a rule in the docs that the owner and agents
+  follow. GitHub does not enforce it (owner's decision, 2026-11-09).
 - Seed categories are a short fixed list (around 6). The large generated dataset comes
   with TASK-5.
 
 ## Clarifications
-<!-- none: speckit-light -->
+
+### Session 2026-11-09
+- Q: Apps on the host or in containers for local development? → A: Infrastructure in
+  containers, apps on the host with hot reload.
+- Q: Branch protection on the private repo (free plan)? → A: A documented rule, not a
+  GitHub setting.
 
 ---
 
