@@ -57,7 +57,7 @@ catalog, orders); only `catalog` gets a schema now.
 | III. Local first, explicit data access | pass | Compose infra, apps on host. Drizzle with committed SQL migrations. The seed is a fixed list (the deterministic generator is TASK-5) |
 | IV. Tests ship with the change | pass | unit + contract + Testcontainers integration, in CI (R-7, R-9) |
 | V. Observable by default | pass with note | `/health` everywhere. `/metrics`, JSON logs and correlation id come with the chassis (TASK-3); the constitution requires them "once it exists" |
-| VI. No scope creep, decisions recorded | pass | Out of Scope respected. Two lasting decisions → ADR 0017, 0018 |
+| VI. No scope creep, decisions recorded | pass | Out of Scope respected. Two lasting decisions → ADR 0018, 0019 |
 | VII. Git workflow and approval | pass | branch `task-2`, Conventional Commits, push / PR behind approval |
 | Gate: versions pinned, cross-platform | pass | exact versions in `package.json` (no `^`), `packageManager`, image tags. Scripts in Node, no shell-specific syntax |
 | Gate: technologies.md | pass | rows switch from planned to in use, plus new rows (Vitest, Testcontainers, Corepack, ESLint / Prettier, Dependabot) |
@@ -80,12 +80,12 @@ Post-design re-check: unchanged, no violations. Complexity Tracking is empty.
 | FR-030 | `apps/web/app/page.tsx`, `lib/gateway.ts` | unit (render with mocked fetch: list / empty / unavailable) |
 | FR-040 | `tsconfig.base.json`, `eslint.config.mjs`, `.prettierrc.json` at root | `pnpm lint`, `pnpm typecheck` |
 | FR-041 | `docker-compose.yml`, root scripts `dev` / `stop` / `reset` | quickstart 1, 9 |
-| FR-042 | `.env.example`, `tools/scripts/ensure-env.mjs`, `.env` gitignored | quickstart 1 |
+| FR-042 | `.env.example`, `tools/scripts/preflight.mjs`, `.env` gitignored | quickstart 1 |
 | FR-043 | `turbo.json` tasks `lint typecheck test test:integration build dev`; `--affected` | CI log |
 | FR-050 | `.github/workflows/ci.yml` | green check on the PR (AC #3) |
 | FR-051 | `apps/catalog-service/test/categories.int.test.ts`, `apps/api-gateway/test/*.int.test.ts` | CI |
 | FR-052 | `.github/dependabot.yml` | Dependabot tab after merge |
-| FR-053 | ADR 0012 note + `docs/playbooks/release.md` rule | review |
+| FR-053 | `docs/playbooks/release.md` rule | review |
 | NFR-001..004 | R-8 limits and `--wait`; R-9 `--affected`; exact versions | quickstart 1, CI timing |
 
 ## Project Structure
@@ -112,7 +112,7 @@ turbo.json
 tsconfig.base.json
 eslint.config.mjs  .prettierrc.json  .prettierignore  .nvmrc  .env.example
 docker-compose.yml
-tools/scripts/ensure-env.mjs
+tools/scripts/preflight.mjs
 shared/dto/             # @master-commerce/dto: src/{category.dto.ts, problem.dto.ts, index.ts}; built with tsc
 apps/
   catalog-service/      # NestJS: src/{main.ts, app.module.ts, config.ts, db/, categories/, health/}; drizzle/; test/
@@ -120,8 +120,8 @@ apps/
   web/                  # Next.js: app/{layout.tsx, page.tsx}, lib/gateway.ts, test/
 .github/workflows/ci.yml
 .github/dependabot.yml
-docs/adr/0017-local-stack-infra-in-compose-apps-on-host.md
-docs/adr/0018-test-tooling-vitest-testcontainers.md
+docs/adr/0018-local-stack-infra-in-compose-apps-on-host.md
+docs/adr/0019-test-tooling-vitest-testcontainers.md
 ```
 
 `packages/` is not created yet: its first runtime library (outbox) comes with TASK-8
@@ -137,7 +137,7 @@ plain JS + `.d.ts`. In Turborepo `dev` and `build` depend on `^build`.
 - `docs/technologies.md`: planned → in use for pnpm / Turborepo, TS, Node, NestJS,
   Postgres, Drizzle, Next / React, Compose, Actions, Dependabot, OpenAPI. New rows:
   Corepack, Vitest, Testcontainers, supertest, ESLint / Prettier, terminus.
-- `docs/adr/` 0017, 0018 + index. ADR 0012 gets an amendment note (FR-053 is not
+- `docs/adr/` 0018, 0019 + index. `release.md` gets the FR-053 rule (it is not
   enforced by GitHub).
 - `docs/roadmap.md` ADR table.
 
