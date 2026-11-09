@@ -1,0 +1,10 @@
+pnpm-lock.yaml
+**/dist
+**/.next
+**/.turbo
+backlog
+.specify
+.claude
+specs
+docs
+*.md
