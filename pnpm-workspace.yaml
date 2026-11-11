@@ -3,3 +3,6 @@ packages:
   - shared/*
   - packages/*
   - tools/*
+onlyBuiltDependencies:
+  - '@swc/core'
+  - esbuild

@@ -8,3 +8,4 @@ backlog
 specs
 docs
 *.md
+**/drizzle/meta
