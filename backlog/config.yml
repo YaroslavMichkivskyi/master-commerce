@@ -1,7 +1,7 @@
 project_name: "master-commerce"
 default_status: "To Do"
 statuses: ["To Do", "In Progress", "Done"]
-labels: ["mvp", "speckit-full", "speckit-light", "no-spec", "process", "backend", "web", "infra", "events", "data", "quality", "cloud"]
+labels: ["mvp", "post-mvp", "speckit-full", "speckit-light", "no-spec", "process", "backend", "web", "infra", "events", "data", "quality", "cloud"]
 date_format: yyyy-mm-dd
 max_column_width: 20
 auto_open_browser: false
