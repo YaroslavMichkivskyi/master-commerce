@@ -4,7 +4,7 @@ title: 'MVP freeze: review, runbook, merge to main, tag mvp-v1'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:39:00Z'
-updated_date: '2026-11-08T15:32:00Z'
+updated_date: '2026-11-12T20:23:00Z'
 labels:
   - mvp
   - no-spec
@@ -46,6 +46,7 @@ Scope:
 <!-- AC:BEGIN -->
 - [ ] #1 The runbook lets a fresh machine start the shop
 - [ ] #2 `main` carries the `mvp-v1` tag
+- [ ] #3 `pnpm dev` starts the whole stack on macOS: quickstart scenarios 1, 2 and 7 of `specs/002-walking-skeleton/quickstart.md` (moved from TASK-2)
 <!-- AC:END -->
 
 ## Definition of Done
