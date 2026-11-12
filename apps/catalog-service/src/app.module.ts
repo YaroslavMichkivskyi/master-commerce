@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ROOT_ENV_FILE } from './config.js';
 import { CategoriesModule } from './categories/categories.module.js';
 import { DatabaseModule } from './db/database.module.js';
 import { HealthModule } from './health/health.module.js';
 
 @Module({
   imports: [
-    // Apps run from their package folder; the shared `.env` is at the repo root.
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: ['../../.env'] }),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: [ROOT_ENV_FILE] }),
     DatabaseModule,
     CategoriesModule,
     HealthModule,

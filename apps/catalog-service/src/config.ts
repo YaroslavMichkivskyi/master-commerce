@@ -1,3 +1,11 @@
+import { fileURLToPath } from 'node:url';
+
+/**
+ * The shared `.env` at the repo root, resolved from this file (`src/` or `dist/`), not
+ * from the working directory: the app finds it however it is started.
+ */
+export const ROOT_ENV_FILE = fileURLToPath(new URL('../../../.env', import.meta.url));
+
 export interface CatalogConfig {
   port: number;
   databaseUrl: string;
