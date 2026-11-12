@@ -147,7 +147,7 @@ master-commerce/
     proto/                — Protocol Buffers for gRPC, if adopted
   packages/               — runtime libraries
     outbox/               — shared outbox + publishing implementation
-    observability/        — metrics, logs, health
+    service-chassis/      — base of every NestJS service: config, logs, health, metrics, errors, OpenAPI
   infra/                  — AWS CDK
   tools/datagen/          — data generator
   docker-compose.yml
