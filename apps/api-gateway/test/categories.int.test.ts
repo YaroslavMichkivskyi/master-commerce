@@ -96,6 +96,30 @@ describe('api-gateway -> catalog-service', () => {
       .expect(502);
   });
 
+  it.each([null, 42, 'ok', []])('answers 502 when the body is %j', async (body) => {
+    behaviour = json(200, body);
+    const res = await request(app.getHttpServer() as Server)
+      .get('/api/v1/categories')
+      .expect(502);
+    expect(res.body).toMatchObject({ status: 502, title: 'Bad Gateway' });
+  });
+
+  it('frees the connection of an error answer without waiting for its body', async () => {
+    let closed!: () => void;
+    const socketClosed = new Promise<void>((resolve) => (closed = resolve));
+    behaviour = (res) => {
+      res.socket?.once('close', closed);
+      res.writeHead(500, { 'content-type': 'application/json' });
+      res.write('{"message":'); // the rest of the error body never comes
+    };
+    await request(app.getHttpServer() as Server)
+      .get('/api/v1/categories')
+      .expect(502);
+    // Well before the 300 ms timeout, which would also free it.
+    const early = new Promise<string>((resolve) => setTimeout(() => resolve('open'), 150));
+    await expect(Promise.race([socketClosed.then(() => 'closed'), early])).resolves.toBe('closed');
+  });
+
   it('answers 503 when the catalog times out (FR-011)', async () => {
     behaviour = () => undefined; // never answers
     const res = await request(app.getHttpServer() as Server)

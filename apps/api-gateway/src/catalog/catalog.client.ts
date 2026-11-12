@@ -14,6 +14,10 @@ export class CatalogClient {
 
   async listCategories(): Promise<CategoryListDto> {
     const body = await this.get('/categories');
+    // class-validator throws (not reports) on a non-object such as `null`.
+    if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+      throw new UpstreamBadResponseError(UPSTREAM, 'body is not a JSON object');
+    }
     const dto = plainToInstance(CategoryListDto, body);
     // `whitelist` strips fields the DTO does not declare: whatever the catalog adds later
     // never reaches the public API unless the shared contract is changed first.
@@ -35,6 +39,8 @@ export class CatalogClient {
       throw new UpstreamUnavailableError(UPSTREAM, { cause: error });
     }
     if (!res.ok) {
+      // The error body is not used; cancel it so the connection is freed at once.
+      await res.body?.cancel().catch(() => undefined);
       throw new UpstreamBadResponseError(UPSTREAM, `HTTP ${res.status}`);
     }
     try {
