@@ -94,7 +94,11 @@ describe('catalog-service against PostgreSQL', () => {
     containerStopped = true;
 
     const res = await http().get('/health').expect(503);
-    expect((res.body as HealthBody).error?.database?.status).toBe('down');
+    // No driver message: it would name the host and the database user.
+    expect((res.body as HealthBody).error?.database).toEqual({
+      status: 'down',
+      message: 'database unreachable',
+    });
   });
 
   it('GET /categories answers 500 problem+json without internals when the database is gone', async () => {
