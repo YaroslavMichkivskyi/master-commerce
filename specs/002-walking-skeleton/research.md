@@ -112,13 +112,23 @@ Versions were checked against the npm registry and Docker Hub on 2026-11-09.
   and `main`, on `ubuntu-24.04`:
   - `actions/checkout` (fetch-depth 0, for `--affected`), `pnpm/action-setup`,
     `actions/setup-node` with `cache: pnpm`;
-  - `pnpm install --frozen-lockfile`;
+  - `pnpm install --frozen-lockfile`, `pnpm format:check`;
   - `turbo run lint typecheck test test:integration --affected`.
+
+  The base of `--affected` is set explicitly in `TURBO_SCM_BASE` (PR: the target
+  branch; push: the commit before the push), because turbo's own detection fails when
+  checkout has no local branches. The workflow can also be run by hand
+  (`workflow_dispatch`) on any branch, with inputs `lint` and `typecheck` (on by
+  default), `test`, `integration` and `scope` (`all` / `affected` against `dev`); the
+  automatic runs always do every check. The repository's default branch is `dev`, so
+  the manual run is available once the workflow is there (owner's decision,
+  2026-11-12).
 
   Docker is on the runner, so Testcontainers works there. A concurrency group cancels
   outdated runs. `.github/dependabot.yml`: ecosystem `npm` (it handles pnpm
-  lockfiles) at `/`, and `github-actions`, weekly, minor + patch grouped. FR-053 goes
-  to ADR 0012 and `release.md` as a rule.
+  lockfiles) at `/`, and `github-actions`, weekly, minor + patch grouped. FR-053 is a
+  rule in `docs/playbooks/release.md` (an accepted ADR is not edited, ADR 0012 stays
+  as is).
 - **Rationale:** mvp-plan §7. `--affected` saves Actions minutes on a private repo
   (NFR-003). Dependabot is free on private repos.
 - **Alternatives:** Renovate (more setup, nothing gained yet). A separate
