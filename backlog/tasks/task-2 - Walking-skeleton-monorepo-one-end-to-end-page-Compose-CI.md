@@ -1,11 +1,11 @@
 ---
 id: TASK-2
 title: 'Walking skeleton: monorepo, one end-to-end page, Compose, CI'
-status: In Progress
+status: Done
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-12T13:29:00Z'
+updated_date: '2026-11-12T21:07:00Z'
 labels:
   - mvp
   - speckit-light
@@ -35,16 +35,16 @@ Spec: `specs/002-walking-skeleton/`
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
 - [x] #1 A browser page shows a row read from the database through gateway and service
-- [ ] #2 `pnpm dev` starts the whole stack on Windows, macOS and Linux
-- [ ] #3 CI is green on a PR to dev
+- [x] #2 `pnpm dev` starts the whole stack on Windows and Linux (macOS is checked in TASK-20)
+- [x] #3 CI is green on a PR to dev
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
-- [ ] #2 Tests added / updated and green locally and in CI
+- [x] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
+- [x] #2 Tests added / updated and green locally and in CI
 - [x] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
-- [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
+- [x] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
 
 ## Implementation Plan
@@ -90,4 +90,16 @@ Two `/code-review` runs on the branch diff against `origin/dev`; every finding v
 - `pnpm format:check` clean; `turbo run lint typecheck test test:integration build --force`: 17/17 tasks. Unit: web 8, gateway 16, catalog 12; integration: gateway 14, catalog 8.
 - `turbo run build` also passes without `.env`, as in CI.
 - `pnpm dev` on Windows: the page at http://localhost:3000 renders the categories read from PostgreSQL through api-gateway and catalog-service.
+
+## CI on PR #3, 2026-11-12
+
+Run 43299781488 (`pull_request`, head 708ee4b): format clean; `turbo run lint typecheck test test:integration build --affected` (base origin/dev) → 17/17 tasks, 0 cached, success in 1 min 43 s.
+
+AC #2 narrowed to Windows and Linux by the owner's decision; the macOS check moved to TASK-20.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Walking skeleton of the shop: the storefront home page renders, on the server, the categories that web gets from api-gateway, which gets them from catalog-service and its PostgreSQL. Built the pnpm + Turborepo monorepo with shared TypeScript / ESLint / Prettier config, the shared DTO package (ADR 0016), the local stack (infrastructure in Docker Compose, apps on the host, port preflight, pnpm dev / stop / reset; ADR 0018), Vitest + Testcontainers tests (ADR 0019), the ci workflow with manual runs and selectable checks, Dependabot, and the green-CI rule for main. Verified: quickstart from a fresh clone on Windows and Linux; locally and in CI 17/17 tasks (lint, typecheck, unit 36, integration 22, build). Two AI reviews: 16 findings fixed with tests, 1 moved to TASK-4. Risks: macOS not verified (TASK-20); branch protection is a rule, not a GitHub setting (free private repo).
+<!-- SECTION:FINAL_SUMMARY:END -->
