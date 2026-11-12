@@ -38,6 +38,14 @@ describe('home page (FR-030)', () => {
     expect(await render()).toContain('The catalog is unavailable right now');
   });
 
+  it.each([{}, { items: null }, null, 'ok'])(
+    'shows "unavailable" when a 200 has another shape (%j)',
+    async (body) => {
+      gatewayAnswers(200, body);
+      expect(await render()).toContain('The catalog is unavailable right now');
+    },
+  );
+
   it('shows "unavailable" when the gateway is unreachable', async () => {
     vi.stubGlobal(
       'fetch',

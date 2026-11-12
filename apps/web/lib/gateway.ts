@@ -17,7 +17,10 @@ export async function fetchCategories(): Promise<CategoriesResult> {
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
     if (!res.ok) return { kind: 'unavailable' };
-    const body = (await res.json()) as CategoryListDto;
+    const body = (await res.json()) as Partial<CategoryListDto> | null;
+    // A 200 of another shape (a proxy, a foreign process on the port) is "unavailable",
+    // never a crash of the page.
+    if (!Array.isArray(body?.items)) return { kind: 'unavailable' };
     return { kind: 'ok', items: body.items };
   } catch {
     return { kind: 'unavailable' };
