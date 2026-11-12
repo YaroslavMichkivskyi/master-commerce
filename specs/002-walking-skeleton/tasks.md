@@ -44,7 +44,7 @@
 - [X] T025 [P] FR-053 rule: `main` only through PRs with green CI, written in `docs/playbooks/release.md` (not enforced by GitHub on the free plan)
 
 ## Phase 8 — Docs and verification
-- [ ] T026 ADR 0018 (local stack), ADR 0019 (test tooling), ADR index, roadmap ADR table
+- [X] T026 ADR 0018 (local stack), ADR 0019 (test tooling), ADR index, roadmap ADR table
 - [ ] T027 `docs/technologies.md` (planned → in use, new rows), `README.md` Getting started
 - [ ] T028 Run `quickstart.md` scenarios 1–7 on Windows, 1/2/7 on Linux (Docker); record evidence in TASK-2 notes
 - [ ] T029 `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm test:integration` green

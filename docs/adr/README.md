@@ -19,5 +19,7 @@ Decisions that outlive a single feature. Format: MADR (`template.md`); how and w
 | [0013](0013-process-tooling.md) | Process tooling: spec-kit for specs, Backlog.md for tasks | accepted |
 | [0014](0014-openapi-swagger-for-every-api.md) | OpenAPI with Swagger UI for every HTTP API | accepted |
 | [0015](0015-backlog-update-commits-on-dev.md) | Backlog-only changes are committed directly on dev as `Update #N` | superseded by 0017 |
-| [0017](0017-commit-merge-and-review-conventions.md) | Commit, merge and review conventions: per-commit review, Conventional Commits, merge commits | accepted |
 | [0016](0016-shared-contracts-folder.md) | Shared contracts in a top-level `shared/` folder | accepted |
+| [0017](0017-commit-merge-and-review-conventions.md) | Commit, merge and review conventions: per-commit review, Conventional Commits, merge commits | accepted |
+| [0018](0018-local-stack-infra-in-compose-apps-on-host.md) | Local stack: infrastructure in Docker Compose, apps on the host | proposed |
+| [0019](0019-test-tooling-vitest-testcontainers.md) | Test tooling: Vitest everywhere, Testcontainers for integration tests | proposed |

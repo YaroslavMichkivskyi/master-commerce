@@ -86,5 +86,7 @@ MinIO and Mailpit.
 | 0013 | Process tooling: spec-kit for specs, Backlog.md for tasks |
 | 0014 | OpenAPI with Swagger UI for every HTTP API |
 | 0015 | Backlog-only changes committed directly on `dev` as `Update #N` (superseded by 0017) |
-| 0017 | Commit, merge and review conventions: per-commit review, Conventional Commits, merge commits |
 | 0016 | Shared contracts in a top-level `shared/` folder |
+| 0017 | Commit, merge and review conventions: per-commit review, Conventional Commits, merge commits |
+| 0018 | Local stack: infrastructure in Docker Compose, apps on the host |
+| 0019 | Test tooling: Vitest everywhere, Testcontainers for integration tests |
