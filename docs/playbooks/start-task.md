@@ -31,16 +31,29 @@
    build green. After each step: stop with only that step's changes in the working
    tree (stash unrelated work), report the changed files, what and why, how it was
    verified (commands and results) and the proposed message; for a fix also the
-   regression analysis (rule 7); commit only after the owner approves, then start the
-   next step. Messages: Conventional Commits
-   (`feat(catalog): …`, `fix(order): …`, `test: …`, `docs: …`, `chore: …`), no task id.
+   regression analysis (rule 7); for any step the reference check (rule 8). Commit
+   only after the owner approves, then start the next step. Messages: Conventional
+   Commits (`feat(catalog): …`, `fix(order): …`, `test: …`, `docs: …`, `chore: …`), no task id.
    The first commit may carry only the status change.
 7. **A fix starts with a regression analysis** (`AGENTS.md`): before changing code,
    list who uses it and what changes for them — callers, other services, contracts
    and OpenAPI, config, tests, CI — and the edge cases the fix touches. Add tests for
    the risky ones: the behaviour that must stay and the new one; a new test must fail
    without the fix. Run the checks of every affected package, not only the one changed.
-8. A decision that outlives the task → ADR (`write-adr.md`) in the same branch.
+8. **Check references, both ways, cheaply.** A stale reference passes every test (a
+   comment citing the wrong ADR, a doc naming a removed script).
+   - Inbound — a step renames, renumbers, moves or removes something (ADR / FR number,
+     file, script, env variable, port, route, exported name): find what points to it,
+     one search for all the names, matching lines only, tracked files only:
+     `git grep -n -F -e '<old name>' -e '<other name>'`. Fix every hit or say why not.
+   - Outbound — in the lines the step writes (code comments, docs, ADRs, the PR body)
+     every cited ADR, FR, path, command and variable must exist and say what the text
+     claims: `git ls-files '<path>'`, the ADR's title line, the FR's line in the spec
+     (`git grep -n 'FR-041' specs/`), never the whole document.
+   - Budget: no reading whole files to hunt references, no searching `node_modules`,
+     lockfiles or build output; only the names this step touches, not the whole repo's
+     references. The step report lists what was searched and what was fixed.
+9. A decision that outlives the task → ADR (`write-adr.md`) in the same branch.
 
 ## Limits
 - No work directly on `dev` or `main` — except backlog-only (`chore(backlog): …`) and

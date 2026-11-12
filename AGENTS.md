@@ -28,6 +28,10 @@ read by every agent runtime.
   cases the fix touches. Cover the risky ones with tests — the behaviour that must stay
   as well as the new one — and run the checks of every affected package. The step
   report and the PR state what could regress and how it is covered.
+- **A change keeps references true, both ways** (`docs/playbooks/start-task.md` rule 8):
+  whatever points to a renamed, renumbered, moved or changed name is updated, and every
+  ADR, FR, path, command, variable or port named in the lines being written is checked
+  against its target. Search by exact name in tracked files, read only the hit lines.
 - **Conventional Commits for every commit** (`feat(catalog): …`, `fix(order): …`,
   `docs: …`, `chore(backlog): …`), no task id in branch commits. PRs into `dev` are
   merged with a **merge commit** titled `Merge TASK-<N>: <PR title> (#<PR>)` (ADR 0017).
