@@ -22,6 +22,12 @@ read by every agent runtime.
   each one stop with only that step's changes in the working tree, report the files,
   what and why, how it was verified, and the proposed commit message; commit only
   after the owner approves, then continue. Never commit several unreviewed steps.
+- **Before any fix, analyse the regressions it can cause** (a bug, a review finding, a
+  failing check alike): who else uses the code being changed (callers, other services,
+  contracts and OpenAPI, config, tests, CI), what changes for each of them, which edge
+  cases the fix touches. Cover the risky ones with tests — the behaviour that must stay
+  as well as the new one — and run the checks of every affected package. The step
+  report and the PR state what could regress and how it is covered.
 - **Conventional Commits for every commit** (`feat(catalog): …`, `fix(order): …`,
   `docs: …`, `chore(backlog): …`), no task id in branch commits. PRs into `dev` are
   merged with a **merge commit** titled `Merge TASK-<N>: <PR title> (#<PR>)` (ADR 0017).

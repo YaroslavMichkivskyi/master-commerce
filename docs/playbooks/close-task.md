@@ -26,8 +26,9 @@
       elsewhere). Never fix or report a finding as real without that check.
    2. **Report to the owner before changing anything**, one row per finding: what it
       claims; verdict with the evidence; for a real one — why it is a problem, the
-      impact (what breaks, for whom, how likely, how bad), and the proposed fix with
-      its cost; for a false positive — why it is not real.
+      impact (what breaks, for whom, how likely, how bad), the proposed fix with its
+      cost, and what the fix could regress (`start-task.md` rule 7); for a false
+      positive — why it is not real.
    3. Fix only the real findings the owner approves, each fix a reviewed step
       (`start-task.md` step 6). A real finding left as is gets a reason, or a follow-up
       task with the owner's approval.

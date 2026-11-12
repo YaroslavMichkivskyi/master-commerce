@@ -16,6 +16,9 @@ Spec: `specs/<NNN>-<name>/` <!-- or "no-spec" -->
 - [ ] every acceptance criterion of TASK-<N> checked with evidence
 - [ ] task closed in this branch (`Done`, final summary)
 
+## Regression risk
+- <for each fix / changed behaviour: what else could break, and the test or check that covers it — or "no behaviour change">
+
 ## AI review
 - Tool: <e.g. Claude Code `/code-review`> on the branch diff against `origin/dev`
 - Findings: <fixed: … / left as is: … because … / false positives: … because … / "none">

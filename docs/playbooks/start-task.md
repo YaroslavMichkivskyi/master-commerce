@@ -30,11 +30,17 @@
    reviewable change (a spec, a plan, one layer of code, CI, docs) that leaves the
    build green. After each step: stop with only that step's changes in the working
    tree (stash unrelated work), report the changed files, what and why, how it was
-   verified (commands and results) and the proposed message; commit only after the
-   owner approves, then start the next step. Messages: Conventional Commits
+   verified (commands and results) and the proposed message; for a fix also the
+   regression analysis (rule 7); commit only after the owner approves, then start the
+   next step. Messages: Conventional Commits
    (`feat(catalog): …`, `fix(order): …`, `test: …`, `docs: …`, `chore: …`), no task id.
    The first commit may carry only the status change.
-7. A decision that outlives the task → ADR (`write-adr.md`) in the same branch.
+7. **A fix starts with a regression analysis** (`AGENTS.md`): before changing code,
+   list who uses it and what changes for them — callers, other services, contracts
+   and OpenAPI, config, tests, CI — and the edge cases the fix touches. Add tests for
+   the risky ones: the behaviour that must stay and the new one; a new test must fail
+   without the fix. Run the checks of every affected package, not only the one changed.
+8. A decision that outlives the task → ADR (`write-adr.md`) in the same branch.
 
 ## Limits
 - No work directly on `dev` or `main` — except backlog-only (`chore(backlog): …`) and
