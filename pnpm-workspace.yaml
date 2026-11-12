@@ -3,6 +3,16 @@ packages:
   - shared/*
   - packages/*
   - tools/*
+# Install scripts that may run: native binaries the build needs.
 onlyBuiltDependencies:
   - '@swc/core'
   - esbuild
+# Install scripts that are skipped on purpose (listed so pnpm stops warning):
+# @scarf/scarf — install telemetry of swagger-ui-dist; cpu-features, ssh2 — optional
+# native speed-ups of the Docker client in Testcontainers (SSH transport, not used);
+# protobufjs — a version check, the package works without it.
+ignoredBuiltDependencies:
+  - '@scarf/scarf'
+  - cpu-features
+  - protobufjs
+  - ssh2
