@@ -1,4 +1,4 @@
-# Local infrastructure only; the apps run on the host with hot reload (ADR 0017).
+# Local infrastructure only; the apps run on the host with hot reload (ADR 0018).
 # Ports and credentials come from `.env` (copied from `.env.example` by `pnpm dev`).
 name: master-commerce
 
