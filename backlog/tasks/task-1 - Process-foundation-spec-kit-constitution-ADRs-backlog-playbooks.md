@@ -21,7 +21,7 @@ ordinal: 1000
 Set up the development process once, before any code.
 
 Scope:
-- spec-kit 0.14.1 vendored in the repo root, co2-style spec template override
+- spec-kit 0.14.1 vendored in the repo root, project spec template override
 - `.specify/memory/constitution.md` from mvp-plan.md §2 and AGENTS.md
 - `docs/adr/` with the template and ADR 0001-0013
 - Backlog.md initialised; roadmap tasks created
@@ -47,5 +47,5 @@ Scope:
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
-Bootstrap of the process, done directly on dev before the task-branch rule existed. spec-kit 0.14.1 vendored with a co2-style spec template override; constitution v1.0.0; ADR 0001-0013; Backlog.md with the 20 roadmap tasks; playbooks create/start/close-task, speckit-run, write-adr, release with thin skills; PR template. Verified: create-new-feature.sh dry-run resolves specs/002-walking-skeleton. No code yet, so no tests (DoD 2 n/a); no PR (DoD 4 n/a, bootstrap).
+Bootstrap of the process, done directly on dev before the task-branch rule existed. spec-kit 0.14.1 vendored with a project spec template override; constitution v1.0.0; ADR 0001-0013; Backlog.md with the 20 roadmap tasks; playbooks create/start/close-task, speckit-run, write-adr, release with thin skills; PR template. Verified: create-new-feature.sh dry-run resolves specs/002-walking-skeleton. No code yet, so no tests (DoD 2 n/a); no PR (DoD 4 n/a, bootstrap).
 <!-- SECTION:FINAL_SUMMARY:END -->
