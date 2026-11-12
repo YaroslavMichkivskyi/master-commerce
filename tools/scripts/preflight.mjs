@@ -4,16 +4,18 @@
 //    On Windows Docker can publish a port that a native service already listens on, and
 //    connections then reach the wrong server, so the check is done here, not left to Docker.
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, existsSync } from 'node:fs';
+import { copyFileSync, existsSync, readFileSync } from 'node:fs';
 import { connect } from 'node:net';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseEnv } from 'node:util';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const envFile = join(root, '.env');
+const exampleFile = join(root, '.env.example');
 
 if (!existsSync(envFile)) {
-  copyFileSync(join(root, '.env.example'), envFile);
+  copyFileSync(exampleFile, envFile);
   console.log('Created .env from .env.example; edit it to change ports or credentials.');
 }
 process.loadEnvFile(envFile);
@@ -49,9 +51,22 @@ function isListening(port) {
   });
 }
 
-const ports = Object.entries(process.env)
-  .filter(([name]) => name.endsWith('_PORT'))
-  .map(([name, value]) => [name, Number(value)]);
+// Only the stack's own ports (the *_PORT keys of .env.example), with their current values;
+// other *_PORT variables of the shell (KUBERNETES_PORT, SSH_PORT…) are none of our business.
+const names = Object.keys(parseEnv(readFileSync(exampleFile, 'utf8'))).filter((n) =>
+  n.endsWith('_PORT'),
+);
+const isPort = (value) => /^\d+$/.test(value ?? '') && Number(value) >= 1 && Number(value) <= 65535;
+const invalid = names.filter((n) => !isPort(process.env[n]));
+if (invalid.length > 0) {
+  const list = invalid.map((n) => `${n}=${process.env[n] ?? ''}`).join(', ');
+  console.error(
+    `Not a port number: ${list}.\n` +
+      'Set an integer from 1 to 65535 in .env (or in your shell, which overrides .env).',
+  );
+  process.exit(1);
+}
+const ports = names.map((name) => [name, Number(process.env[name])]);
 const ours = ownPorts();
 
 const busy = [];
