@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/turbo/schema.json",
+  "globalDependencies": ["tsconfig.base.json", "eslint.config.mjs"],
+  "globalPassThroughEnv": ["DOCKER_HOST", "TESTCONTAINERS_*", "*_PORT", "*_URL", "CI"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+    },
+    "dev": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "dependsOn": ["^build"]
+    },
+    "typecheck": {
+      "dependsOn": ["^build"]
+    },
+    "test": {
+      "dependsOn": ["^build"]
+    },
+    "test:integration": {
+      "dependsOn": ["^build"],
+      "cache": false
+    }
+  }
+}

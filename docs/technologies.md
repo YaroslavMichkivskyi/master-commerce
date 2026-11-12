@@ -34,23 +34,36 @@ task), not applied yet. A planned row turns `in use` when its task lands, with t
 | GitHub PR template | in use | the same PR body for every task: task link, verification, docs | [`.github/pull_request_template.md`](../.github/pull_request_template.md) |
 | [`.gitattributes`](https://git-scm.com/docs/gitattributes) (LF) | in use | identical line endings on Windows, macOS, Linux | [`.gitattributes`](../.gitattributes) |
 | [release-please](https://github.com/googleapis/release-please) | planned (TASK-19) | versions, changelog and tags from Conventional Commits | — |
-| [Dependabot](https://docs.github.com/en/code-security/dependabot) | planned (TASK-2) | dependency updates | — |
+| [Dependabot](https://docs.github.com/en/code-security/dependabot) version updates | in use | weekly grouped PRs into `dev` for npm (pnpm lockfile) and GitHub Actions | [`.github/dependabot.yml`](../.github/dependabot.yml) |
+| Green CI before `main` (rule, not a GitHub setting) | in use | branch protection is not available for a private repo on the free plan | [`release.md`](playbooks/release.md) |
+| AI review of the branch before every PR (Claude Code `/code-review`) | in use | a second look at the whole diff; advises, the owner decides | [`close-task.md`](playbooks/close-task.md), PR template |
+
+## Workspace and tooling
+
+| Technology | Status | Why | Where used |
+|---|---|---|---|
+| [Node.js](https://nodejs.org/) 24 LTS | in use | runtime of every app and script; native ESM, built-in `fetch` | [`.nvmrc`](../.nvmrc), `engines` in [`package.json`](../package.json) |
+| [TypeScript](https://www.typescriptlang.org/) 6.0, strict, ESM (`NodeNext`; `Bundler` in web) | in use | one language everywhere; 6.0 is the newest that typescript-eslint supports | [`tsconfig.base.json`](../tsconfig.base.json), `tsconfig.json` of each package |
+| [pnpm](https://pnpm.io/) 10 workspaces, [Corepack](https://nodejs.org/api/corepack.html) | in use | strict `node_modules`, one store per machine, the same pnpm everywhere via `packageManager` | [`pnpm-workspace.yaml`](../pnpm-workspace.yaml), [`package.json`](../package.json); ADR [0002](adr/0002-monorepo-pnpm-turborepo.md) |
+| [Turborepo](https://turborepo.com/) 2.11 | in use | runs `build` / `lint` / `typecheck` / `test` in dependency order with caching and `--affected` | [`turbo.json`](../turbo.json); ADR [0002](adr/0002-monorepo-pnpm-turborepo.md) |
+| [ESLint](https://eslint.org/) 10 + [typescript-eslint](https://typescript-eslint.io/) (type-checked rules) | in use | catches bugs the compiler does not (floating promises, unsafe `any`); type-only DTO imports in web | [`eslint.config.mjs`](../eslint.config.mjs), [`apps/web/eslint.config.mjs`](../apps/web/eslint.config.mjs) |
+| [Prettier](https://prettier.io/) 3 | in use | one formatting, checked in CI | [`.prettierrc.json`](../.prettierrc.json), `pnpm format:check` |
 
 ## Backend
 
 | Technology | Status | Why | Where used |
 |---|---|---|---|
-| [TypeScript](https://www.typescriptlang.org/), [Node.js](https://nodejs.org/) | planned (TASK-2) | one language for services, web, Lambdas, tools | — |
-| [pnpm](https://pnpm.io/) workspaces + [Turborepo](https://turbo.build/repo) | planned (TASK-2) | monorepo with cached, affected-only tasks | ADR [0002](adr/0002-monorepo-pnpm-turborepo.md) |
-| [NestJS](https://nestjs.com/) | planned (TASK-2) | microservices framework: modules, DI, transports | ADR [0003](adr/0003-nestjs-microservices-db-per-service.md) |
-| [PostgreSQL](https://www.postgresql.org/) 17 | planned (TASK-2) | a database per service; JSONB, FTS, `SKIP LOCKED` | ADR [0004](adr/0004-postgresql-17.md) |
-| [Drizzle ORM](https://orm.drizzle.team/) | planned (TASK-4) | thin type-safe data access and migrations | ADR [0005](adr/0005-drizzle-orm-and-raw-sql.md) |
+| [NestJS](https://nestjs.com/) 12 (+ `@nestjs/config`) | in use | microservices framework: modules, DI, transports | [`apps/catalog-service/`](../apps/catalog-service/), [`apps/api-gateway/`](../apps/api-gateway/); ADR [0003](adr/0003-nestjs-microservices-db-per-service.md) |
+| [`@nestjs/terminus`](https://docs.nestjs.com/recipes/terminus) | in use | `/health` with a database ping (503 when the database is down) | [`apps/catalog-service/src/health/`](../apps/catalog-service/src/health/), [`apps/api-gateway/src/health/`](../apps/api-gateway/src/health/) |
+| [PostgreSQL](https://www.postgresql.org/) 17 + [`pg`](https://node-postgres.com/) | in use | a database per service; JSONB, FTS, `SKIP LOCKED` | [`docker-compose.yml`](../docker-compose.yml), [`apps/catalog-service/src/db/`](../apps/catalog-service/src/db/); ADR [0004](adr/0004-postgresql-17.md) |
+| [Drizzle ORM](https://orm.drizzle.team/) 0.45 + drizzle-kit | in use | thin type-safe data access; SQL migrations generated, committed and applied on start | [`apps/catalog-service/src/db/`](../apps/catalog-service/src/db/), [`apps/catalog-service/drizzle/`](../apps/catalog-service/drizzle/); ADR [0005](adr/0005-drizzle-orm-and-raw-sql.md) |
 | PostgreSQL full-text search | planned (TASK-6) | product search without a separate search engine | ADR [0009](adr/0009-postgres-fts-no-elasticsearch.md) |
-| [RabbitMQ](https://www.rabbitmq.com/) 4 + Transactional Outbox / Inbox | planned (TASK-8) | reliable domain events between services | ADR [0006](adr/0006-rabbitmq-outbox-inbox.md) |
+| [RabbitMQ](https://www.rabbitmq.com/) 4 + Transactional Outbox / Inbox | broker runs in Compose; events planned (TASK-8) | reliable domain events between services | ADR [0006](adr/0006-rabbitmq-outbox-inbox.md) |
 | Choreography saga | planned (TASK-11) | stock reservation without distributed transactions | ADR [0007](adr/0007-choreography-saga.md) |
-| [OpenAPI](https://www.openapis.org/) 3 + [Swagger UI](https://swagger.io/tools/swagger-ui/) via [`@nestjs/swagger`](https://docs.nestjs.com/openapi/introduction) | planned (TASK-3) | every HTTP API documented from code, browsable at `/docs`, input for contract tests | ADR [0014](adr/0014-openapi-swagger-for-every-api.md) |
-| [pino](https://getpino.io/), [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) Problem Details | planned (TASK-3) | structured logs, one error format | — |
-| Shared contracts packages (`shared/dto`, `shared/events`) with [class-validator](https://github.com/typestack/class-validator) | planned (TASK-2, TASK-8) | one definition of DTOs and events for every app | [`shared/`](../shared/README.md), ADR [0016](adr/0016-shared-contracts-folder.md) |
+| [OpenAPI](https://www.openapis.org/) 3 + [Swagger UI](https://swagger.io/tools/swagger-ui/) via [`@nestjs/swagger`](https://docs.nestjs.com/openapi/introduction) | in use | every HTTP API documented from code, browsable at `/docs`, input for contract tests | `/docs` of catalog-service and api-gateway (`src/bootstrap.ts`); ADR [0014](adr/0014-openapi-swagger-for-every-api.md) |
+| [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) Problem Details | in use | one error format (`application/problem+json`); upstream failures → 502 / 503 | [`apps/api-gateway/src/common/`](../apps/api-gateway/src/common/), `ProblemDto` in [`shared/dto`](../shared/dto/) |
+| [pino](https://getpino.io/) | planned (TASK-3) | structured JSON logs with a correlation id | — |
+| Shared contracts packages with [class-validator](https://github.com/typestack/class-validator) + [class-transformer](https://github.com/typestack/class-transformer) | in use (`shared/dto`); planned (`shared/events`, TASK-8) | one definition of DTOs and events for every app; validation and OpenAPI from the same classes | [`shared/dto/`](../shared/dto/), ADR [0016](adr/0016-shared-contracts-folder.md) |
 | [Protocol Buffers](https://protobuf.dev/) + [gRPC](https://grpc.io/) | optional — not adopted | typed service-to-service calls; `.proto` files would live in `shared/proto` | ADR [0016](adr/0016-shared-contracts-folder.md) |
 | JWT, [argon2](https://github.com/ranisalt/node-argon2) | planned (TASK-7) | authentication and password hashing | — |
 
@@ -58,14 +71,18 @@ task), not applied yet. A planned row turns `in use` when its task lands, with t
 
 | Technology | Status | Why | Where used |
 |---|---|---|---|
-| [Next.js](https://nextjs.org/) App Router, SSR / ISR | planned (TASK-2, TASK-6) | crawlable, fast product pages | ADR [0008](adr/0008-nextjs-app-router-ssr-isr.md) |
-| [React](https://react.dev/) | planned (TASK-2) | UI | — |
+| [Next.js](https://nextjs.org/) 16 App Router, SSR / ISR | in use (SSR); ISR planned (TASK-6) | crawlable, fast product pages; Server Components fetch from the gateway | [`apps/web/`](../apps/web/); ADR [0008](adr/0008-nextjs-app-router-ssr-isr.md) |
+| [React](https://react.dev/) 19 | in use | UI | [`apps/web/app/`](../apps/web/app/) |
 | JSON-LD `Product`, sitemap, canonical URLs | planned (TASK-6, TASK-18) | SEO | — |
 
 ## Quality and observability
 
 | Technology | Status | Why | Where used |
 |---|---|---|---|
+| [Vitest](https://vitest.dev/) 5 | in use | one fast runner with native ESM and TypeScript for unit, integration and contract tests | `vitest.config.ts` of each app; ADR [0019](adr/0019-test-tooling-vitest-testcontainers.md) |
+| [SWC](https://swc.rs/) via [`unplugin-swc`](https://github.com/unplugin/unplugin-swc) | in use | emits decorator metadata for Nest DI under Vitest | `vitest.config.ts` of the Nest apps; ADR [0019](adr/0019-test-tooling-vitest-testcontainers.md) |
+| [Testcontainers](https://testcontainers.com/) (`@testcontainers/postgresql`) | in use | a fresh PostgreSQL per integration test file, the same on every OS and in CI | [`apps/catalog-service/test/`](../apps/catalog-service/test/); ADR [0019](adr/0019-test-tooling-vitest-testcontainers.md) |
+| [supertest](https://github.com/ladjs/supertest) | in use | HTTP tests against the Nest app in-process | `test/` of catalog-service and api-gateway; ADR [0019](adr/0019-test-tooling-vitest-testcontainers.md) |
 | [Prometheus](https://prometheus.io/), [Grafana](https://grafana.com/), cAdvisor, postgres_exporter | planned (TASK-13) | metrics and dashboards | — |
 | [Playwright](https://playwright.dev/) | planned (TASK-14) | end-to-end tests of customer and admin journeys | — |
 | [k6](https://k6.io/) | planned (TASK-14) | load and smoke tests | — |
@@ -76,8 +93,8 @@ task), not applied yet. A planned row turns `in use` when its task lands, with t
 
 | Technology | Status | Why | Where used |
 |---|---|---|---|
-| [Docker](https://www.docker.com/) Compose | planned (TASK-2) | the whole stack locally, the same files on the VM | ADR [0011](adr/0011-deploy-vm-compose-amplify.md) |
-| [GitHub Actions](https://docs.github.com/en/actions) | planned (TASK-2) | CI, images, deploys, scheduled smoke runs | `docs/mvp-plan.md` §7 |
+| [Docker](https://www.docker.com/) Compose | in use (local infrastructure); apps in containers planned (TASK-19) | pinned infrastructure on every OS with health checks and memory limits; the same files on the VM | [`docker-compose.yml`](../docker-compose.yml), [`tools/scripts/preflight.mjs`](../tools/scripts/preflight.mjs); ADR [0018](adr/0018-local-stack-infra-in-compose-apps-on-host.md), ADR [0011](adr/0011-deploy-vm-compose-amplify.md) |
+| [GitHub Actions](https://docs.github.com/en/actions) | in use (CI); images, deploys planned (TASK-19) | lint, type check and tests on PRs and pushes, manual runs with selectable checks | [`.github/workflows/ci.yml`](../.github/workflows/ci.yml); `docs/mvp-plan.md` §7 |
 | [AWS CDK](https://aws.amazon.com/cdk/) | planned (TASK-15) | infrastructure as code | ADR [0010](adr/0010-lambda-async-only-cdk.md) |
 | [AWS Lambda](https://aws.amazon.com/lambda/), SQS, S3, SES, EventBridge | planned (TASK-15–18) | asynchronous side work: e-mails, thumbnails, revalidation, sitemap | ADR [0010](adr/0010-lambda-async-only-cdk.md) |
 | GitHub OIDC → AWS | planned (TASK-15) | deploys without long-lived keys | — |

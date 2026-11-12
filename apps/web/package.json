@@ -1,0 +1,29 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Storefront and admin panel (Next.js App Router)",
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/next.mjs build",
+    "dev": "node scripts/next.mjs dev",
+    "start": "node scripts/next.mjs start",
+    "lint": "eslint .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "next": "16.4.5",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@master-commerce/dto": "workspace:*",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "typescript": "6.0.3",
+    "vitest": "5.1.0"
+  }
+}

@@ -4,3 +4,8 @@ dist/
 *.log
 __pycache__/
 .venv/
+.next/
+.turbo/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
