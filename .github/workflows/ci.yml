@@ -33,8 +33,11 @@ on:
         options: [all, affected]
         default: all
 
+# An outdated PR or manual run is cancelled. Push runs on dev / main never are: each one
+# checks only what changed since the previous push, so a cancelled (or replaced pending)
+# run would leave a change unchecked; every push gets its own group.
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.ref }}-${{ github.event_name == 'push' && github.sha || 'latest' }}
   cancel-in-progress: true
 
 permissions:
