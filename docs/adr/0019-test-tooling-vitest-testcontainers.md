@@ -1,6 +1,6 @@
 # 0019. Test tooling: Vitest everywhere, Testcontainers for integration tests
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-12
 - Deciders: project owner
 
