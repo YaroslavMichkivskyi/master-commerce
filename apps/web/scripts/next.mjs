@@ -14,6 +14,15 @@ if (command === 'dev' || command === 'start') args.push('--port', process.env.WE
 
 const nextBin = createRequire(import.meta.url).resolve('next/dist/bin/next');
 const child = spawn(process.execPath, [nextBin, ...args], { stdio: 'inherit' });
-child.on('exit', (code, signal) =>
-  signal ? process.kill(process.pid, signal) : process.exit(code ?? 0),
-);
+
+// A stop signal sent only to this wrapper (turbo, `kill`, a closed terminal) must reach
+// Next too, or Next keeps running and holds WEB_PORT. The wrapper exits when Next does.
+const forwarded = ['SIGINT', 'SIGTERM', 'SIGHUP'];
+for (const signal of forwarded) process.on(signal, () => child.kill(signal));
+
+child.on('exit', (code, signal) => {
+  if (!signal) process.exit(code ?? 0);
+  // Re-raise Next's signal on the wrapper with the default handler, for the right exit status.
+  for (const s of forwarded) process.removeAllListeners(s);
+  process.kill(process.pid, signal);
+});
