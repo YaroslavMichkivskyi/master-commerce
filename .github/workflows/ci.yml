@@ -1,4 +1,4 @@
-# Lint, type check and tests (FR-050, FR-051).
+# Lint, type check, tests and build (FR-050, FR-051).
 # Automatic on pushes and PRs to dev / main: every check, affected packages only.
 # By hand (Actions → ci → Run workflow, or `gh workflow run ci.yml --ref <branch> -f …`):
 # pick the branch and the checks below.
@@ -27,6 +27,10 @@ on:
         description: Integration tests (Testcontainers, slowest)
         type: boolean
         default: false
+      build:
+        description: Production build of every app (nest build, next build)
+        type: boolean
+        default: false
       scope:
         description: All packages, or only those changed against dev
         type: choice
@@ -53,6 +57,7 @@ jobs:
       DO_TYPECHECK: ${{ github.event_name != 'workflow_dispatch' || inputs.typecheck }}
       DO_TEST: ${{ github.event_name != 'workflow_dispatch' || inputs.test }}
       DO_INTEGRATION: ${{ github.event_name != 'workflow_dispatch' || inputs.integration }}
+      DO_BUILD: ${{ github.event_name != 'workflow_dispatch' || inputs.build }}
       SCOPE: ${{ github.event_name == 'workflow_dispatch' && inputs.scope || 'affected' }}
       # The base for --affected is set explicitly: turbo's own detection fails when checkout
       # has no local branches. PR: the target branch; push: the commit before the push;
@@ -86,6 +91,7 @@ jobs:
           [ "$DO_TYPECHECK" = true ] && tasks+=(typecheck)
           [ "$DO_TEST" = true ] && tasks+=(test)
           [ "$DO_INTEGRATION" = true ] && tasks+=(test:integration)
+          [ "$DO_BUILD" = true ] && tasks+=(build)
           if [ ${#tasks[@]} -eq 0 ]; then
             echo "::notice::No checks selected"
             exit 0

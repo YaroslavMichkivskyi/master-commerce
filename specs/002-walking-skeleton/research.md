@@ -113,13 +113,14 @@ Versions were checked against the npm registry and Docker Hub on 2026-11-09.
   - `actions/checkout` (fetch-depth 0, for `--affected`), `pnpm/action-setup`,
     `actions/setup-node` with `cache: pnpm`;
   - `pnpm install --frozen-lockfile`, `pnpm format:check`;
-  - `turbo run lint typecheck test test:integration --affected`.
+  - `turbo run lint typecheck test test:integration build --affected`: the build
+    catches what only `nest build` / `next build` reject.
 
   The base of `--affected` is set explicitly in `TURBO_SCM_BASE` (PR: the target
   branch; push: the commit before the push), because turbo's own detection fails when
   checkout has no local branches. The workflow can also be run by hand
   (`workflow_dispatch`) on any branch, with inputs `lint` and `typecheck` (on by
-  default), `test`, `integration` and `scope` (`all` / `affected` against `dev`); the
+  default), `test`, `integration`, `build` and `scope` (`all` / `affected` against `dev`); the
   automatic runs always do every check. The repository's default branch is `dev`, so
   the manual run is available once the workflow is there (owner's decision,
   2026-11-12).
