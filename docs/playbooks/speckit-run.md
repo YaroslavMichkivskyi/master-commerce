@@ -10,7 +10,7 @@
   skills `speckit-*` in `.claude/skills/`. Scripts are bash (`.specify/scripts/bash/`);
   on Windows run them with Git Bash.
 - The spec template is overridden in `.specify/templates/overrides/spec-template.md`
-  (co2 style: Scope, US-n with Given / then acceptance, grouped FR-0xx, Out of Scope,
+  (project style: Scope, US-n with Given / then acceptance, grouped FR-0xx, Out of Scope,
   Explicitly Not Restated Here, review checklist). Do not edit
   `.specify/templates/spec-template.md`.
 - The current feature is resolved from `.specify/feature.json`, **not** from the git
