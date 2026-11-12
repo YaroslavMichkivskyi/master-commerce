@@ -8,10 +8,12 @@
 ## Rules
 1. `dev` is green in CI and every task merged since the last release is `Done`.
    **`main` changes only through a PR whose `ci` checks are green** on its last commit
-   (FR-053 of TASK-2). GitHub does not enforce this for a private repository on the
-   free plan, so whoever merges checks it first: the PR's Checks tab or
+   (FR-053 of TASK-2). GitHub enforces it: ruleset "main: PRs with green CI only"
+   (pull request required, required check `check`, merge commits only, no
+   force-push or deletion). Still look before merging — the PR's Checks tab or
    `gh pr checks <PR>`. Red, pending or missing checks → no merge, even for a hotfix
-   (a fix goes `bug-<N>` → `dev` → release PR).
+   (a fix goes `bug-<N>` → `dev` → release PR). `dev` has its own ruleset: no
+   force-push or deletion; direct backlog / process commits stay allowed (ADR 0017).
 2. Open a PR `dev → main` titled `release: <short summary>`; body lists the tasks
    (TASK-<N>) included. **Merge commit**, not squash, so `main` keeps the task commits.
 3. Push / PR / merge only with the owner's explicit approval.

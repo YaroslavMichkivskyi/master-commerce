@@ -128,8 +128,8 @@ experience; load tests run locally.
 Plus: Dependabot, protection of `main` (only via PRs from `dev`, green CI), reusable
 workflows and composite actions for shared steps.
 
-Actions minutes for a private repo are limited — heavy runs go to the self-hosted
-runner, GitHub-hosted runners do CI only.
+The repo is public, so GitHub-hosted runners have no minute limit; `load-test` still
+runs on the self-hosted runner, as listed above.
 
 ## 8. Repository
 

@@ -35,7 +35,7 @@ task), not applied yet. A planned row turns `in use` when its task lands, with t
 | [`.gitattributes`](https://git-scm.com/docs/gitattributes) (LF) | in use | identical line endings on Windows, macOS, Linux | [`.gitattributes`](../.gitattributes) |
 | [release-please](https://github.com/googleapis/release-please) | planned (TASK-19) | versions, changelog and tags from Conventional Commits | — |
 | [Dependabot](https://docs.github.com/en/code-security/dependabot) version updates | in use | weekly grouped PRs into `dev` for npm (pnpm lockfile) and GitHub Actions | [`.github/dependabot.yml`](../.github/dependabot.yml) |
-| Green CI before `main` (rule, not a GitHub setting) | in use | branch protection is not available for a private repo on the free plan | [`release.md`](playbooks/release.md) |
+| GitHub rulesets (branch protection) | in use | `main`: only PRs with green `ci`, merge commits, no force-push or deletion; `dev`: no force-push or deletion. Free since the repo is public | repo Settings → Rules; [`release.md`](playbooks/release.md) |
 | AI review of the branch before every PR (Claude Code `/code-review`) | in use | a second look at the whole diff; advises, the owner decides | [`close-task.md`](playbooks/close-task.md), PR template |
 
 ## Workspace and tooling
