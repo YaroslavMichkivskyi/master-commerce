@@ -41,7 +41,7 @@
 ## Phase 7 — CI and repository (FR-050..FR-053)
 - [X] T023 `.github/workflows/ci.yml` (pnpm cache, `turbo run … --affected`, concurrency)
 - [X] T024 [P] `.github/dependabot.yml` (npm + github-actions, weekly, grouped)
-- [ ] T025 [P] FR-053 rule: `main` only through PRs with green CI, written in `docs/playbooks/release.md` (not enforced by GitHub on the free plan)
+- [X] T025 [P] FR-053 rule: `main` only through PRs with green CI, written in `docs/playbooks/release.md` (not enforced by GitHub on the free plan)
 
 ## Phase 8 — Docs and verification
 - [ ] T026 ADR 0018 (local stack), ADR 0019 (test tooling), ADR index, roadmap ADR table

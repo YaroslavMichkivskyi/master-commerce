@@ -7,6 +7,11 @@
 
 ## Rules
 1. `dev` is green in CI and every task merged since the last release is `Done`.
+   **`main` changes only through a PR whose `ci` checks are green** on its last commit
+   (FR-053 of TASK-2). GitHub does not enforce this for a private repository on the
+   free plan, so whoever merges checks it first: the PR's Checks tab or
+   `gh pr checks <PR>`. Red, pending or missing checks → no merge, even for a hotfix
+   (a fix goes `bug-<N>` → `dev` → release PR).
 2. Open a PR `dev → main` titled `release: <short summary>`; body lists the tasks
    (TASK-<N>) included. **Merge commit**, not squash, so `main` keeps the task commits.
 3. Push / PR / merge only with the owner's explicit approval.
@@ -17,6 +22,7 @@
 
 ## Limits
 - Never commit directly on `main`; never force-push `main`.
+- Never merge into `main` while CI is red, pending or did not run.
 
 ## Done when
 - `main` contains the release, the tag exists on the remote, `dev` is not behind `main`.
