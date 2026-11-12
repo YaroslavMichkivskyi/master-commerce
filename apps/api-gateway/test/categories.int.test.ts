@@ -67,6 +67,28 @@ describe('api-gateway -> catalog-service', () => {
     expect(res.body).toMatchObject({ status: 502, title: 'Bad Gateway' });
   });
 
+  it('drops fields the shared contract does not declare', async () => {
+    behaviour = json(200, {
+      items: [{ ...LIST.items[0], createdAt: '2026-11-12', internalNote: 'x' }],
+      total: 1,
+    });
+    const res = await request(app.getHttpServer() as Server)
+      .get('/api/v1/categories')
+      .expect(200);
+    expect(res.body).toEqual(LIST);
+  });
+
+  it('answers 503 when the body is slower than the timeout', async () => {
+    behaviour = (res) => {
+      res.writeHead(200, { 'content-type': 'application/json' });
+      res.write('{"items":'); // headers and half the body, the rest never comes in time
+    };
+    const res = await request(app.getHttpServer() as Server)
+      .get('/api/v1/categories')
+      .expect(503);
+    expect(res.body).toMatchObject({ status: 503, detail: 'catalog-service is unavailable' });
+  });
+
   it('answers 502 when the catalog breaks the contract', async () => {
     behaviour = json(200, { items: [{ id: 'not-a-uuid', name: '', slug: 'X', sortOrder: 'a' }] });
     await request(app.getHttpServer() as Server)

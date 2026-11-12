@@ -1,14 +1,7 @@
+import { STATUS_CODES } from 'node:http';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { type ProblemDto } from '@master-commerce/dto';
 import { UpstreamBadResponseError, UpstreamUnavailableError } from '../catalog/upstream.errors.js';
-
-const TITLES: Record<number, string> = {
-  400: 'Bad Request',
-  404: 'Not Found',
-  500: 'Internal Server Error',
-  502: 'Bad Gateway',
-  503: 'Service Unavailable',
-};
 
 /** Maps any thrown value to an RFC 9457 body; internals never leak to the client. */
 export function toProblem(error: unknown, instance: string): ProblemDto {
@@ -28,7 +21,8 @@ export function toProblem(error: unknown, instance: string): ProblemDto {
 function problem(status: number, instance: string, detail?: string): ProblemDto {
   return {
     type: 'about:blank',
-    title: TITLES[status] ?? 'Error',
+    // RFC 9457: with `about:blank` the title is the status phrase.
+    title: STATUS_CODES[status] ?? 'Error',
     status,
     ...(detail ? { detail } : {}),
     instance,

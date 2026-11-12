@@ -15,7 +15,9 @@ export class CatalogClient {
   async listCategories(): Promise<CategoryListDto> {
     const body = await this.get('/categories');
     const dto = plainToInstance(CategoryListDto, body);
-    const errors = await validate(dto, { forbidUnknownValues: true });
+    // `whitelist` strips fields the DTO does not declare: whatever the catalog adds later
+    // never reaches the public API unless the shared contract is changed first.
+    const errors = await validate(dto, { forbidUnknownValues: true, whitelist: true });
     if (errors.length > 0) {
       throw new UpstreamBadResponseError(UPSTREAM, 'body does not match CategoryListDto');
     }
@@ -37,8 +39,14 @@ export class CatalogClient {
     }
     try {
       return await res.json();
-    } catch {
+    } catch (error) {
+      // The timeout also covers reading the body: a slow body is "unavailable", not "bad".
+      if (isAbort(error)) throw new UpstreamUnavailableError(UPSTREAM, { cause: error });
       throw new UpstreamBadResponseError(UPSTREAM, 'body is not JSON');
     }
   }
+}
+
+function isAbort(error: unknown): boolean {
+  return error instanceof Error && (error.name === 'TimeoutError' || error.name === 'AbortError');
 }

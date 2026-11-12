@@ -1,4 +1,4 @@
-import { NotFoundException } from '@nestjs/common';
+import { HttpException, NotFoundException } from '@nestjs/common';
 import { describe, expect, it } from 'vitest';
 import { UpstreamBadResponseError, UpstreamUnavailableError } from '../catalog/upstream.errors.js';
 import { toProblem } from './problem.js';
@@ -28,5 +28,10 @@ describe('toProblem', () => {
       status: 500,
       instance: '/x',
     });
+  });
+
+  it('titles every status with its HTTP phrase (RFC 9457)', () => {
+    expect(toProblem(new HttpException('nope', 405), '/x').title).toBe('Method Not Allowed');
+    expect(toProblem(new HttpException('slow down', 429), '/x').title).toBe('Too Many Requests');
   });
 });
