@@ -14,31 +14,38 @@
 3. **Verify, don't assume.** Run lint, typecheck and tests of affected packages
    (`pnpm turbo run lint typecheck test --filter=...[origin/dev]`) and the relevant
    integration / e2e tests via Docker Compose. UI → exercise it in a browser. A check
-   that cannot run is reported as not run, never as passed.
-4. **Prove each acceptance criterion** (`backlog task view TASK-<N> --plain`) and tick
+   that cannot run is reported as not run, never as passed. CI can also be run by hand
+   on the branch before the PR: `gh workflow run ci.yml --ref task-<N>` (inputs `lint`,
+   `typecheck`, `test`, `integration`, `scope`).
+4. **AI review of the branch.** Before the PR, run an AI code review of the whole branch
+   diff against `origin/dev` (Claude Code: `/code-review`). Fix every finding that is
+   real, each fix a reviewed step (`start-task.md` step 6); a finding left as is gets a
+   reason. Record the result in the PR body, section "AI review". The review advises;
+   the owner decides, and it never replaces the owner's review.
+5. **Prove each acceptance criterion** (`backlog task view TASK-<N> --plain`) and tick
    only the proven ones: `backlog task edit TASK-<N> --check-ac 1 --check-dod 1 …`.
    An unprovable AC → fix it, or ask the owner to change / move it — never tick it.
-5. **spec-kit tasks:** every item in `specs/<NNN>-*/tasks.md` is `[X]`; spec, plan and
+6. **spec-kit tasks:** every item in `specs/<NNN>-*/tasks.md` is `[X]`; spec, plan and
    code agree (spec first if they diverged); `.specify/feature.json` points at this spec.
-6. **Docs in the same PR:** OpenAPI / Swagger UI for every new or changed endpoint
+7. **Docs in the same PR:** OpenAPI / Swagger UI for every new or changed endpoint
    (open `/docs` and check it — ADR 0014), ADRs for lasting decisions, `docs/technologies.md` for
    every newly applied technology, README / runbook for changed commands.
-7. **Close the task in the branch:**
+8. **Close the task in the branch:**
    `backlog task edit TASK-<N> --final-summary "<what changed, why, how verified, risks>" -s Done`.
    The status lands on `dev` together with the code when the PR is merged. If the PR
    is rejected, set it back to `In Progress`.
-8. **Final commit** after the owner's review (`start-task.md` step 6), Conventional
+9. **Final commit** after the owner's review (`start-task.md` step 6), Conventional
    Commits, English. Working tree clean afterwards.
-9. **Push and open the PR — only after the owner approves the exact payload**
-   (branch, PR title, body). One approval = one push + one PR.
-   - Push: `git push -u origin task-<N>`.
-   - PR: base `dev`, head `task-<N>`; title = a Conventional Commit summarising the
-     task, e.g. `feat(catalog): product attributes` / `fix(order): stale price`;
-     body = `.github/pull_request_template.md` filled in (its Task section names TASK-<N>).
-10. **Merge — only with the owner's approval** (ADR 0017): merge method **merge commit**
+10. **Push and open the PR — only after the owner approves the exact payload**
+    (branch, PR title, body). One approval = one push + one PR.
+    - Push: `git push -u origin task-<N>`.
+    - PR: base `dev`, head `task-<N>`; title = a Conventional Commit summarising the
+      task, e.g. `feat(catalog): product attributes` / `fix(order): stale price`;
+      body = `.github/pull_request_template.md` filled in (its Task section names TASK-<N>).
+11. **Merge — only with the owner's approval** (ADR 0017): merge method **merge commit**
     (never squash or rebase), title `Merge TASK-<N>: <PR title> (#<PR>)` (`BUG-<N>` for
     a bug), body = the PR summary.
-11. **After the merge:** `git checkout dev`, `git pull --ff-only`, delete the branch
+12. **After the merge:** `git checkout dev`, `git pull --ff-only`, delete the branch
     locally (`git branch -d task-<N>`) and on the remote. Report the next ready task.
 
 ## Limits
@@ -49,6 +56,6 @@
 
 ## Done when
 - The PR `task-<N> → dev` is open, its CI is green, its body links TASK-<N> and lists
-  verification.
+  verification and the AI review result.
 - In the branch, the task is `Done` with all ACs / DoD ticked and a final summary.
 - The working tree is clean; the owner has the PR link.

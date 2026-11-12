@@ -16,6 +16,10 @@ Spec: `specs/<NNN>-<name>/` <!-- or "no-spec" -->
 - [ ] every acceptance criterion of TASK-<N> checked with evidence
 - [ ] task closed in this branch (`Done`, final summary)
 
+## AI review
+- Tool: <e.g. Claude Code `/code-review`> on the branch diff against `origin/dev`
+- Findings: <fixed: … / left as is: … because … / "none">
+
 ## Decisions and docs
 - ADRs: <new / superseded, or "none">
 - Docs updated: <mvp-plan.md / technologies.md / README / runbook, or "none">
