@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-12T01:00:00Z'
+updated_date: '2026-11-12T13:29:00Z'
 labels:
   - mvp
   - speckit-light
@@ -34,7 +34,7 @@ Spec: `specs/002-walking-skeleton/`
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 A browser page shows a row read from the database through gateway and service
+- [x] #1 A browser page shows a row read from the database through gateway and service
 - [ ] #2 `pnpm dev` starts the whole stack on Windows, macOS and Linux
 - [ ] #3 CI is green on a PR to dev
 <!-- AC:END -->
@@ -43,7 +43,7 @@ Spec: `specs/002-walking-skeleton/`
 <!-- DOD:BEGIN -->
 - [ ] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
 - [ ] #2 Tests added / updated and green locally and in CI
-- [ ] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
+- [x] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
 - [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
 
@@ -78,4 +78,16 @@ Both runs from a fresh `git clone -b task-2` into an empty folder, `pnpm install
 **Not verified:** macOS (no machine). Everything it needs is cross-platform (Node scripts, Compose, no shell-specific syntax). CI on GitHub (AC #3) runs on the PR.
 
 Install note: pnpm skips the install scripts of `@scarf/scarf` (telemetry), `cpu-features`, `ssh2` (optional native parts of the Docker client used by Testcontainers) and `protobufjs`; nothing needs them.
+
+## AI review (close-task step 4), 2026-11-12
+
+Two `/code-review` runs on the branch diff against `origin/dev`; every finding verified before a fix (code read, failing test or run), each fix with a regression analysis and a test that fails without it.
+- Run 1, 10 findings, all real. Fixed: CI concurrency on push runs, preflight port names from `.env.example`, contract `whitelist` in the gateway, slow-body timeout → 503, RFC 9457 titles from `node:http`, catalog problem+json filter, pg connection timeout, web guard for a body without `items`, `.env` resolved from the app's own files. Moved to TASK-4 (AC #4): DTO rules enforced in the database.
+- Run 2, 10 findings: 3 repeats of run 1 (already fixed), 7 new and real, all fixed: gateway 502 for a non-object body, error bodies cancelled, config validated at start-up (gateway and catalog), `/health` no longer returns the driver message, the Next wrapper forwards stop signals (checked in a Linux container: before, Next outlived the wrapper on SIGTERM/SIGINT/SIGHUP), CI builds the apps, `docker-compose.yml` cites ADR 0018.
+
+## Final verification, 2026-11-12, commit 994b2ea
+
+- `pnpm format:check` clean; `turbo run lint typecheck test test:integration build --force`: 17/17 tasks. Unit: web 8, gateway 16, catalog 12; integration: gateway 14, catalog 8.
+- `turbo run build` also passes without `.env`, as in CI.
+- `pnpm dev` on Windows: the page at http://localhost:3000 renders the categories read from PostgreSQL through api-gateway and catalog-service.
 <!-- SECTION:NOTES:END -->
