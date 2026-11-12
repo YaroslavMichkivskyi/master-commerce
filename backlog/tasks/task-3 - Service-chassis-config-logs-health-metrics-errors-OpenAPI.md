@@ -1,10 +1,11 @@
 ---
 id: TASK-3
 title: 'Service chassis: config, logs, health, metrics, errors, OpenAPI'
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-08T15:36:00Z'
+updated_date: '2026-11-12T22:33:00Z'
 labels:
   - mvp
   - speckit-light
@@ -42,3 +43,9 @@ Spec: `specs/003-service-chassis/`
 - [ ] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
 - [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+speckit-light: spec specs/003-service-chassis -> plan -> tasks -> implement
+<!-- SECTION:PLAN:END -->
