@@ -18,10 +18,21 @@
    on the branch before the PR: `gh workflow run ci.yml --ref task-<N>` (inputs `lint`,
    `typecheck`, `test`, `integration`, `scope`).
 4. **AI review of the branch.** Before the PR, run an AI code review of the whole branch
-   diff against `origin/dev` (Claude Code: `/code-review`). Fix every finding that is
-   real, each fix a reviewed step (`start-task.md` step 6); a finding left as is gets a
-   reason. Record the result in the PR body, section "AI review". The review advises;
-   the owner decides, and it never replaces the owner's review.
+   diff against `origin/dev` (Claude Code: `/code-review`). The review advises; the
+   owner decides, and it never replaces the owner's review.
+   1. **Verify every finding first** — a reviewer can be wrong. Read the code it points
+      at and, where possible, prove it with a failing test, a run or a log. Verdict:
+      *real*, or *false positive* (misread code, wrong assumption, already handled
+      elsewhere). Never fix or report a finding as real without that check.
+   2. **Report to the owner before changing anything**, one row per finding: what it
+      claims; verdict with the evidence; for a real one — why it is a problem, the
+      impact (what breaks, for whom, how likely, how bad), and the proposed fix with
+      its cost; for a false positive — why it is not real.
+   3. Fix only the real findings the owner approves, each fix a reviewed step
+      (`start-task.md` step 6). A real finding left as is gets a reason, or a follow-up
+      task with the owner's approval.
+   4. Record the result in the PR body, section "AI review": fixed, left as is (why),
+      false positives.
 5. **Prove each acceptance criterion** (`backlog task view TASK-<N> --plain`) and tick
    only the proven ones: `backlog task edit TASK-<N> --check-ac 1 --check-dod 1 …`.
    An unprovable AC → fix it, or ask the owner to change / move it — never tick it.

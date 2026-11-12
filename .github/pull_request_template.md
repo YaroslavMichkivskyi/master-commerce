@@ -18,7 +18,7 @@ Spec: `specs/<NNN>-<name>/` <!-- or "no-spec" -->
 
 ## AI review
 - Tool: <e.g. Claude Code `/code-review`> on the branch diff against `origin/dev`
-- Findings: <fixed: … / left as is: … because … / "none">
+- Findings: <fixed: … / left as is: … because … / false positives: … because … / "none">
 
 ## Decisions and docs
 - ADRs: <new / superseded, or "none">
