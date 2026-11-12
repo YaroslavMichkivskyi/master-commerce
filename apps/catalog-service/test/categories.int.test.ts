@@ -88,12 +88,23 @@ describe('catalog-service against PostgreSQL', () => {
     expect(body.components.schemas).toHaveProperty('CategoryListDto');
   });
 
-  // Last: it stops the database.
+  // Last two: the first stops the database.
   it('GET /health answers 503 when the database is gone (FR-004)', async () => {
     await container.stop();
     containerStopped = true;
 
     const res = await http().get('/health').expect(503);
     expect((res.body as HealthBody).error?.database?.status).toBe('down');
+  });
+
+  it('GET /categories answers 500 problem+json without internals when the database is gone', async () => {
+    const res = await http().get('/categories').expect(500);
+    expect(res.headers['content-type']).toMatch(/^application\/problem\+json/);
+    expect(res.body).toEqual({
+      type: 'about:blank',
+      title: 'Internal Server Error',
+      status: 500,
+      instance: '/categories',
+    });
   });
 });

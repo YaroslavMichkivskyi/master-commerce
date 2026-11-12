@@ -15,8 +15,15 @@ export const MIGRATIONS_FOLDER = fileURLToPath(new URL('../../drizzle', import.m
 
 const logger = new Logger('Database');
 
+/** A database that does not answer fails fast instead of hanging requests and /health. */
+export const CONNECTION_TIMEOUT_MS = 2000;
+
 export function createPool(databaseUrl: string): pg.Pool {
-  const pool = new pg.Pool({ connectionString: databaseUrl, max: 10 });
+  const pool = new pg.Pool({
+    connectionString: databaseUrl,
+    max: 10,
+    connectionTimeoutMillis: CONNECTION_TIMEOUT_MS,
+  });
   // An idle connection dropped by the server (restart, failover) emits 'error' on the pool;
   // unhandled, it would crash the process. The pool replaces the connection on next use.
   pool.on('error', (error) => logger.warn(`Idle database connection lost: ${error.message}`));
