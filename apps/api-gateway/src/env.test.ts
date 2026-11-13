@@ -1,7 +1,8 @@
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { loadEnv } from '@master-commerce/service-core';
 import { describe, expect, it } from 'vitest';
-import { loadConfig, ROOT_ENV_FILE } from './config.js';
+import { GatewayEnv, ROOT_ENV_FILE } from './env.js';
 
 describe('ROOT_ENV_FILE', () => {
   it('points at the repo root whatever the working directory is', () => {
@@ -10,26 +11,26 @@ describe('ROOT_ENV_FILE', () => {
   });
 });
 
-describe('loadConfig', () => {
+describe('GatewayEnv', () => {
   it('uses the defaults when nothing is set', () => {
-    expect(loadConfig({})).toEqual({
-      port: 3001,
-      catalogServiceUrl: 'http://localhost:3002',
-      upstreamTimeoutMs: 2000,
+    expect(loadEnv(GatewayEnv, undefined, {})).toMatchObject({
+      GATEWAY_PORT: 3001,
+      CATALOG_SERVICE_URL: 'http://localhost:3002',
+      UPSTREAM_TIMEOUT_MS: 2000,
     });
   });
 
   it('reads the values that are set', () => {
     expect(
-      loadConfig({
+      loadEnv(GatewayEnv, undefined, {
         GATEWAY_PORT: '4001',
         CATALOG_SERVICE_URL: 'https://catalog.internal:8443',
         UPSTREAM_TIMEOUT_MS: '300',
       }),
-    ).toEqual({
-      port: 4001,
-      catalogServiceUrl: 'https://catalog.internal:8443',
-      upstreamTimeoutMs: 300,
+    ).toMatchObject({
+      GATEWAY_PORT: 4001,
+      CATALOG_SERVICE_URL: 'https://catalog.internal:8443',
+      UPSTREAM_TIMEOUT_MS: 300,
     });
   });
 
@@ -44,6 +45,6 @@ describe('loadConfig', () => {
     ['CATALOG_SERVICE_URL', 'localhost:3002'],
     ['CATALOG_SERVICE_URL', 'not a url'],
   ])('stops on %s=%j, naming the variable', (name, value) => {
-    expect(() => loadConfig({ [name]: value })).toThrow(name);
+    expect(() => loadEnv(GatewayEnv, undefined, { [name]: value })).toThrow(name);
   });
 });

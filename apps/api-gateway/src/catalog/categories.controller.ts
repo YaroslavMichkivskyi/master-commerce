@@ -1,12 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
-import {
-  ApiBadGatewayResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiServiceUnavailableResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { CategoryListDto, ProblemDto } from '@master-commerce/dto';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CategoryListDto } from '@master-commerce/dto';
+import { ApiProblemResponses, Public } from '@master-commerce/service-core';
 import { CatalogClient } from './catalog.client.js';
 
 @ApiTags('catalog')
@@ -15,16 +10,13 @@ export class CategoriesController {
   constructor(private readonly catalog: CatalogClient) {}
 
   @Get()
+  @Public()
   @ApiOperation({ summary: 'List product categories in display order' })
   @ApiOkResponse({ type: CategoryListDto })
-  @ApiBadGatewayResponse({
-    type: ProblemDto,
-    description: 'catalog-service answered with an error',
-  })
-  @ApiServiceUnavailableResponse({
-    type: ProblemDto,
-    description: 'catalog-service is unreachable or timed out',
-  })
+  @ApiProblemResponses(
+    [502, 'catalog-service answered with an error'],
+    [503, 'catalog-service is unreachable or timed out'],
+  )
   list(): Promise<CategoryListDto> {
     return this.catalog.listCategories();
   }

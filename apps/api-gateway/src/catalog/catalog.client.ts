@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CategoryListDto } from '@master-commerce/dto';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-import { loadConfig } from '../config.js';
+import { correlationHeaders } from '@master-commerce/service-core';
+import { GatewayEnv } from '../env.js';
 import { UpstreamBadResponseError, UpstreamUnavailableError } from './upstream.errors.js';
 
 const UPSTREAM = 'catalog-service';
@@ -10,7 +11,7 @@ const UPSTREAM = 'catalog-service';
 /** Typed client of catalog-service; the response is checked against the shared DTO. */
 @Injectable()
 export class CatalogClient {
-  private readonly config = loadConfig();
+  constructor(private readonly env: GatewayEnv) {}
 
   async listCategories(): Promise<CategoryListDto> {
     const body = await this.get('/categories');
@@ -31,9 +32,10 @@ export class CatalogClient {
   private async get(path: string): Promise<unknown> {
     let res: Response;
     try {
-      res = await fetch(new URL(path, this.config.catalogServiceUrl), {
-        headers: { accept: 'application/json' },
-        signal: AbortSignal.timeout(this.config.upstreamTimeoutMs),
+      res = await fetch(new URL(path, this.env.CATALOG_SERVICE_URL), {
+        // The caller's request id goes along, so both services log it (FR-012).
+        headers: { accept: 'application/json', ...correlationHeaders() },
+        signal: AbortSignal.timeout(this.env.UPSTREAM_TIMEOUT_MS),
       });
     } catch (error) {
       throw new UpstreamUnavailableError(UPSTREAM, { cause: error });
