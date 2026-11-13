@@ -3,6 +3,7 @@ export { toProblem } from './errors/problem.js';
 export { ProblemFilter } from './errors/problem.filter.js';
 export { fieldErrors, validationPipe } from './errors/validation.js';
 export { httpLoggerOptions, type LogIdentity } from './logging.js';
+export { ApiProblemResponses, type DocsInfo, Public, setupOpenApi } from './openapi.js';
 export {
   correlationHeaders,
   currentRequestId,
