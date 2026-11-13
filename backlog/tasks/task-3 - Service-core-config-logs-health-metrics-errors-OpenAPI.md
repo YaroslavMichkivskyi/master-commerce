@@ -1,11 +1,11 @@
 ---
 id: TASK-3
-title: 'Service chassis: config, logs, health, metrics, errors, OpenAPI'
+title: 'Service core: config, logs, health, metrics, errors, OpenAPI'
 status: In Progress
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-12T22:47:00Z'
+updated_date: '2026-11-13T00:06:00Z'
 labels:
   - mvp
   - speckit-light
@@ -22,16 +22,16 @@ ordinal: 3000
 A shared base so every service behaves the same operationally.
 
 Scope:
-- `packages/service-chassis`: a base NestJS module: env config validation, structured logs (pino) with correlation id propagated by the gateway, `/health` (liveness / readiness), `/metrics` (Prometheus), one error format (RFC 9457 Problem Details), OpenAPI from code, graceful shutdown
-- the TASK-2 services moved onto the chassis
+- `packages/service-core` (Microservice chassis pattern): a base NestJS module: env config validation, structured logs (pino) with correlation id propagated by the gateway, `/health` (liveness / readiness), `/metrics` (Prometheus), one error format (RFC 9457 Problem Details), OpenAPI from code, graceful shutdown
+- the TASK-2 services moved onto service-core
 
-Spec: `specs/003-service-chassis/`
+Spec: `specs/003-service-core/`
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
 - [ ] #1 Every service exposes the same health, metrics, error format and OpenAPI
-- [ ] #2 A new service adopts the chassis with one module import and the chassis bootstrap call
+- [ ] #2 A new service adopts service-core with one module import and the service-core bootstrap call
 - [ ] #3 A request's correlation id appears in the logs of gateway and service
 - [ ] #4 Swagger UI at /docs shows every endpoint with schemas, status codes and auth (ADR 0014)
 <!-- AC:END -->
@@ -47,5 +47,5 @@ Spec: `specs/003-service-chassis/`
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
-speckit-light: spec specs/003-service-chassis -> plan -> tasks -> implement
+speckit-light: spec specs/003-service-core -> plan -> tasks -> implement
 <!-- SECTION:PLAN:END -->

@@ -1,12 +1,12 @@
-# Feature Specification: Service chassis
+# Feature Specification: Service core
 
 **Feature Branch**: `task-3`
-**Spec folder**: `specs/003-service-chassis/`
-**Task**: TASK-3 — `backlog/tasks/task-3 - Service-chassis-config-logs-health-metrics-errors-OpenAPI.md`
+**Spec folder**: `specs/003-service-core/`
+**Task**: TASK-3 — `backlog/tasks/task-3 - Service-core-config-logs-health-metrics-errors-OpenAPI.md`
 **Mode**: speckit-light
 **Status**: Approved (2026-11-13)
 **Created**: 2026-11-13
-**Input**: "Service chassis: config, logs, health, metrics, errors, OpenAPI"
+**Input**: "Service core: config, logs, health, metrics, errors, OpenAPI"
 
 ---
 
@@ -26,7 +26,7 @@ web app is not a backend service and is not touched.
 ## Goal
 
 A developer creating the next service (identity, orders) gets health, metrics, logs,
-errors, config checks, API docs and graceful shutdown by adopting the chassis, and
+errors, config checks, API docs and graceful shutdown by adopting service-core, and
 writes none of it again. An operator sees every service behave alike: the same
 endpoints, the same log lines, the same error bodies, and can follow one request
 through the logs of all the services it touched.
@@ -35,8 +35,8 @@ through the logs of all the services it touched.
 - Given each backend service running, when its health, metrics and API-docs endpoints
   are called and an error is provoked, then the endpoint paths, the response formats
   and the error body are the same in every service. *(TASK-3 AC #1)*
-- Given a new NestJS service, when it imports the chassis module and starts through
-  the chassis bootstrap, then it has every capability of FR-001…FR-061 with no other
+- Given a new NestJS service, when it imports service-core module and starts through
+  service-core bootstrap, then it has every capability of FR-001…FR-061 with no other
   set-up code. *(TASK-3 AC #2, Clarifications Q1)*
 - Given a request to the gateway that reaches `catalog-service`, when the logs of both
   are read, then the log lines of that request in both services carry the same
@@ -119,17 +119,17 @@ through the logs of all the services it touched.
   in-flight requests finish within a configurable time limit, close its connections
   (database pool, upstream clients) and exit with code 0. Past the limit it MUST exit
   with a non-zero code.
-- **FR-061** Adopting the chassis MUST take one module import and the chassis
-  bootstrap call; the chassis MUST NOT need per-service copies of any of the above.
+- **FR-061** Adopting service-core MUST take one module import and service-core
+  bootstrap call; service-core MUST NOT need per-service copies of any of the above.
 
 ### Migration of the TASK-2 services
-- **FR-070** `api-gateway` and `catalog-service` MUST run on the chassis, and their
+- **FR-070** `api-gateway` and `catalog-service` MUST run on service-core, and their
   own error filters, config loaders, health controllers and Swagger set-up MUST be
   removed. Their public behaviour stays as in TASK-2 except where this spec changes
   it (health paths, error format of every route, correlation header).
 
 ### Non-functional
-- **NFR-001** The chassis MUST add no more than 5 ms to the median latency of a
+- **NFR-001** Service-core MUST add no more than 5 ms to the median latency of a
   trivial request on a typical laptop (measured with and without it).
 - **NFR-002** Logs, metrics and health work with no external service running (no log
   collector, no Prometheus); collecting them is TASK-13.
@@ -155,7 +155,7 @@ through the logs of all the services it touched.
 - TASK-2 spec FR-004, FR-011, FR-012, which this spec generalises.
 
 ## Assumptions
-- One runtime package holds the whole chassis (a library under `packages/`, ADR 0016),
+- One runtime package holds the whole of service-core (a library under `packages/`, ADR 0016),
   not one package per concern: every service needs all of it, and splitting can come
   later if a service needs only a part.
 - The correlation id header is `X-Request-Id`, the de-facto standard name; the
@@ -171,13 +171,14 @@ through the logs of all the services it touched.
 ### Session 2026-11-13
 - Q1: TASK-3 AC #2 says "one module import". A module alone cannot set up Swagger UI
   or shutdown hooks, which need the application object. → A: one module import
-  **plus** the chassis bootstrap call in `main` (FR-061); AC #2 reworded to match.
-- Q2: The task names the package `packages/observability`, but the chassis also covers
-  config, errors, OpenAPI and lifecycle. → A: `packages/service-chassis`;
-  `docs/mvp-plan.md` §8 updated.
-- Q3: Add error tracking (Sentry) to the chassis now? → A: no, it stays in TASK-27.
-  It needs an outside service and a DSN, which breaks "local first" and NFR-002; the
-  chassis gets no placeholder for it (no speculative extension points).
+  **plus** the service-core bootstrap call in `main` (FR-061); AC #2 reworded to match.
+- Q2: The task names the package `packages/observability`, but it also covers config,
+  errors, OpenAPI and lifecycle. → A: `packages/service-core`
+  (`@master-commerce/service-core`), named for its role; it implements the Microservice
+  chassis pattern (`docs/technologies.md`). `docs/mvp-plan.md` §8 updated.
+- Q3: Add error tracking (Sentry) to service-core now? → A: no, it stays in TASK-27.
+  It needs an outside service and a DSN, which breaks "local first" and NFR-002;
+  service-core gets no placeholder for it (no speculative extension points).
 
 ---
 
