@@ -90,3 +90,4 @@ MinIO and Mailpit.
 | 0017 | Commit, merge and review conventions: per-commit review, Conventional Commits, merge commits |
 | 0018 | Local stack: infrastructure in Docker Compose, apps on the host |
 | 0019 | Test tooling: Vitest everywhere, Testcontainers for integration tests |
+| 0020 | Service core: one library for config, logs, health, metrics, errors, OpenAPI and shutdown |

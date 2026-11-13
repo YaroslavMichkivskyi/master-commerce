@@ -67,13 +67,13 @@ exact versions; no secrets in logs (FR-013)
 | FR-001 | `env.ts`: `loadEnv(EnvClass, envFile)`, `@Secret()`; services' `env.ts` classes | service-core int: several bad vars → one error naming all, secret value absent; service unit: defaults |
 | FR-010, FR-013 | `logging.ts`: `LoggerModule.forRootAsync` (nestjs-pino), redact list, pretty switch | service-core int: captured JSON line has service, route, status, duration; no `authorization` |
 | FR-011 | `genReqId` + response header; `request-context.ts` (AsyncLocalStorage) | service-core int: id kept, malformed id replaced, header returned, id in every line |
-| FR-012 | `correlationHeaders()`; gateway `catalog.client.ts` sends it | gateway int: stub receives the caller's id; catalog int: log line has it; quickstart: one id in both terminals (AC #3) |
+| FR-012 | `correlationHeaders()`; gateway `catalog.client.ts` sends it | gateway int: stub receives the caller's id; service-core int: the id is in the handler's and the request's log lines; quickstart: one id in both services' lines (AC #3) |
 | FR-020, FR-021 | `health/health.controller.ts`, `ReadinessCheck` providers, shutdown flag | service-core int: live 200 always; ready 503 when a check fails and while shutting down; catalog int: DB stopped → ready 503, live 200 |
 | FR-030 | `metrics/` registry, middleware, controller | service-core int: counters / histogram with route template; service-core endpoints not counted |
 | FR-040–FR-042 | `errors/problem.filter.ts`, `validation.ts` (`exceptionFactory`), `ProblemDto.errors` | service-core int: 400 with field list, 404 unknown route, 500 without internals + logged cause |
 | FR-050–FR-052 | `openapi.ts` in `createServiceApp`, `@ApiProblemResponses`, `@Public()` | service-core int: `/docs-json` has the problem component; every operation has explicit `security`; health / metrics listed |
-| FR-060 | `lifecycle.ts`: shutdown hooks, flag, idle-connection close, watchdog | service-core int (child process): in-flight request finishes, exit 0; slow handler past the limit → exit 1 |
-| FR-061 | `ServiceCoreModule.forRoot`, `createServiceApp` | both services' `app.module.ts` / `main.ts` have only these two service-core calls (AC #2) |
+| FR-060 | `lifecycle.ts`: flag, `app.close()`, watchdog; `startService` handles SIGTERM / SIGINT | service-core int (real HTTP server, `exit` injected): in-flight request finishes, new connections refused, exit 0; slow handler past the limit → exit 1; SIGTERM handler of `startService` → exit 0 |
+| FR-061 | `ServiceCoreModule.forRoot`, `startService` (`createServiceApp` for tests) | both services' `app.module.ts` / `main.ts` have only these two service-core calls (AC #2) |
 | FR-070 | services migrated, TASK-2 copies deleted | services' int tests; `git grep` finds no `ProblemFilter` / `loadConfig` / `SwaggerModule` in `apps/` |
 | NFR-001 | — | manual benchmark, recorded in the task notes |
 | NFR-002 | — | quickstart with only Compose infra running |
@@ -98,10 +98,11 @@ specs/003-service-core/
 packages/service-core/        # @master-commerce/service-core, built with tsc
   src/
     index.ts
-    service-core.module.ts            # ServiceCoreModule.forRoot({ service, version, env, readiness })
-    create-app.ts                # createServiceApp(AppModule, options)
+    service-core.module.ts       # ServiceCoreModule.forRoot(options)
+    options.ts                   # ServiceCoreOptions: service, version, env, port variable, readiness
+    bootstrap.ts                 # createServiceApp(AppModule), startService(AppModule)
     env.ts                       # loadEnv, @Secret, ENV token
-    logging.ts  request-context.ts
+    logging.ts  request-context.ts  routes.ts
     health/   metrics/   errors/   openapi.ts   lifecycle.ts
   test/                          # integration tests against a small test app
 shared/dto/src/problem.dto.ts    # + optional `errors` field

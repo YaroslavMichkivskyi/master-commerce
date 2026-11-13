@@ -29,11 +29,22 @@ waits until it is healthy, then runs the apps on the host with hot reload
 | App | URL |
 |---|---|
 | web (storefront) | http://localhost:3000 |
-| api-gateway | http://localhost:3001, Swagger UI at `/docs` |
-| catalog-service | http://localhost:3002, Swagger UI at `/docs` |
+| api-gateway | http://localhost:3001 |
+| catalog-service | http://localhost:3002 |
+
+Every backend service also answers on the same paths
+(ADR [0020](docs/adr/0020-service-core.md)):
+
+| Path | What |
+|---|---|
+| `/docs`, `/docs-json` | Swagger UI and the OpenAPI document |
+| `/health/live` | the process answers |
+| `/health/ready` | its dependencies are reachable and it is not stopping (`503` otherwise) |
+| `/metrics` | Prometheus metrics |
 
 Ports and connection strings are in `.env`. If a port is taken, `pnpm dev` names it;
-change it in `.env`.
+change it in `.env`. Logs are JSON lines; set `LOG_PRETTY=true` in `.env` for readable
+ones. Each request's `X-Request-Id` is in every line it causes, in every service.
 
 | Command | What |
 |---|---|

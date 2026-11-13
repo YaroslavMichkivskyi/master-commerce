@@ -10,9 +10,10 @@ was published more than two weeks earlier.
   (`^build` runs before the apps' `dev`). It exports:
   - `ServiceCoreModule.forRoot({ service, version, env, readiness })` — the one module a
     service imports (FR-061);
-  - `createServiceApp(AppModule, options)` — builds the Nest app with logger, pipes,
-    filter, Swagger, metrics and shutdown wired; `main.ts` calls it and listens, the
-    integration tests call it and do not;
+  - `startService(AppModule)` — the whole `main.ts`: builds the app, listens on the
+    port variable named in the options, stops gracefully on SIGTERM / SIGINT;
+  - `createServiceApp(AppModule)` — builds the same app with logger, pipes, filter,
+    Swagger and metrics wired, without listening; for integration tests;
   - the helpers a service uses in its own code: `@Public()`,
     `@ApiProblemResponses(...)`, `correlationHeaders()`, the env decorators.
 - **Why one package:** every service needs all of it; one version, one import.
@@ -39,7 +40,8 @@ was published more than two weeks earlier.
 - **Decision:** pino 10.4.0 through `nestjs-pino` 5.3.1 (+ `pino-http` 11.0.0, its
   peer), replacing Nest's default logger for the app and for `Logger` calls in code.
   JSON to stdout; `LOG_LEVEL` (default `info`), `LOG_PRETTY=true` switches on
-  `pino-pretty` 13.2.0 (dev dependency of service-core, loaded only when set). Base
+  `pino-pretty` 13.2.0 (a regular dependency of service-core, since the switch is read
+  at run time; loaded only when set). Base
   fields: `service`, `version`. Request log on completion: method, route, status,
   duration, request id. `redact` removes `req.headers.authorization`,
   `req.headers.cookie`, `res.headers["set-cookie"]`; connection strings are never
@@ -49,10 +51,10 @@ was published more than two weeks earlier.
 
 ## R-4. Correlation id (FR-011, FR-012)
 
-- **Decision:** header `X-Request-Id`. `pino-http`'s `genReqId` keeps the incoming
-  value if it matches `^[A-Za-z0-9._:-]{1,128}$`, else generates `randomUUID()`; the
-  same id is set on the response header. Service-core keeps it in an
-  `AsyncLocalStorage` for the request, so `correlationHeaders()` returns
+- **Decision:** header `X-Request-Id`. A middleware registered before the logger keeps
+  the incoming value if it matches `^[A-Za-z0-9._:-]{1,128}$`, else generates
+  `randomUUID()`, sets it on the response header and keeps it in an
+  `AsyncLocalStorage` for the request; `pino-http`'s `genReqId` reads it from there, so `correlationHeaders()` returns
   `{ 'x-request-id': id }` anywhere in the call chain; the gateway's catalog client
   adds it to every upstream call.
 - **Rejected:** W3C `traceparent` — belongs to tracing, which is out of scope; a
@@ -103,13 +105,14 @@ was published more than two weeks earlier.
 
 ## R-9. Graceful shutdown (FR-060)
 
-- **Decision:** `enableShutdownHooks()`. On SIGTERM / SIGINT service-core sets the
-  shutting-down flag first (readiness → 503), then Nest closes the HTTP server
+- **Decision:** `startService` handles SIGTERM / SIGINT itself (not
+  `enableShutdownHooks()`, so a second signal does not start a second close). It sets
+  the shutting-down flag first (readiness → 503), then Nest closes the HTTP server
   (waits for in-flight requests) and runs `onApplicationShutdown` hooks (the catalog
   pool's `end()` already exists). A watchdog timer of `SHUTDOWN_TIMEOUT_MS` (default
-  8000, `unref`'d) exits with code 1 if closing takes longer. Keep-alive connections
-  are closed with `server.closeIdleConnections()` so an idle client cannot hold the
-  shutdown.
+  8000, `unref`'d) exits with code 1 if closing takes longer. Idle keep-alive
+  connections do not hold the shutdown: Node's `server.close()` closes them itself
+  (Node 19+).
 
 ## R-10. Tests
 
@@ -117,10 +120,12 @@ was published more than two weeks earlier.
   config errors, request id kept / replaced / propagated, log lines captured through a
   pino destination stream, liveness / readiness incl. during shutdown, metrics text
   and labels, problem bodies for 400 / 404 / 500, OpenAPI security check, shutdown
-  exit codes (child process).
+  exit codes (in-process with a real HTTP server; `exit` is injected, so the test
+  runner keeps running).
 - Services: TASK-2 tests updated to the new health paths; gateway test asserts the
-  stub catalog receives the caller's `X-Request-Id`; catalog test asserts its log line
-  carries it.
+  stub catalog receives the caller's `X-Request-Id`. That the id is in the log lines is
+  asserted in service-core's tests (a service's own `AppModule` logs to stdout, which a
+  test cannot capture), and seen in quickstart scenario 3.
 - NFR-001: a manual benchmark script (2 000 sequential `fetch` calls, no new
   dependency) on a trivial route of the test app, bare Nest vs service-core; medians
   recorded in the task notes, not run in CI.
