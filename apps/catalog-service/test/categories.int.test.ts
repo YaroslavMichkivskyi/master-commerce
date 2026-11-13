@@ -19,7 +19,7 @@ interface HealthBody {
 }
 
 interface OpenApiBody {
-  paths: Record<string, unknown>;
+  paths: Record<string, Record<string, { security?: unknown[] }>>;
   components: { schemas: Record<string, unknown> };
 }
 
@@ -76,24 +76,46 @@ describe('catalog-service against PostgreSQL', () => {
     expect(body.items.at(-1)).toMatchObject({ name: 'Monitors', slug: 'monitors' });
   });
 
-  it('GET /health reports the database up (FR-004)', async () => {
-    const res = await http().get('/health').expect(200);
+  it('GET /health/ready reports the database up (TASK-3 FR-021)', async () => {
+    const res = await http().get('/health/ready').expect(200);
     expect((res.body as HealthBody).info?.database?.status).toBe('up');
   });
 
-  it('documents every route in OpenAPI (FR-012)', async () => {
-    const res = await http().get('/docs-json').expect(200);
-    const body = res.body as OpenApiBody;
-    expect(Object.keys(body.paths).sort()).toEqual(['/categories', '/health']);
-    expect(body.components.schemas).toHaveProperty('CategoryListDto');
+  it('returns the X-Request-Id the gateway sends (TASK-3 FR-011, FR-012)', async () => {
+    const res = await http().get('/categories').set('X-Request-Id', 'from-gateway-1').expect(200);
+    expect(res.headers['x-request-id']).toBe('from-gateway-1');
   });
 
-  // Last two: the first stops the database.
-  it('GET /health answers 503 when the database is gone (FR-004)', async () => {
+  it('counts its requests in /metrics (TASK-3 FR-030)', async () => {
+    const res = await http().get('/metrics').expect(200);
+    expect(res.text).toMatch(
+      /http_requests_total\{method="GET",route="\/categories",status_code="200",service="catalog-service"\}/,
+    );
+  });
+
+  it('documents every route in OpenAPI, each one public (FR-012, TASK-3 FR-051)', async () => {
+    const res = await http().get('/docs-json').expect(200);
+    const body = res.body as OpenApiBody;
+    expect(Object.keys(body.paths).sort()).toEqual([
+      '/categories',
+      '/health/live',
+      '/health/ready',
+      '/metrics',
+    ]);
+    expect(body.components.schemas).toHaveProperty('CategoryListDto');
+    expect(body.components.schemas).toHaveProperty('ProblemDto');
+    for (const item of Object.values(body.paths)) {
+      for (const op of Object.values(item)) expect(op.security).toEqual([]);
+    }
+  });
+
+  // Last ones: the first stops the database.
+  it('GET /health/ready answers 503 when the database is gone, liveness stays 200', async () => {
     await container.stop();
     containerStopped = true;
 
-    const res = await http().get('/health').expect(503);
+    await http().get('/health/live').expect(200);
+    const res = await http().get('/health/ready').expect(503);
     // No driver message: it would name the host and the database user.
     expect((res.body as HealthBody).error?.database).toEqual({
       status: 'down',

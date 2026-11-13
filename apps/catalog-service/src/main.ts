@@ -1,7 +1,5 @@
 import 'reflect-metadata';
-import { createApp } from './bootstrap.js';
-import { loadConfig } from './config.js';
+import { startService } from '@master-commerce/service-core';
+import { AppModule } from './app.module.js';
 
-const app = await createApp();
-await app.listen(loadConfig().port);
-console.log(`catalog-service listening on ${await app.getUrl()}`);
+await startService(AppModule);
