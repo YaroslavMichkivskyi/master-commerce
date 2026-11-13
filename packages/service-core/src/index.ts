@@ -1,3 +1,4 @@
+export { createServiceApp, startService } from './bootstrap.js';
 export { BaseEnv, ENV, EnvBool, EnvInt, loadEnv, Secret } from './env.js';
 export { toProblem } from './errors/problem.js';
 export { ProblemFilter } from './errors/problem.filter.js';
@@ -8,6 +9,8 @@ export { Lifecycle, shutDown } from './lifecycle.js';
 export { httpLoggerOptions, type LogIdentity } from './logging.js';
 export { Metrics, MetricsController } from './metrics/metrics.js';
 export { ApiProblemResponses, type DocsInfo, Public, setupOpenApi } from './openapi.js';
+export { SERVICE_CORE_OPTIONS, type ServiceCoreOptions } from './options.js';
+export { ServiceCoreModule } from './service-core.module.js';
 export {
   correlationHeaders,
   currentRequestId,
