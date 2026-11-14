@@ -1,10 +1,11 @@
 ---
 id: TASK-4
 title: 'Catalog model: brands, categories, attributes, products, admin API'
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-12T11:01:00Z'
+updated_date: '2026-11-14T23:48:00Z'
 labels:
   - mvp
   - speckit-full
@@ -44,6 +45,12 @@ Spec: `specs/004-catalog-model/`
 - [ ] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
 - [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+speckit-full: spec specs/004-catalog-model -> clarify -> plan -> tasks -> implement
+<!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
 
