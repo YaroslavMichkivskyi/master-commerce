@@ -27,8 +27,8 @@ export class ServiceCoreModule {
       module: ServiceCoreModule,
       imports: [
         TerminusModule,
+        // ENV comes from this module (global, exported): one env object, read once.
         LoggerModule.forRootAsync({
-          providers: [envProvider],
           inject: [ENV],
           useFactory: (env: BaseEnv) => {
             const http = httpLoggerOptions(env, options);
