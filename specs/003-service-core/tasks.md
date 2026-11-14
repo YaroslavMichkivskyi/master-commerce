@@ -29,4 +29,4 @@
 - [x] T015 [P] ADR 0020 + index + roadmap table
 - [x] T016 [P] `docs/technologies.md`, `README.md`, `.env.example`
 - [x] T017 [P] `quickstart.md`, `contracts/http.md`
-- [ ] T018 Full checks (`format:check`, `turbo run lint typecheck test test:integration build --force`); quickstart on Windows; NFR-001 benchmark; notes in TASK-3
+- [x] T018 Full checks (`format:check`, `turbo run lint typecheck test test:integration build --force`); quickstart on Windows; NFR-001 benchmark; notes in TASK-3
