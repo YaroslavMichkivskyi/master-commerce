@@ -44,7 +44,19 @@ describe('GatewayEnv', () => {
     ['GATEWAY_PORT', ' 3001'],
     ['CATALOG_SERVICE_URL', 'localhost:3002'],
     ['CATALOG_SERVICE_URL', 'not a url'],
+    ['CATALOG_SERVICE_URL', 'ftp://catalog:3002'],
   ])('stops on %s=%j, naming the variable', (name, value) => {
     expect(() => loadEnv(GatewayEnv, undefined, { [name]: value })).toThrow(name);
+  });
+
+  it.each([
+    'http://catalog_service:3002',
+    'http://catalog-service:3002',
+    'http://10.0.0.5:3002',
+    'https://catalog.internal',
+  ])('accepts the catalog address %j', (url) => {
+    expect(loadEnv(GatewayEnv, undefined, { CATALOG_SERVICE_URL: url }).CATALOG_SERVICE_URL).toBe(
+      url,
+    );
   });
 });

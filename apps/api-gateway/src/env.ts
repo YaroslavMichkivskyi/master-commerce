@@ -20,7 +20,13 @@ export class GatewayEnv extends BaseEnv {
   GATEWAY_PORT: number = 3001;
 
   @IsUrl(
-    { protocols: ['http', 'https'], require_protocol: true, require_tld: false },
+    // Container names may have underscores (`catalog_service`); `URL` accepts them too.
+    {
+      protocols: ['http', 'https'],
+      require_protocol: true,
+      require_tld: false,
+      allow_underscores: true,
+    },
     { message: 'CATALOG_SERVICE_URL must be an http(s) URL' },
   )
   CATALOG_SERVICE_URL: string = 'http://localhost:3002';
