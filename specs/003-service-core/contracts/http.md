@@ -22,8 +22,9 @@ Every error of every route, including unknown routes (`404`), is
 ```
 
 - `title` is the HTTP status phrase; `instance` is the request path.
-- `detail` is the message of an error thrown on purpose; an unexpected error answers
-  `500` with no `detail` (the cause is in the log).
+- `detail` is the message of an error thrown on purpose (`503 catalog-service is
+  unavailable`); an unexpected error answers `500` with no `detail` (the cause is in the
+  log). A `500` never has a `detail`, even one thrown on purpose.
 - A request that fails validation answers `400` and lists the fields:
 
   ```json

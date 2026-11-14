@@ -4,7 +4,9 @@ import type { FieldErrorDto, ProblemDto } from '@master-commerce/dto';
 
 /**
  * Any thrown value → RFC 9457 body (FR-040). An `HttpException` is thrown on purpose, so
- * its status and message are the answer; anything else is a bug: `500` with no detail.
+ * its status and message are the answer (`503 catalog-service is unavailable`); anything
+ * else is a bug: `500` with no detail. A `500` never has a detail, even when thrown on
+ * purpose: its message is often an internal one (`new InternalServerErrorException(err.message)`).
  */
 export function toProblem(error: unknown, instance: string): ProblemDto {
   if (!(error instanceof HttpException)) {
@@ -16,7 +18,8 @@ export function toProblem(error: unknown, instance: string): ProblemDto {
     typeof response === 'object' && Array.isArray((response as { errors?: unknown }).errors)
       ? (response as { errors: FieldErrorDto[] }).errors
       : undefined;
-  return problem(status, instance, error.message, errors);
+  const detail = status === 500 ? undefined : error.message;
+  return problem(status, instance, detail, errors);
 }
 
 function problem(

@@ -1,15 +1,17 @@
 import 'reflect-metadata';
-import { type Server } from 'node:http';
+import { type Server, type ServerResponse } from 'node:http';
 import {
   Body,
   Controller,
   Get,
   HttpException,
   type INestApplication,
+  InternalServerErrorException,
   type LoggerService,
   Module,
   NotFoundException,
   Post,
+  Res,
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
@@ -38,6 +40,16 @@ describe('toProblem (FR-040)', () => {
       instance: '/x',
     });
     expect(toProblem('a string', '/x').status).toBe(500);
+  });
+
+  it('never gives the detail of a 500, even one thrown on purpose', () => {
+    const error = new InternalServerErrorException('relation "orders" does not exist');
+    expect(toProblem(error, '/x')).toEqual({
+      type: 'about:blank',
+      title: 'Internal Server Error',
+      status: 500,
+      instance: '/x',
+    });
   });
 
   it('titles every status with its HTTP phrase (RFC 9457)', () => {
@@ -75,6 +87,28 @@ class ThingsController {
   @Get('boom')
   boom(): never {
     throw new Error('relation "secret_table" does not exist, password=hunter2');
+  }
+
+  /** A bug wrapped on purpose: still a bug. */
+  @Get('wrapped')
+  wrapped(): never {
+    throw new InternalServerErrorException('relation "orders" does not exist');
+  }
+
+  /** Starts a streamed answer, then fails half-way. */
+  @Get('stream')
+  stream(@Res() res: ServerResponse): never {
+    res.writeHead(200, { 'content-type': 'text/plain' });
+    res.write('first part');
+    throw new Error('the source of the stream broke');
+  }
+
+  /** Starts a streamed answer, then finds out the thing is not there. */
+  @Get('stream-gone')
+  streamGone(@Res() res: ServerResponse): never {
+    res.writeHead(200, { 'content-type': 'text/plain' });
+    res.write('first part');
+    throw new NotFoundException('the rest of the export is gone');
   }
 
   @Get('upstream')
@@ -161,6 +195,16 @@ describe('ProblemFilter and validation (FR-040…FR-042)', () => {
     expect(logged?.message).toContain('at ThingsController.boom');
   });
 
+  it('logs a 500 thrown on purpose as an error with its stack, too', async () => {
+    const res = await http().get('/things/wrapped').expect(500);
+    expect(res.body).not.toHaveProperty('detail');
+    const logged = logger.lines.filter((l) => l.level !== 'log');
+    expect(logged).toHaveLength(1);
+    expect(logged[0]?.level).toBe('error');
+    expect(logged[0]?.message).toContain('relation "orders" does not exist');
+    expect(logged[0]?.message).toContain('at ThingsController.wrapped');
+  });
+
   it('keeps the message of a deliberate 5xx and logs its cause in one warn line', async () => {
     const res = await http().get('/things/upstream').expect(503);
     expect(res.body).toMatchObject({ status: 503, detail: 'stock-service is unavailable' });
@@ -169,6 +213,25 @@ describe('ProblemFilter and validation (FR-040…FR-042)', () => {
       {
         level: 'warn',
         message: '503 stock-service is unavailable: connect ECONNREFUSED 10.0.0.5:3003',
+      },
+    ]);
+  });
+
+  it('aborts a response already under way, so a cut body never looks complete', async () => {
+    await expect(http().get('/things/stream').buffer(true)).rejects.toThrow();
+    const logged = logger.lines.find((l) => l.level === 'error');
+    expect(logged?.message).toContain('the source of the stream broke');
+    // The app still answers.
+    await http().post('/things').send({ name: 'CPU', count: 1 }).expect(201);
+  });
+
+  it('logs any error that cuts a response short, a client error too', async () => {
+    await expect(http().get('/things/stream-gone').buffer(true)).rejects.toThrow();
+    expect(logger.lines.filter((l) => l.level !== 'log')).toEqual([
+      {
+        level: 'warn',
+        message:
+          '404 the rest of the export is gone (response already under way, connection aborted)',
       },
     ]);
   });

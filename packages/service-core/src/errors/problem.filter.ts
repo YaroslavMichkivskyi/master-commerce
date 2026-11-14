@@ -21,18 +21,30 @@ export class ProblemFilter implements ExceptionFilter {
     const res = http.getResponse<ServerResponse>();
     const body = toProblem(error, req.originalUrl ?? req.url ?? '');
 
-    if (body.status >= 500) {
-      if (error instanceof HttpException) {
-        // Thrown on purpose (an upstream is down…): one line with its cause, no stack.
-        const cause = error.cause instanceof Error ? `: ${error.cause.message}` : '';
-        this.logger.warn(`${body.status} ${error.message}${cause}`);
-      } else {
-        // A bug: the full error with its stack goes to the log, never to the client.
-        this.logger.error(error instanceof Error ? error : String(error));
-      }
+    // A response already under way (a stream that failed) cannot change its status. Ending
+    // it would pass the cut body off as complete: the connection is aborted instead, so
+    // the client sees a failed transfer, and the error is always logged.
+    if (res.headersSent) {
+      this.log(error, body.status, ' (response already under way, connection aborted)');
+      res.destroy();
+      return;
     }
+    if (body.status >= 500) this.log(error, body.status);
     res.statusCode = body.status;
     res.setHeader('content-type', `${PROBLEM_CONTENT_TYPE}; charset=utf-8`);
     res.end(JSON.stringify(body));
+  }
+
+  private log(error: unknown, status: number, note = ''): void {
+    // A 500 is a bug even when thrown on purpose
+    // (`new InternalServerErrorException(err.message)`): logged with its stack.
+    if (error instanceof HttpException && status !== 500) {
+      // Thrown on purpose (an upstream is down…): one line with its cause, no stack.
+      const cause = error.cause instanceof Error ? `: ${error.cause.message}` : '';
+      this.logger.warn(`${status} ${error.message}${cause}${note}`);
+    } else {
+      // A bug: the full error with its stack goes to the log, never to the client.
+      this.logger.error(error instanceof Error ? error : String(error));
+    }
   }
 }

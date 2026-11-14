@@ -84,7 +84,8 @@ was published more than two weeks earlier.
 
 - **Decision:** the TASK-2 problem filters (gateway and catalog) become one global
   service-core filter (`APP_FILTER`): `HttpException` → its status; anything else → 500,
-  logged with the cause; `detail` only below 500. The `ValidationPipe`
+  logged with the cause; `detail` for every status but 500 (a deliberate
+  503 says which upstream is down; a 500's message is often internal). The `ValidationPipe`
   (`whitelist`, `forbidNonWhitelisted`, `transform`) gets an `exceptionFactory` that
   throws a 400 carrying `errors: [{ field, messages[] }]`. Unknown routes are Nest's
   `NotFoundException`, so they already pass through the filter as 404. The gateway's
