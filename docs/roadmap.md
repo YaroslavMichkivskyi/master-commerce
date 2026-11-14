@@ -44,7 +44,7 @@ Done in order, the tasks give the MVP, frozen by the `mvp-v1` tag.
 |---|---|---|---|
 | TASK-1 | process-foundation — spec-kit, constitution, ADRs, backlog, playbooks | no-spec | — |
 | TASK-2 | walking-skeleton — monorepo, one end-to-end page, Compose, CI | speckit-light | 1 |
-| TASK-3 | service-chassis — config, logs, health, metrics, errors, OpenAPI | speckit-light | 2 |
+| TASK-3 | service-core — config, logs, health, metrics, errors, OpenAPI | speckit-light | 2 |
 | TASK-4 | catalog-model — brands, categories, attributes, products, admin API | speckit-full | 3 |
 | TASK-5 | datagen — deterministic skewed hardware data | speckit-light | 4 |
 | TASK-6 | storefront-browse — filters, facets, FTS, SSR / ISR pages, SEO | speckit-full | 5 |
@@ -90,3 +90,4 @@ MinIO and Mailpit.
 | 0017 | Commit, merge and review conventions: per-commit review, Conventional Commits, merge commits |
 | 0018 | Local stack: infrastructure in Docker Compose, apps on the host |
 | 0019 | Test tooling: Vitest everywhere, Testcontainers for integration tests |
+| 0020 | Service core: one library for config, logs, health, metrics, errors, OpenAPI and shutdown |

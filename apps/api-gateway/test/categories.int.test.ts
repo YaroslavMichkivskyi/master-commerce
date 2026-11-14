@@ -8,7 +8,7 @@ import { createApp } from '../src/bootstrap.js';
 
 // FR-010 / FR-011: the gateway against a stub catalog-service on a real socket.
 interface OpenApiBody {
-  paths: Record<string, { get?: { responses: Record<string, unknown> } }>;
+  paths: Record<string, { get?: { responses: Record<string, unknown>; security?: unknown[] } }>;
 }
 
 type Behaviour = (res: ServerResponse) => void;
@@ -22,10 +22,14 @@ const LIST = {
 describe('api-gateway -> catalog-service', () => {
   let upstream: Server;
   let behaviour: Behaviour;
+  let upstreamRequestId: unknown;
   let app: INestApplication;
 
   beforeAll(async () => {
-    upstream = createServer((_req, res) => behaviour(res));
+    upstream = createServer((req, res) => {
+      upstreamRequestId = req.headers['x-request-id'];
+      behaviour(res);
+    });
     await new Promise<void>((resolve) => upstream.listen(0, '127.0.0.1', resolve));
     const { port } = upstream.address() as AddressInfo;
     process.env.CATALOG_SERVICE_URL = `http://127.0.0.1:${port}`;
@@ -132,20 +136,49 @@ describe('api-gateway -> catalog-service', () => {
     });
   });
 
-  it('keeps its own health independent of the catalog', async () => {
-    await request(app.getHttpServer() as Server)
-      .get('/health')
-      .expect(200, { status: 'ok' });
+  it('passes the X-Request-Id of the caller to the catalog (TASK-3 FR-011, FR-012)', async () => {
+    behaviour = json(200, LIST);
+    const res = await request(app.getHttpServer() as Server)
+      .get('/api/v1/categories')
+      .set('X-Request-Id', 'browser-77')
+      .expect(200);
+    expect(upstreamRequestId).toBe('browser-77');
+    expect(res.headers['x-request-id']).toBe('browser-77');
   });
 
-  it('documents every route in OpenAPI (FR-012)', async () => {
+  it('gives a request without an id a new one and sends the same to the catalog', async () => {
+    behaviour = json(200, LIST);
+    const res = await request(app.getHttpServer() as Server)
+      .get('/api/v1/categories')
+      .expect(200);
+    expect(res.headers['x-request-id']).toMatch(/^[0-9a-f-]{36}$/);
+    expect(upstreamRequestId).toBe(res.headers['x-request-id']);
+  });
+
+  it('keeps its health independent of the catalog (no readiness checks)', async () => {
+    behaviour = () => undefined; // the catalog hangs
+    await request(app.getHttpServer() as Server)
+      .get('/health/live')
+      .expect(200);
+    await request(app.getHttpServer() as Server)
+      .get('/health/ready')
+      .expect(200);
+  });
+
+  it('documents every route in OpenAPI, each one public (FR-012, TASK-3 FR-051)', async () => {
     const res = await request(app.getHttpServer() as Server)
       .get('/docs-json')
       .expect(200);
     const body = res.body as OpenApiBody;
-    expect(Object.keys(body.paths).sort()).toEqual(['/api/v1/categories', '/health']);
-    const responses = body.paths['/api/v1/categories']?.get?.responses ?? {};
-    expect(Object.keys(responses).sort()).toEqual(['200', '502', '503']);
+    expect(Object.keys(body.paths).sort()).toEqual([
+      '/api/v1/categories',
+      '/health/live',
+      '/health/ready',
+      '/metrics',
+    ]);
+    const operation = body.paths['/api/v1/categories']?.get;
+    expect(Object.keys(operation?.responses ?? {}).sort()).toEqual(['200', '500', '502', '503']);
+    expect(operation?.security).toEqual([]);
   });
 });
 

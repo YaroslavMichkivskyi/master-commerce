@@ -23,3 +23,4 @@ Decisions that outlive a single feature. Format: MADR (`template.md`); how and w
 | [0017](0017-commit-merge-and-review-conventions.md) | Commit, merge and review conventions: per-commit review, Conventional Commits, merge commits | accepted |
 | [0018](0018-local-stack-infra-in-compose-apps-on-host.md) | Local stack: infrastructure in Docker Compose, apps on the host | accepted |
 | [0019](0019-test-tooling-vitest-testcontainers.md) | Test tooling: Vitest everywhere, Testcontainers for integration tests | accepted |
+| [0020](0020-service-core.md) | Service core: one library gives every service its config, logs, health, metrics, errors, OpenAPI and shutdown | accepted |
