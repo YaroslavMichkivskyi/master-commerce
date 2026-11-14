@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { type Server } from 'node:http';
 import {
   Body,
+  ConsoleLogger,
   Controller,
   Get,
   type INestApplication,
@@ -117,6 +118,7 @@ function testModule(lines: LogLine[]) {
 
 describe('createServiceApp (FR-061)', () => {
   const lines: LogLine[] = [];
+  let startup: LogLine[] = [];
   let app: INestApplication;
   const http = () => request(app.getHttpServer() as Server);
 
@@ -125,6 +127,7 @@ describe('createServiceApp (FR-061)', () => {
     process.env.TEST_PORT = '4999';
     app = await createServiceApp(testModule(lines));
     await app.init();
+    startup = [...lines];
   });
 
   afterEach(() => {
@@ -135,6 +138,14 @@ describe('createServiceApp (FR-061)', () => {
   afterAll(async () => {
     delete process.env.TEST_PORT;
     await app?.close();
+  });
+
+  it("writes Nest's start-up lines through the same logger", () => {
+    expect(startup.find((l) => l.msg === 'Starting Nest application...')).toMatchObject({
+      service: 'test-service',
+      context: 'NestFactory',
+    });
+    expect(startup.some((l) => l.msg.startsWith('Mapped {/things/:id, GET}'))).toBe(true);
   });
 
   it('checks the config and gives the service its env class', async () => {
@@ -244,16 +255,30 @@ describe('startService (FR-060, FR-061)', () => {
 
   it('ends the process with 1 on a bad config, printing only the message', async () => {
     process.env.TEST_DATABASE_URL = 'not-a-url';
+    // A real start has Nest's console logger; earlier tests in this process replaced it.
+    Logger.overrideLogger(new ConsoleLogger());
     const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    // Nest's console logger writes straight to the streams.
+    const written: string[] = [];
+    const capture = (chunk: unknown): boolean => written.push(String(chunk)) > 0;
+    const stdout = vi.spyOn(process.stdout, 'write').mockImplementation(capture);
+    const stderr = vi.spyOn(process.stderr, 'write').mockImplementation(capture);
     const exit = vi.spyOn(process, 'exit').mockImplementation(() => {
       throw new Error('exited');
     });
     try {
       await expect(startService(testModule([]))).rejects.toThrow('exited');
       expect(exit).toHaveBeenCalledWith(1);
-      expect(String(error.mock.calls[0]?.[0])).toContain('TEST_DATABASE_URL');
+      expect(error).toHaveBeenCalledOnce();
+      expect(String(error.mock.calls[0]?.[0])).toMatch(
+        /^Invalid configuration[^]*TEST_DATABASE_URL/,
+      );
+      // Not the same error again with its stack in Nest's text format.
+      expect(written).toEqual([]);
     } finally {
       exit.mockRestore();
+      stdout.mockRestore();
+      stderr.mockRestore();
       error.mockRestore();
     }
   });

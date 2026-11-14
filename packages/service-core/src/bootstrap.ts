@@ -17,10 +17,23 @@ type AppModule = Parameters<typeof NestFactory.create>[0];
  * `startService` runs, and what integration tests use.
  */
 export async function createServiceApp(appModule: AppModule): Promise<INestApplication> {
-  // abortOnError: false — a bad config reaches the caller as an error instead of killing
-  // the process with the message still in the log buffer.
-  const app = await NestFactory.create(appModule, { bufferLogs: true, abortOnError: false });
+  // Nest's start-up lines wait in a buffer until pino takes over. abortOnError: false —
+  // a bad config reaches the caller as an error instead of killing the process.
+  // autoFlushLogs: false — on such an error the buffer, which holds the same error with
+  // its stack in Nest's text format, is dropped: `startService` prints the message once.
+  let app: INestApplication;
+  try {
+    app = await NestFactory.create(appModule, {
+      bufferLogs: true,
+      autoFlushLogs: false,
+      abortOnError: false,
+    });
+  } catch (error) {
+    NestLogger.detachBuffer();
+    throw error;
+  }
   app.useLogger(app.get(Logger));
+  app.flushLogs();
   // Before the module middleware (the request logger), so the id exists when it logs.
   app.use(requestContext);
   app.use(app.get(Metrics).middleware);
