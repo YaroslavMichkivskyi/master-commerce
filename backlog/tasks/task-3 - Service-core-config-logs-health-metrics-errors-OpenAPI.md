@@ -1,11 +1,11 @@
 ---
 id: TASK-3
 title: 'Service core: config, logs, health, metrics, errors, OpenAPI'
-status: In Progress
+status: Done
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-14T23:37:00Z'
+updated_date: '2026-11-14T23:41:00Z'
 labels:
   - mvp
   - speckit-light
@@ -30,18 +30,18 @@ Spec: `specs/003-service-core/`
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Every service exposes the same health, metrics, error format and OpenAPI
-- [ ] #2 A new service adopts service-core with one module import and the service-core bootstrap call
-- [ ] #3 A request's correlation id appears in the logs of gateway and service
-- [ ] #4 Swagger UI at /docs shows every endpoint with schemas, status codes and auth (ADR 0014)
+- [x] #1 Every service exposes the same health, metrics, error format and OpenAPI
+- [x] #2 A new service adopts service-core with one module import and the service-core bootstrap call
+- [x] #3 A request's correlation id appears in the logs of gateway and service
+- [x] #4 Swagger UI at /docs shows every endpoint with schemas, status codes and auth (ADR 0014)
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
-- [ ] #2 Tests added / updated and green locally and in CI
-- [ ] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
-- [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
+- [x] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
+- [x] #2 Tests added / updated and green locally and in CI
+- [x] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
+- [x] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
 
 ## Implementation Plan
@@ -88,3 +88,9 @@ Three `/code-review` runs; every finding verified before a fix (code read, a pro
 - Run 2 (the fixes), 9 findings. Fixed: a cut response is aborted, not ended as if complete, and always logged; Nest's log buffer detached when the start fails; a bad config recognised by name, not `instanceof`; test fixture env restored. False positive: `app.close()` replacing the start-up error (Nest 12 logs hook errors instead of throwing). Left: a close timeout on a failed start, hiding the detail of every 5xx (the owner chose 500 only).
 - Run 3, 9 findings. Fixed: a 500 thrown on purpose is logged as an error with its stack; the test checks the error text and restores Nest's logger; a misleading comment. Left as rare with no impact today: metrics and logs of failing streams (no streaming endpoint yet), a handler that ends the response and then throws, class renaming by a bundler (services are built with `tsc`), the `Error:` header of the config error's stack.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+packages/service-core (ADR 0020, the microservice chassis pattern) gives every NestJS service start-up config checks (env classes, every bad variable in one message, secrets hidden), pino JSON logs with X-Request-Id on every line and passed on to other services, /health/live and /health/ready, Prometheus /metrics by route template, RFC 9457 errors for every route (400 lists the fields, a 500 never shows its message), OpenAPI with an auth marker on every endpoint, and graceful shutdown with a time limit. A service adopts it with ServiceCoreModule.forRoot and startService. api-gateway and catalog-service run on it; their TASK-2 config, error, health and Swagger code is gone. Verified: 21/21 checks locally and from a fresh clone, quickstart S1-S8 on Windows, NFR-001 +0.16 ms median, CI green on PR #6. Three AI review runs, findings verified and fixed or recorded with a reason. Risks: GET /health became /health/live and /health/ready (no caller), logs are JSON (LOG_PRETTY for local reading); providers built before a failure inside NestFactory.create are not closed (startService exits the process).
+<!-- SECTION:FINAL_SUMMARY:END -->

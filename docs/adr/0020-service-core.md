@@ -1,6 +1,6 @@
 # 0020. Service core: one library gives every service its config, logs, health, metrics, errors, OpenAPI and shutdown
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-14
 - Deciders: project owner
 
