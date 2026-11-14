@@ -1,5 +1,5 @@
 export { createServiceApp, startService } from './bootstrap.js';
-export { BaseEnv, ENV, EnvBool, EnvInt, loadEnv, Secret } from './env.js';
+export { BaseEnv, ENV, EnvBool, EnvInt, InvalidConfigError, loadEnv, Secret } from './env.js';
 export { toProblem } from './errors/problem.js';
 export { ProblemFilter } from './errors/problem.filter.js';
 export { fieldErrors, validationPipe } from './errors/validation.js';

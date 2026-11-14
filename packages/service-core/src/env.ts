@@ -52,6 +52,11 @@ export class BaseEnv {
   SHUTDOWN_TIMEOUT_MS: number = 8000;
 }
 
+/** Bad settings: the message names each one and is all the operator needs, no stack. */
+export class InvalidConfigError extends Error {
+  override readonly name = 'InvalidConfigError';
+}
+
 /**
  * Reads the variables the class declares from the environment (after loading `envFile`),
  * checks them all at once and throws one error naming every bad one (FR-001).
@@ -83,5 +88,7 @@ export function loadEnv<E extends object>(
     const got = raw === undefined ? 'not set' : secret ? 'value hidden' : `got "${raw}"`;
     return `  ${e.property}: ${Object.values(e.constraints ?? {}).join('; ')} (${got})`;
   });
-  throw new Error(`Invalid configuration, the service cannot start:\n${lines.join('\n')}`);
+  throw new InvalidConfigError(
+    `Invalid configuration, the service cannot start:\n${lines.join('\n')}`,
+  );
 }

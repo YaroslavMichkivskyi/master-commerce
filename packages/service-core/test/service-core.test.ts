@@ -8,6 +8,7 @@ import {
   type INestApplication,
   Injectable,
   Logger,
+  type OnModuleDestroy,
   Module,
   Param,
   Post,
@@ -226,6 +227,60 @@ describe('configuration errors (FR-001)', () => {
   });
 });
 
+describe('a failure after the app is created', () => {
+  it('closes what was created, then reports the error', async () => {
+    process.env.TEST_DATABASE_URL = 'postgres://shop@localhost/shop';
+    let closed = false;
+
+    @Injectable()
+    class Pool implements OnModuleDestroy {
+      onModuleDestroy(): void {
+        closed = true;
+      }
+    }
+
+    @Controller('forgotten')
+    class ForgottenController {
+      @Get()
+      list(): string[] {
+        return [];
+      }
+    }
+
+    @Module({
+      imports: [testModule([])],
+      controllers: [ForgottenController],
+      providers: [Pool],
+    })
+    class BrokenModule {}
+
+    await expect(createServiceApp(BrokenModule)).rejects.toThrow('mark them @Public()');
+    expect(closed).toBe(true);
+  });
+
+  it('leaves no Nest log lines buffered when it fails before the logger is set', async () => {
+    // A root module that forgot ServiceCoreModule: there is no pino logger to take over.
+    @Module({})
+    class WithoutServiceCore {}
+    await expect(createServiceApp(WithoutServiceCore)).rejects.toThrow(
+      'Nest could not find Logger element',
+    );
+
+    const seen: string[] = [];
+    Logger.overrideLogger({
+      log: (m: unknown) => void seen.push(String(m)),
+      error: (m: unknown) => void seen.push(String(m)),
+      warn: (m: unknown) => void seen.push(String(m)),
+    });
+    try {
+      new Logger('After').log('written after the failure');
+      expect(seen).toContain('written after the failure');
+    } finally {
+      Logger.overrideLogger(new ConsoleLogger()); // Nest's own, as at a real start
+    }
+  });
+});
+
 describe('startService (FR-060, FR-061)', () => {
   it('listens on the configured port and stops on SIGTERM', async () => {
     process.env.TEST_DATABASE_URL = 'postgres://shop@localhost/shop';
@@ -279,6 +334,71 @@ describe('startService (FR-060, FR-061)', () => {
       exit.mockRestore();
       stdout.mockRestore();
       stderr.mockRestore();
+      error.mockRestore();
+    }
+  });
+
+  it('prints any other start-up error with its stack', async () => {
+    process.env.TEST_DATABASE_URL = 'postgres://shop@localhost/shop';
+
+    @Module({
+      imports: [testModule([])],
+      providers: [
+        {
+          provide: 'BROKEN',
+          useFactory: () => {
+            throw new TypeError('a bug in a provider');
+          },
+        },
+      ],
+    })
+    class BrokenModule {}
+
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const exit = vi.spyOn(process, 'exit').mockImplementation(() => {
+      throw new Error('exited');
+    });
+    try {
+      await expect(startService(BrokenModule)).rejects.toThrow('exited');
+      expect(exit).toHaveBeenCalledWith(1);
+      const printed: unknown = error.mock.calls[0]?.[0];
+      expect(printed).toBeInstanceOf(TypeError);
+      expect((printed as Error).stack).toContain('at ');
+    } finally {
+      exit.mockRestore();
+      error.mockRestore();
+    }
+  });
+
+  it('knows a bad config by its name, even from another copy of the package', async () => {
+    process.env.TEST_DATABASE_URL = 'postgres://shop@localhost/shop';
+    // What a second copy of service-core would throw: same name, another class.
+    class InvalidConfigError extends Error {
+      override readonly name = 'InvalidConfigError';
+    }
+
+    @Module({
+      imports: [testModule([])],
+      providers: [
+        {
+          provide: 'CONFIG',
+          useFactory: () => {
+            throw new InvalidConfigError('Invalid configuration, the service cannot start: X');
+          },
+        },
+      ],
+    })
+    class BrokenModule {}
+
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const exit = vi.spyOn(process, 'exit').mockImplementation(() => {
+      throw new Error('exited');
+    });
+    try {
+      await expect(startService(BrokenModule)).rejects.toThrow('exited');
+      expect(error).toHaveBeenCalledWith('Invalid configuration, the service cannot start: X');
+    } finally {
+      exit.mockRestore();
       error.mockRestore();
     }
   });

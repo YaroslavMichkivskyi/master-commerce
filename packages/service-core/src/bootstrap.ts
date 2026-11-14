@@ -1,7 +1,7 @@
 import { type INestApplication, Logger as NestLogger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';
-import { type BaseEnv, ENV } from './env.js';
+import { type BaseEnv, ENV, InvalidConfigError } from './env.js';
 import { validationPipe } from './errors/validation.js';
 import { shutDown } from './lifecycle.js';
 import { Metrics } from './metrics/metrics.js';
@@ -20,7 +20,7 @@ export async function createServiceApp(appModule: AppModule): Promise<INestAppli
   // Nest's start-up lines wait in a buffer until pino takes over. abortOnError: false —
   // a bad config reaches the caller as an error instead of killing the process.
   // autoFlushLogs: false — on such an error the buffer, which holds the same error with
-  // its stack in Nest's text format, is dropped: `startService` prints the message once.
+  // its stack in Nest's text format, is dropped: `startService` prints it once.
   let app: INestApplication;
   try {
     app = await NestFactory.create(appModule, {
@@ -32,14 +32,24 @@ export async function createServiceApp(appModule: AppModule): Promise<INestAppli
     NestLogger.detachBuffer();
     throw error;
   }
-  app.useLogger(app.get(Logger));
-  app.flushLogs();
-  // Before the module middleware (the request logger), so the id exists when it logs.
-  app.use(requestContext);
-  app.use(app.get(Metrics).middleware);
-  app.useGlobalPipes(validationPipe());
-  setupOpenApi(app, app.get<ServiceCoreOptions>(SERVICE_CORE_OPTIONS));
-  return app;
+  try {
+    app.useLogger(app.get(Logger));
+    app.flushLogs();
+    // Before the module middleware (the request logger), so the id exists when it logs.
+    app.use(requestContext);
+    app.use(app.get(Metrics).middleware);
+    app.useGlobalPipes(validationPipe());
+    setupOpenApi(app, app.get<ServiceCoreOptions>(SERVICE_CORE_OPTIONS));
+    return app;
+  } catch (error) {
+    // If it failed before pino took over, Nest's lines must not pile up in the buffer.
+    NestLogger.detachBuffer();
+    // The providers exist already (a database pool…): close them, or they keep the
+    // process (a test run) alive. Nest logs a failing hook instead of throwing it, so the
+    // start-up error stays the one reported.
+    await app.close();
+    throw error;
+  }
 }
 
 /**
@@ -51,7 +61,10 @@ export async function startService(appModule: AppModule): Promise<INestApplicati
   try {
     app = await createServiceApp(appModule);
   } catch (error) {
-    console.error(error instanceof Error ? error.message : error);
+    // A bad config needs only its message; anything else is a bug and needs its stack.
+    // By name, not `instanceof`: a second copy of this package has its own class.
+    const badConfig = error instanceof Error && error.name === InvalidConfigError.name;
+    console.error(badConfig ? error.message : error);
     process.exit(1);
   }
   const options = app.get<ServiceCoreOptions>(SERVICE_CORE_OPTIONS);
