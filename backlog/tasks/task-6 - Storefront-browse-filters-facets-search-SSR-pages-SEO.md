@@ -24,6 +24,7 @@ Customers can find products, and search engines can index them.
 Scope:
 - API: category listing with spec / brand / price / stock filters, facet counts, sorting, pagination; PostgreSQL FTS search
 - web: home, category page with filters in the URL, product page (SSR / ISR), search; metadata, canonical, JSON-LD Product, robots.txt, basic sitemap
+- old slugs of products, categories and brands (kept by TASK-4) answer a 301 redirect to the current URL
 
 Spec: `specs/006-storefront-browse/`
 <!-- SECTION:DESCRIPTION:END -->
