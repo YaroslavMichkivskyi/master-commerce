@@ -120,8 +120,8 @@ shared/dto/src/
   catalog-admin/          # brand, category, attribute, product DTOs; page wrapper
   category.dto.ts         # + parentId
 apps/catalog-service/
-  drizzle/                # 0001 uuid_v7 (custom), 0002 catalog model (generated),
-                          # 0003 role catalog_app and its grants (custom)
+  drizzle/                # 0001 role catalog_app and its grants (custom),
+                          # 0002 uuid_v7 (custom), 0003 catalog model (generated)
   src/db/migrate.ts       # the db:migrate step: migrations, app role password, seed
   src/db/schema.ts        # brand, category, category_attribute, product, former_slug
   src/admin/

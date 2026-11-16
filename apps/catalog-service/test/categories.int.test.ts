@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { type Server } from 'node:http';
-import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
+import { type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { type INestApplication } from '@nestjs/common';
 import { CategoryListDto } from '@master-commerce/dto';
 import { plainToInstance } from 'class-transformer';
@@ -9,8 +9,10 @@ import pg from 'pg';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '../src/bootstrap.js';
-import { createPool, prepareDatabase } from '../src/db/database.js';
+import { createPool } from '../src/db/database.js';
+import { migrateDatabase } from '../src/db/migrate.js';
 import { SEED_CATEGORIES } from '../src/db/seed.js';
+import { APP_PASSWORD, startCatalogDatabase } from './support/catalog-database.js';
 
 interface HealthBody {
   status: string;
@@ -26,14 +28,16 @@ interface OpenApiBody {
 // FR-051: the real thread inside the service — migrations, seed, endpoint — on a real Postgres.
 describe('catalog-service against PostgreSQL', () => {
   let container: StartedPostgreSqlContainer;
+  let ownerUrl: string;
   let containerStopped = false;
   let app: INestApplication;
 
   const http = () => request(app.getHttpServer() as Server);
 
   beforeAll(async () => {
-    container = await new PostgreSqlContainer('postgres:17.11-alpine').start();
-    process.env.CATALOG_DATABASE_URL = container.getConnectionUri();
+    const db = await startCatalogDatabase();
+    ({ container, ownerUrl } = db);
+    process.env.CATALOG_DATABASE_URL = db.appUrl;
     app = await createApp();
     await app.init();
   });
@@ -44,9 +48,9 @@ describe('catalog-service against PostgreSQL', () => {
   });
 
   it('migrates and seeds idempotently (FR-002)', async () => {
-    const pool = createPool(container.getConnectionUri());
+    await migrateDatabase(ownerUrl, APP_PASSWORD); // the harness already ran it once
+    const pool = createPool(ownerUrl);
     try {
-      await prepareDatabase(pool); // the app already ran it once
       const { rows } = await pool.query<{ count: string }>('select count(*) from category');
       expect(Number(rows[0]?.count)).toBe(SEED_CATEGORIES.length);
     } finally {

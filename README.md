@@ -21,10 +21,14 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm dev` creates `.env` from `.env.example` if it is missing, checks that the ports
-are free, starts the infrastructure in Docker Compose (3 × PostgreSQL, RabbitMQ) and
-waits until it is healthy, then runs the apps on the host with hot reload
-(ADR [0018](docs/adr/0018-local-stack-infra-in-compose-apps-on-host.md)):
+`pnpm dev` creates `.env` from `.env.example` if it is missing (or adds the settings an
+older `.env` lacks), checks that the ports are free, starts the infrastructure in Docker
+Compose (3 × PostgreSQL, RabbitMQ) and waits until it is healthy, applies the catalog
+migrations with the database owner (`pnpm --filter catalog-service db:migrate`), then
+runs the apps on the host with hot reload
+(ADR [0018](docs/adr/0018-local-stack-infra-in-compose-apps-on-host.md)). The catalog
+service itself connects as `catalog_app`, a role that can't change the schema or delete
+rows:
 
 | App | URL |
 |---|---|

@@ -6,15 +6,15 @@
 Each phase is one or more reviewed commits (`start-task.md` step 6).
 
 ## Phase 1 — Database roles and the migration step (FR-043, R-15)
-- [ ] T001 [P] `docker-compose.yml`: the three database ports bind to `127.0.0.1`
-- [ ] T002 `apps/catalog-service/src/db/migrate.ts` + `db:migrate` script: migrations,
+- [x] T001 [P] `docker-compose.yml`: the three database ports bind to `127.0.0.1`
+- [x] T002 `apps/catalog-service/src/db/migrate.ts` + `db:migrate` script: migrations,
   then the `catalog_app` password and `LOGIN`, then the seed; `prepareDatabase` no
   longer migrates or seeds on start; `CatalogEnv`: `CATALOG_MIGRATION_URL` (migrate
   only), `CATALOG_APP_PASSWORD`; `.env.example`; the dev preflight runs `db:migrate`
   before the apps; CI the same
-- [ ] T003 migration `catalog_app` role (custom): create `NOLOGIN` if missing, grants,
+- [x] T003 migration `catalog_app` role (custom): create `NOLOGIN` if missing, grants,
   default privileges, `statement_timeout`, connection limit
-- [ ] T004 Testcontainers harness: migrate as the owner, run the service as
+- [x] T004 Testcontainers harness: migrate as the owner, run the service as
   `catalog_app`; tests that it cannot `DELETE`, `TRUNCATE`, `DROP`, `CREATE TABLE`
 
 ## Phase 2 — Schema (FR-030…FR-035, FR-040…FR-042, R-1…R-3, R-12)

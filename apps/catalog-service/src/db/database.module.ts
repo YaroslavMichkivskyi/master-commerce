@@ -1,7 +1,7 @@
 import { Global, Inject, Module, type OnApplicationShutdown } from '@nestjs/common';
 import pg from 'pg';
 import { CatalogEnv } from '../env.js';
-import { createPool, DB, PG_POOL, prepareDatabase } from './database.js';
+import { connectDatabase, createPool, DB, PG_POOL } from './database.js';
 
 @Global()
 @Module({
@@ -11,7 +11,7 @@ import { createPool, DB, PG_POOL, prepareDatabase } from './database.js';
       inject: [CatalogEnv],
       useFactory: (env: CatalogEnv) => createPool(env.CATALOG_DATABASE_URL),
     },
-    { provide: DB, inject: [PG_POOL], useFactory: (pool: pg.Pool) => prepareDatabase(pool) },
+    { provide: DB, inject: [PG_POOL], useFactory: (pool: pg.Pool) => connectDatabase(pool) },
   ],
   exports: [PG_POOL, DB],
 })

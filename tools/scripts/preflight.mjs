@@ -1,10 +1,10 @@
 // Runs before `pnpm dev` (FR-041, FR-042):
-// 1. creates `.env` from `.env.example` if it is missing;
+// 1. creates `.env` from `.env.example` if it is missing, or appends the settings it lacks;
 // 2. fails with a clear message when a port the stack needs is taken by another process.
 //    On Windows Docker can publish a port that a native service already listens on, and
 //    connections then reach the wrong server, so the check is done here, not left to Docker.
 import { execFileSync } from 'node:child_process';
-import { copyFileSync, existsSync, readFileSync } from 'node:fs';
+import { appendFileSync, copyFileSync, existsSync, readFileSync } from 'node:fs';
 import { connect } from 'node:net';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -17,6 +17,16 @@ const exampleFile = join(root, '.env.example');
 if (!existsSync(envFile)) {
   copyFileSync(exampleFile, envFile);
   console.log('Created .env from .env.example; edit it to change ports or credentials.');
+} else {
+  // A setting added to .env.example after .env was made: append it with its example value.
+  const example = parseEnv(readFileSync(exampleFile, 'utf8'));
+  const current = parseEnv(readFileSync(envFile, 'utf8'));
+  const missing = Object.keys(example).filter((name) => !(name in current));
+  if (missing.length > 0) {
+    const lines = missing.map((name) => `${name}=${example[name]}`).join('\n');
+    appendFileSync(envFile, `\n# Added from .env.example by pnpm dev\n${lines}\n`);
+    console.log(`Added to .env from .env.example: ${missing.join(', ')}.`);
+  }
 }
 process.loadEnvFile(envFile);
 

@@ -8,7 +8,7 @@
     "node": ">=22.12"
   },
   "scripts": {
-    "dev": "node tools/scripts/preflight.mjs && docker compose up -d --wait && turbo run dev",
+    "dev": "node tools/scripts/preflight.mjs && docker compose up -d --wait && turbo run build --filter=catalog-service && pnpm --filter catalog-service db:migrate && turbo run dev",
     "stop": "docker compose down",
     "reset": "docker compose down -v",
     "build": "turbo run build",
