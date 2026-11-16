@@ -143,26 +143,34 @@ brand, price, stock and specs.
 ### Common to every catalog entity
 - **FR-030** Deletion MUST be soft: the row stays, marked deleted with its time, hidden
   from every read and list, and can be restored.
-- **FR-031** Every row MUST record when and by whom it was created and last updated.
-  Until sign-in exists (TASK-7) the author is empty.
+- **FR-031** Every row MUST record when and by whom it was created, last updated and
+  deleted. Until sign-in exists (TASK-7) the author is empty.
 - **FR-032** Every error MUST be an RFC 9457 problem response; validation errors list
   every offending field, specs errors every offending attribute (TASK-3 FR-041).
 - **FR-033** Every entity MUST carry a version that changes on every update. Reads MUST
   return it; an update or delete MUST name the version it is based on, and MUST be
   refused with `412` when the stored version differs, or `428` when none is named.
-- **FR-034** Every list MUST be paged by a cursor that continues after the last item
-  returned, not by a page number, so a page deep in a large list answers as fast as
-  the first one.
+- **FR-034** Every list of brands and products MUST be paged by a cursor that
+  continues after the last item returned, not by a page number, so a page deep in a
+  large list answers as fast as the first one. The category tree is returned whole.
 - **FR-035** Identifiers MUST grow with creation time, so new rows land at the end of
   the indexes instead of at random places in them.
 
 ### Data integrity
-- **FR-040** The database MUST enforce every rule the API checks that a database can
-  express: name lengths, slug and SKU formats, price above zero, stock zero or more,
-  uniqueness among rows that are not deleted, references between rows.
+- **FR-040** The database MUST enforce every rule a row can check by itself (name
+  lengths, slug and SKU formats, price above zero, stock zero or more, the shape of
+  specs), uniqueness among rows that are not deleted, and every reference between rows.
+  Rules that read other rows (tree shape, products only in leaves, specs against the
+  attributes, former slugs, attribute changes) MUST be enforced by the service inside
+  one transaction, so concurrent writes cannot break them either.
 - **FR-041** The schema MUST be created and changed only by versioned migrations that
   build it from scratch on an empty database and upgrade the TASK-2 database in place.
 - **FR-042** The existing seed categories MUST survive the upgrade.
+- **FR-043** The running service MUST reach the database with a role that can only
+  read, add and change catalog rows: it cannot change the schema, delete rows
+  physically, empty tables or act as a superuser. Schema changes MUST be applied by a
+  separate migration step with its own credentials, which the running service does
+  not have.
 
 ### Gateway
 - **FR-050** The gateway MUST expose the admin API under its own prefix, forwarding to
@@ -184,8 +192,7 @@ brand, price, stock and specs.
   price (EUR, VAT included), stock, specs (attribute code → value), published.
 - **Former slug** — a slug a product, category or brand had before; belongs to that
   entity.
-- Every entity carries created / updated time and author, a version, and a deletion
-  mark and time.
+- Every entity carries created / updated / deleted time and author, and a version.
 
 ---
 
@@ -235,6 +242,9 @@ brand, price, stock and specs.
 - Q4: Currency? → A: one currency, euros, exact to the cent (FR-021).
 - Q5: Concurrent edits? → A: detected: every entity has a version, an update names it,
   a stale one answers `412` (FR-033).
+- Owner, after reviewing the plan: the running service gets a least-privilege
+  database role, migrations run apart with the owner role (FR-043); deletion records
+  its author too (FR-031).
 - Owner, after reviewing the draft: prices include VAT (FR-021); lists paged by a
   cursor (FR-034); identifiers ordered by creation time (FR-035); old slugs kept for
   redirects (FR-025). Change history, bulk import / export and price history became
