@@ -80,6 +80,28 @@ describe('catalog-service against PostgreSQL', () => {
     expect(body.items.at(-1)).toMatchObject({ name: 'Monitors', slug: 'monitors' });
   });
 
+  it('says which category is the parent, and leaves deleted ones out (FR-014)', async () => {
+    const client = new pg.Client({ connectionString: container.getConnectionUri() });
+    await client.connect();
+    try {
+      await client.query(
+        `insert into category(name, slug, sort_order, parent_id)
+         select 'Gaming monitors', 'gaming-monitors', 80, id from category where slug = 'monitors'`,
+      );
+      await client.query(
+        "insert into category(name, slug, sort_order, deleted_at) values ('Old', 'old', 90, now())",
+      );
+    } finally {
+      await client.end();
+    }
+
+    const { items } = (await http().get('/categories').expect(200)).body as CategoryListDto;
+    const monitors = items.find((c) => c.slug === 'monitors');
+    expect(monitors?.parentId).toBeNull();
+    expect(items.find((c) => c.slug === 'gaming-monitors')?.parentId).toBe(monitors?.id);
+    expect(items.map((c) => c.slug)).not.toContain('old');
+  });
+
   it('GET /health/ready reports the database up (TASK-3 FR-021)', async () => {
     const res = await http().get('/health/ready').expect(200);
     expect((res.body as HealthBody).info?.database?.status).toBe('up');

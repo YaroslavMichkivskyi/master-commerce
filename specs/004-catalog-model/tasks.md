@@ -23,7 +23,7 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   `category_attribute`, `product`, `former_slug`; CHECKs and partial indexes
   (data-model); generated migration; tests: from empty, upgrade from the TASK-2 schema
   with its seed rows, one bad row per CHECK refused (AC #3, AC #4)
-- [ ] T007 `CategoryDto.parentId`; the public list returns live categories with it;
+- [x] T007 `CategoryDto.parentId`; the public list returns live categories with it;
   gateway and catalog tests (FR-014)
 
 ## Phase 3 — Admin building blocks (FR-033, FR-034, FR-025, R-4, R-6, R-10)

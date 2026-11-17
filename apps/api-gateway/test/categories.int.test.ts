@@ -15,7 +15,20 @@ type Behaviour = (res: ServerResponse) => void;
 
 const LIST = {
   items: [
-    { id: '4f6c1c9e-2b1a-4d8e-9a57-1b2c3d4e5f60', name: 'CPUs', slug: 'cpus', sortOrder: 10 },
+    {
+      id: '4f6c1c9e-2b1a-4d8e-9a57-1b2c3d4e5f60',
+      name: 'Components',
+      slug: 'components',
+      sortOrder: 10,
+      parentId: null,
+    },
+    {
+      id: '0193a7c2-5b1e-7c3d-9a57-1b2c3d4e5f61',
+      name: 'CPUs',
+      slug: 'cpus',
+      sortOrder: 20,
+      parentId: '4f6c1c9e-2b1a-4d8e-9a57-1b2c3d4e5f60',
+    },
   ],
 };
 
@@ -62,6 +75,22 @@ describe('api-gateway -> catalog-service', () => {
     expect(res.body).toEqual(LIST);
   });
 
+  it('accepts a catalog that does not send parentId yet (an older catalog during a deploy)', async () => {
+    const older = { items: LIST.items.map(({ parentId: _parentId, ...rest }) => rest) };
+    behaviour = json(200, older);
+    const res = await request(app.getHttpServer() as Server)
+      .get('/api/v1/categories')
+      .expect(200);
+    expect(res.body).toEqual(older);
+  });
+
+  it('answers 502 when a parentId is not a UUID', async () => {
+    behaviour = json(200, { items: [{ ...LIST.items[0], parentId: 'components' }] });
+    await request(app.getHttpServer() as Server)
+      .get('/api/v1/categories')
+      .expect(502);
+  });
+
   it('answers 502 problem+json when the catalog fails (FR-011)', async () => {
     behaviour = json(500, { message: 'boom' });
     const res = await request(app.getHttpServer() as Server)
@@ -79,7 +108,7 @@ describe('api-gateway -> catalog-service', () => {
     const res = await request(app.getHttpServer() as Server)
       .get('/api/v1/categories')
       .expect(200);
-    expect(res.body).toEqual(LIST);
+    expect(res.body).toEqual({ items: [LIST.items[0]] });
   });
 
   it('answers 503 when the body is slower than the timeout', async () => {

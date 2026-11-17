@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsInt, IsString, IsUUID, Length, Matches, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Length,
+  Matches,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 /** A top-level product group of the shop, e.g. "CPUs". */
@@ -21,6 +30,17 @@ export class CategoryDto {
   @ApiProperty({ example: 20, description: 'Display order, ascending' })
   @IsInt()
   sortOrder!: number;
+
+  @ApiProperty({
+    format: 'uuid',
+    nullable: true,
+    example: null,
+    description: 'The parent category; null for a top-level one',
+  })
+  // Optional when checked, so a reader newer than the catalog it reads still works.
+  @IsOptional()
+  @IsUUID()
+  parentId!: string | null;
 }
 
 /** A list wrapper, so paging fields can be added later without a breaking change. */

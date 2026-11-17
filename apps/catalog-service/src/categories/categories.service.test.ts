@@ -4,14 +4,14 @@ import { toListDto } from './categories.service.js';
 describe('toListDto', () => {
   it('keeps the order and exposes only public fields', () => {
     const dto = toListDto([
-      { id: 'a', name: 'CPUs', slug: 'cpus', sortOrder: 10 },
-      { id: 'b', name: 'Memory', slug: 'memory', sortOrder: 40 },
+      { id: 'a', name: 'CPUs', slug: 'cpus', sortOrder: 10, parentId: null },
+      { id: 'b', name: 'Memory', slug: 'memory', sortOrder: 40, parentId: 'a' },
     ]);
 
     expect(dto).toEqual({
       items: [
-        { id: 'a', name: 'CPUs', slug: 'cpus', sortOrder: 10 },
-        { id: 'b', name: 'Memory', slug: 'memory', sortOrder: 40 },
+        { id: 'a', name: 'CPUs', slug: 'cpus', sortOrder: 10, parentId: null },
+        { id: 'b', name: 'Memory', slug: 'memory', sortOrder: 40, parentId: 'a' },
       ],
     });
   });
