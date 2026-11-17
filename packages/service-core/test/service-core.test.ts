@@ -176,6 +176,11 @@ describe('createServiceApp (FR-061)', () => {
     expect(lines.some((l) => l.level === 50 && JSON.stringify(l).includes('hunter2'))).toBe(true);
   });
 
+  it('sends no ETag of its own: an ETag is a version the service sets', async () => {
+    const res = await http().get('/things/env').expect(200);
+    expect(res.headers.etag).toBeUndefined();
+  });
+
   it('validates every body', async () => {
     const res = await http().post('/things').send({ name: '', extra: 1 }).expect(400);
     const fields = (res.body as { errors: { field: string }[] }).errors.map((e) => e.field);

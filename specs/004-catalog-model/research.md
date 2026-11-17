@@ -119,9 +119,9 @@ PostgreSQL 17, Drizzle 0.45 and the packages the catalog already has.
 - **Decision:** table `former_slug (kind, slug, entity_id, retired_at)`, unique on
   `(kind, slug)`. Changing a slug moves the old one there in the same transaction. A
   new slug is refused when it is a former slug of another entity of that kind; a
-  former slug of the same entity can be taken back (it leaves the table). Lookups by
-  slug check the live rows, then `former_slug`; the response is the entity, whose
-  `slug` is the current one.
+  former slug of the same entity can be taken back (its row stays: the service role
+  has no `DELETE`, FR-043). Lookups by slug check the live rows, then `former_slug`;
+  the response is the entity, whose `slug` is the current one.
 - A deleted entity keeps its former slugs (old links still point to it and answer
   "gone" on the storefront), but its current slug is free (FR-030).
 

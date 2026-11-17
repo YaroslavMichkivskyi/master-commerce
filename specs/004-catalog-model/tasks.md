@@ -34,7 +34,7 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   tests
 
 ## Phase 4 — Brands (FR-001, FR-002, US-5)
-- [ ] T010 `src/admin/brands/`: create, list, read, by-slug, update, delete (`409` when
+- [x] T010 `src/admin/brands/`: create, list, read, by-slug, update, delete (`409` when
   live products use it), restore; integration tests incl. `412`, `428`, former slug
 
 ## Phase 5 — Categories and attributes (FR-010…FR-015, US-1, R-5, R-8, R-9)

@@ -1,11 +1,15 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
 
 /** Lowercase words joined by single dashes: `graphics-cards`. */
 export const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 export const PAGE_SIZE_DEFAULT = 50;
 export const PAGE_SIZE_MAX = 200;
+
+/** Strips the spaces around a string before it is validated; names are stored trimmed. */
+export const Trim = (): PropertyDecorator =>
+  Transform(({ value }: { value: unknown }) => (typeof value === 'string' ? value.trim() : value));
 
 /** What every catalog entity carries: identity, version, audit (FR-031, FR-033). */
 export class AuditedDto {

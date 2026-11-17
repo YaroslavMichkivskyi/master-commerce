@@ -123,6 +123,10 @@ describe('catalog-service against PostgreSQL', () => {
     const res = await http().get('/docs-json').expect(200);
     const body = res.body as OpenApiBody;
     expect(Object.keys(body.paths).sort()).toEqual([
+      '/admin/brands',
+      '/admin/brands/by-slug/{slug}',
+      '/admin/brands/{id}',
+      '/admin/brands/{id}/restore',
       '/categories',
       '/health/live',
       '/health/ready',

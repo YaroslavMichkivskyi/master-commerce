@@ -1,7 +1,7 @@
 import type { Type as Class } from '@nestjs/common';
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { IsString, Length, Matches } from 'class-validator';
-import { AuditedDto, PageInfoDto, SLUG_PATTERN } from './common.dto.js';
+import { AuditedDto, PageInfoDto, SLUG_PATTERN, Trim } from './common.dto.js';
 
 /** A maker of hardware: ASUS, AMD (FR-001). */
 export class BrandDto extends AuditedDto {
@@ -14,6 +14,7 @@ export class BrandDto extends AuditedDto {
 
 export class CreateBrandDto {
   @ApiProperty({ example: 'ASUS', minLength: 1, maxLength: 100 })
+  @Trim()
   @IsString()
   @Length(1, 100)
   name!: string;
