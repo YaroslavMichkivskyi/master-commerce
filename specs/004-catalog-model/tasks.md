@@ -27,9 +27,9 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   gateway and catalog tests (FR-014)
 
 ## Phase 3 — Admin building blocks (FR-033, FR-034, FR-025, R-4, R-6, R-10)
-- [ ] T008 `shared/dto/src/catalog-admin/`: page wrapper, brand, category, attribute,
+- [x] T008 `shared/dto/src/catalog-admin/`: page wrapper, brand, category, attribute,
   product DTOs with OpenAPI and validation (per-type attribute limits)
-- [ ] T009 `src/admin/versioning.ts` (`If-Match` / `ETag`, conditional update → `412` /
+- [x] T009 `src/admin/versioning.ts` (`If-Match` / `ETag`, conditional update → `412` /
   `428`), `paging.ts` (cursor), `slugs.ts` (former slugs, lookup by any slug); unit
   tests
 
