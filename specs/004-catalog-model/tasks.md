@@ -18,8 +18,8 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   `catalog_app`; tests that it cannot `DELETE`, `TRUNCATE`, `DROP`, `CREATE TABLE`
 
 ## Phase 2 — Schema (FR-030…FR-035, FR-040…FR-042, R-1…R-3, R-12)
-- [ ] T005 migration `uuid_v7()` (custom); test: ids made in sequence sort in order
-- [ ] T006 `schema.ts`: common columns, `brand`, `category` extended,
+- [x] T005 migration `uuid_v7()` (custom); test: ids made in sequence sort in order
+- [x] T006 `schema.ts`: common columns, `brand`, `category` extended,
   `category_attribute`, `product`, `former_slug`; CHECKs and partial indexes
   (data-model); generated migration; tests: from empty, upgrade from the TASK-2 schema
   with its seed rows, one bad row per CHECK refused (AC #3, AC #4)

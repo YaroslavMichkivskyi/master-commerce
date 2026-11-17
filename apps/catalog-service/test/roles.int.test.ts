@@ -29,6 +29,27 @@ describe('the catalog_app role', () => {
     expect(rows[0]?.n).toBe('1');
   });
 
+  it('has the same rights on every table, also those added by later migrations', async () => {
+    const { rows } = await app.query<{ table: string; rights: string }>(
+      `SELECT tablename AS table,
+              concat_ws(',',
+                CASE WHEN has_table_privilege(tablename, 'SELECT') THEN 'select' END,
+                CASE WHEN has_table_privilege(tablename, 'INSERT') THEN 'insert' END,
+                CASE WHEN has_table_privilege(tablename, 'UPDATE') THEN 'update' END,
+                CASE WHEN has_table_privilege(tablename, 'DELETE') THEN 'delete' END,
+                CASE WHEN has_table_privilege(tablename, 'TRUNCATE') THEN 'truncate' END) AS rights
+       FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename`,
+    );
+    expect(rows.map((r) => r.table)).toEqual([
+      'brand',
+      'category',
+      'category_attribute',
+      'former_slug',
+      'product',
+    ]);
+    for (const row of rows) expect(row.rights, row.table).toBe('select,insert,update');
+  });
+
   it.each([
     ['delete rows', "delete from category where slug = 'cpus'"],
     ['empty a table', 'truncate category'],

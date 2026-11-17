@@ -4,8 +4,10 @@ import { asc } from 'drizzle-orm';
 import { DB, type Database } from '../db/database.js';
 import { category, type CategoryRow } from '../db/schema.js';
 
-/** Internal columns (`created_at`) never leave the service. */
-export function toListDto(rows: readonly CategoryRow[]): CategoryListDto {
+/** Internal columns (audit, version) never leave the service. */
+export function toListDto(
+  rows: readonly Pick<CategoryRow, 'id' | 'name' | 'slug' | 'sortOrder'>[],
+): CategoryListDto {
   return {
     items: rows.map(({ id, name, slug, sortOrder }) => ({ id, name, slug, sortOrder })),
   };
