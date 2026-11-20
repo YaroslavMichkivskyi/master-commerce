@@ -246,6 +246,31 @@ describe('admin: products', () => {
       expect(results.map((r) => r.status).sort()).toEqual([200, 412]);
     });
 
+    it.each([
+      'name',
+      'slug',
+      'sku',
+      'description',
+      'brandId',
+      'categoryId',
+      'priceCents',
+      'stock',
+      'specs',
+    ])('refuses null for %s (400), changing nothing', async (field) => {
+      const p = await create(`null-${field.toLowerCase()}`);
+      const res = await patch(p, { [field]: null }).expect(400);
+      expect((res.body as Problem).errors?.map((e) => e.field)).toEqual([field]);
+      const kept = await http().get(`/admin/products/${p.id}`).expect(200);
+      expect((kept.body as ProductDto).version).toBe(1);
+    });
+
+    it('refuses null for an optional field on create too (400)', async () => {
+      await http()
+        .post('/admin/products')
+        .send(input('null-create', { description: null, stock: null }))
+        .expect(400);
+    });
+
     it('needs If-Match (428) and the current version (412)', async () => {
       const p = await create('match');
       await http().patch(`/admin/products/${p.id}`).send({ stock: 1 }).expect(428);

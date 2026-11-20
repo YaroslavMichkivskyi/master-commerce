@@ -14,7 +14,14 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { AuditedDto, PageInfoDto, PageQueryDto, SLUG_PATTERN, Trim } from './common.dto.js';
+import {
+  AuditedDto,
+  OmittableNotNull,
+  PageInfoDto,
+  PageQueryDto,
+  SLUG_PATTERN,
+  Trim,
+} from './common.dto.js';
 
 export const SKU_PATTERN = /^[A-Z0-9][A-Z0-9-]*$/;
 /** The largest price `integer` cents hold: 21 474 836.47 EUR. */
@@ -80,7 +87,7 @@ export class CreateProductDto {
   sku!: string;
 
   @ApiPropertyOptional({ example: 'Two fans, 2.5 slots.', maxLength: 10_000, default: '' })
-  @IsOptional()
+  @OmittableNotNull()
   @IsString()
   @MaxLength(10_000)
   description?: string;
@@ -105,7 +112,7 @@ export class CreateProductDto {
   priceCents!: number;
 
   @ApiPropertyOptional({ example: 12, minimum: 0, default: 0 })
-  @IsOptional()
+  @OmittableNotNull()
   @IsInt()
   @Min(0)
   @Max(PRICE_CENTS_MAX)
@@ -120,9 +127,11 @@ export class CreateProductDto {
   specs!: Record<string, unknown>;
 }
 
-/** Any of the create fields; a new `categoryId` re-checks the specs. */
+/** Any of the create fields, none of them `null`; a new `categoryId` re-checks the specs. */
 // Annotated, so the declaration file names the type portably.
-const PartialCreateProductDto: Class<Partial<CreateProductDto>> = PartialType(CreateProductDto);
+const PartialCreateProductDto: Class<Partial<CreateProductDto>> = PartialType(CreateProductDto, {
+  skipNullProperties: false,
+});
 export class UpdateProductDto extends PartialCreateProductDto {}
 
 /** `GET /admin/products` filters (FR-024). */

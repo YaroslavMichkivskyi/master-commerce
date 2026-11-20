@@ -26,7 +26,10 @@ export class CreateBrandDto {
 }
 
 // Annotated, so the declaration file names the type portably.
-const PartialCreateBrandDto: Class<Partial<CreateBrandDto>> = PartialType(CreateBrandDto);
+// `null` is refused: every field of a brand is NOT NULL.
+const PartialCreateBrandDto: Class<Partial<CreateBrandDto>> = PartialType(CreateBrandDto, {
+  skipNullProperties: false,
+});
 export class UpdateBrandDto extends PartialCreateBrandDto {}
 
 export class BrandPageDto extends PageInfoDto {

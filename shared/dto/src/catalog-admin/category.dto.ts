@@ -18,7 +18,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { AuditedDto, SLUG_PATTERN, Trim } from './common.dto.js';
+import { AuditedDto, OmittableNotNull, SLUG_PATTERN, Trim } from './common.dto.js';
 
 export const ATTRIBUTE_TYPES = ['select', 'multi_select', 'number', 'boolean', 'text'] as const;
 export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
@@ -173,7 +173,7 @@ export class CreateCategoryDto {
   slug!: string;
 
   @ApiPropertyOptional({ example: 20, default: 0 })
-  @IsOptional()
+  @OmittableNotNull()
   @IsInt()
   sortOrder?: number;
 
@@ -189,5 +189,8 @@ export class CreateCategoryDto {
 
 /** A change of name, slug, order, or a move to another parent (`parentId`). */
 // Annotated, so the declaration file names the type portably.
-const PartialCreateCategoryDto: Class<Partial<CreateCategoryDto>> = PartialType(CreateCategoryDto);
+// `null` is refused except for `parentId`, which keeps its own `@IsOptional()`: null = top.
+const PartialCreateCategoryDto: Class<Partial<CreateCategoryDto>> = PartialType(CreateCategoryDto, {
+  skipNullProperties: false,
+});
 export class UpdateCategoryDto extends PartialCreateCategoryDto {}

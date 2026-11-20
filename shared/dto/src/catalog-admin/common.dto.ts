@@ -1,11 +1,18 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsInt, IsOptional, IsUUID, Max, Min } from 'class-validator';
+import { IsInt, IsOptional, IsUUID, Max, Min, ValidateIf } from 'class-validator';
 
 /** Lowercase words joined by single dashes: `graphics-cards`. */
 export const SLUG_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 export const PAGE_SIZE_DEFAULT = 50;
 export const PAGE_SIZE_MAX = 200;
+
+/**
+ * May be left out, but is never `null`: for a field the database stores as NOT NULL.
+ * `@IsOptional()` would let `null` through to the database (a 500 instead of a 400).
+ */
+export const OmittableNotNull = (): PropertyDecorator =>
+  ValidateIf((_object: object, value: unknown) => value !== undefined);
 
 /** Strips the spaces around a string before it is validated; names are stored trimmed. */
 export const Trim = (): PropertyDecorator =>

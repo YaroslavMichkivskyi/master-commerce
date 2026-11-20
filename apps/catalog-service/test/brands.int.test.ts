@@ -80,6 +80,13 @@ describe('admin: brands', () => {
       expect(res.headers.etag).toBe('"2"');
     });
 
+    it.each(['name', 'slug'])('refuses null for %s (400)', async (field) => {
+      const b = await create(`null-${field}`);
+      await patch(b, { [field]: null }).expect(400);
+      const kept = await http().get(`/admin/brands/${b.id}`).expect(200);
+      expect(kept.body).toMatchObject({ slug: `null-${field}`, version: 1 });
+    });
+
     it('answers 428 without If-Match and 412 for an older version', async () => {
       const b = await create('zotac');
       await http().patch(`/admin/brands/${b.id}`).send({ name: 'Z' }).expect(428);

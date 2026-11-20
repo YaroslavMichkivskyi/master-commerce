@@ -152,6 +152,18 @@ describe('admin: categories', () => {
       expect(back).toMatchObject({ parentId: null, version: 3 });
     });
 
+    it('refuses null for name, slug and sortOrder; null parentId means the top', async () => {
+      const c = await create('null-fields');
+      for (const field of ['name', 'slug', 'sortOrder']) {
+        await patch(c, { [field]: null }).expect(400);
+      }
+      await http()
+        .post('/admin/categories')
+        .send({ name: 'N', slug: 'null-order', sortOrder: null })
+        .expect(400);
+      await patch(c, { parentId: null }).expect(200);
+    });
+
     it('refuses a cycle: under itself or under its own descendant (409)', async () => {
       const a = await create('cycle-a');
       const b = await create('cycle-b', a.id);
