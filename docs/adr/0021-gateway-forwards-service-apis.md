@@ -30,7 +30,8 @@ gateway's OpenAPI lists the whole public contract and the gateway validates inpu
 any call. Each method calls `CatalogClient.forward(method, { path, query, body,
 ifMatch })`, which:
 
-- sends the method, the path (ids checked as UUIDs, slugs encoded as one segment), the
+- sends the method, the path (ids checked as UUIDs, slugs against the slug format, so no input turns
+  into another path of the service), the
   defined query values, the JSON body, `If-Match` for changes of an existing entity and
   the correlation id;
 - answers a `2xx` with the service's status, body and `ETag`;

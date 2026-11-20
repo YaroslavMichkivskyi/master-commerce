@@ -1,4 +1,13 @@
-import { applyDecorators, Headers, Param, ParseUUIDPipe, Res } from '@nestjs/common';
+import {
+  applyDecorators,
+  BadRequestException,
+  Headers,
+  Param,
+  ParseUUIDPipe,
+  type PipeTransform,
+  Res,
+} from '@nestjs/common';
+import { SLUG_PATTERN } from '@master-commerce/dto';
 import { ApiProblemResponses, Public } from '@master-commerce/service-core';
 import type { Response } from 'express';
 import type { Forwarded } from '../catalog.client.js';
@@ -34,5 +43,16 @@ export function relay<T>(res: Response, forwarded: Forwarded): T {
   return forwarded.body as T;
 }
 
-/** A slug as one path segment, whatever it holds. */
-export const segment = (value: string) => encodeURIComponent(value);
+/**
+ * A slug in the path, checked against the slug format before it is put into the
+ * catalog's path: `..` or `a/b` would otherwise turn into another path of the catalog.
+ */
+class ParseSlugPipe implements PipeTransform<string, string> {
+  transform(value: string): string {
+    if (value.length > 100 || !SLUG_PATTERN.test(value)) {
+      throw new BadRequestException(`"${value}" is not a slug`);
+    }
+    return value;
+  }
+}
+export const Slug = () => Param('slug', new ParseSlugPipe());

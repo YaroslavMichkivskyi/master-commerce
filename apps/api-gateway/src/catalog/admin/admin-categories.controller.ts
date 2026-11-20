@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Patch, Post, Put } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiNoContentResponse,
@@ -16,7 +16,7 @@ import {
 import { ApiProblemResponses, ApiVersionedWrite } from '@master-commerce/service-core';
 import type { Response } from 'express';
 import { CatalogClient } from '../catalog.client.js';
-import { ADMIN_PREFIX, AdminForward, Id, IfMatch, relay, Reply, segment } from './relay.js';
+import { ADMIN_PREFIX, AdminForward, Id, IfMatch, relay, Reply, Slug } from './relay.js';
 
 const base = '/admin/categories';
 
@@ -51,11 +51,8 @@ export class AdminCategoriesController {
   @ApiOperation({ summary: 'Find a category by its current or a former slug' })
   @ApiOkResponse({ type: CategoryDetailDto, description: 'The body has the current slug' })
   @ApiProblemResponses(404)
-  async getBySlug(@Param('slug') slug: string, @Reply() res: Response): Promise<CategoryDetailDto> {
-    return relay(
-      res,
-      await this.catalog.forward('GET', { path: `${base}/by-slug/${segment(slug)}` }),
-    );
+  async getBySlug(@Slug() slug: string, @Reply() res: Response): Promise<CategoryDetailDto> {
+    return relay(res, await this.catalog.forward('GET', { path: `${base}/by-slug/${slug}` }));
   }
 
   @Get(':id')

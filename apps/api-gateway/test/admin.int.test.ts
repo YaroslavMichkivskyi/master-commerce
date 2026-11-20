@@ -178,10 +178,15 @@ describe('api-gateway admin API -> catalog-service', () => {
     expect(seen).toBeUndefined();
   });
 
-  it('sends a slug as one path segment', async () => {
-    await send('GET', '/brands/by-slug/a%2Fb').expect(200);
-    expect(seen?.url).toBe('/admin/brands/by-slug/a%2Fb');
-  });
+  it.each(['%2E%2E', 'a%2Fb', 'Not-A-Slug'])(
+    'refuses %s as a slug before it reaches the catalog path (400)',
+    async (slug) => {
+      for (const kind of ['brands', 'categories', 'products']) {
+        await send('GET', `/${kind}/by-slug/${slug}`).expect(400);
+      }
+      expect(seen).toBeUndefined();
+    },
+  );
 
   it('answers 502 for a catalog 5xx and 503 when it does not answer', async () => {
     behaviour = (_req, res) => void res.writeHead(500).end();
