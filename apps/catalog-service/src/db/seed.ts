@@ -12,8 +12,9 @@ export const SEED_CATEGORIES = [
 ];
 
 /**
- * Idempotent: a slug any row has, live or deleted, is left alone, so a re-run never
- * duplicates a category nor brings back one a manager deleted.
+ * Idempotent: a slug any row has, live or deleted, or had before a manager changed it
+ * (`former_slug`), is left alone, so a re-run never duplicates a category, brings back
+ * one a manager deleted, or takes an old link from a renamed one.
  */
 export async function seed(db: NodePgDatabase): Promise<void> {
   const values = sql.join(
@@ -23,5 +24,6 @@ export async function seed(db: NodePgDatabase): Promise<void> {
   await db.execute(sql`
     INSERT INTO category (name, slug, sort_order)
     SELECT v.name, v.slug, v.sort_order FROM (VALUES ${values}) AS v(name, slug, sort_order)
-    WHERE NOT EXISTS (SELECT 1 FROM category c WHERE c.slug = v.slug)`);
+    WHERE NOT EXISTS (SELECT 1 FROM category c WHERE c.slug = v.slug)
+      AND NOT EXISTS (SELECT 1 FROM former_slug f WHERE f.kind = 'category' AND f.slug = v.slug)`);
 }

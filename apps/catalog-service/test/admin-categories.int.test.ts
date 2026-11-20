@@ -10,7 +10,12 @@ import pg from 'pg';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '../src/bootstrap.js';
-import { type CatalogDatabase, startCatalogDatabase } from './support/catalog-database.js';
+import { migrateDatabase } from '../src/db/migrate.js';
+import {
+  APP_PASSWORD,
+  type CatalogDatabase,
+  startCatalogDatabase,
+} from './support/catalog-database.js';
 
 interface Problem {
   detail?: string;
@@ -196,6 +201,21 @@ describe('admin: categories', () => {
   });
 
   describe('slugs (FR-025)', () => {
+    it('does not seed a renamed seeded category again under its old slug', async () => {
+      const laptops = await detail(
+        ((await http().get('/admin/categories/by-slug/laptops').expect(200)).body as { id: string })
+          .id,
+      );
+      await patch(laptops, { slug: 'notebooks' }).expect(200);
+      await migrateDatabase(database.ownerUrl, APP_PASSWORD); // what every `pnpm dev` runs
+      const { rows } = await owner.query<{ n: number }>(
+        "select count(*)::int as n from category where name = 'Laptops'",
+      );
+      expect(rows[0]?.n).toBe(1);
+      const old = await http().get('/admin/categories/by-slug/laptops').expect(200);
+      expect(old.body).toMatchObject({ id: laptops.id, slug: 'notebooks' });
+    });
+
     it('finds a category by a former slug, answering with the current one', async () => {
       const c = await create('hdd');
       await patch(c, { slug: 'hard-drives' }).expect(200);
