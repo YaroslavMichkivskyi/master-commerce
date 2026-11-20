@@ -1,5 +1,12 @@
-import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import type {
+  AttributeDto,
   CategoryDetailDto,
   CategoryTreeDto,
   CategoryTreeNodeDto,
@@ -8,10 +15,12 @@ import type {
 } from '@master-commerce/dto';
 import { and, asc, eq, sql } from 'drizzle-orm';
 import { DB, type Database } from '../../db/database.js';
-import { category, type CategoryRow } from '../../db/schema.js';
+import { category, categoryAttribute, type CategoryRow } from '../../db/schema.js';
 import { conflictOnUnique, type Executor } from '../common/executor.js';
 import { assertSlugFree, changeSlug, entityOfFormerSlug } from '../common/slugs.js';
 import { updateVersioned } from '../common/versioning.js';
+import { attributeSetErrors, columnsOf, ruleOf } from './attributes.js';
+import { checkSubtree } from './subtree.js';
 import {
   attributesOf,
   liveCategory,
@@ -22,6 +31,13 @@ import {
   pathTo,
   toAttributeDto,
 } from './tree.js';
+
+/** Whether any stored column differs; arrays compared by their values. */
+function changed(old: Record<string, unknown>, columns: Record<string, unknown>): boolean {
+  return Object.entries(columns).some(
+    ([key, value]) => JSON.stringify(old[key]) !== JSON.stringify(value),
+  );
+}
 
 const taken = (slug: string) => `A category with the slug "${slug}" already exists`;
 const plural = (n: number, one: string, many: string) => `${String(n)} ${n === 1 ? one : many}`;
@@ -121,10 +137,16 @@ export class AdminCategoriesService {
       const moving = input.parentId !== undefined;
       if (moving) await lockTreeShape(tx);
       if (moving || input.slug !== undefined) {
-        const current = await this.findLive(tx, id);
+        // Locked when moving: a product written under it waits for the checks below.
+        const current = moving
+          ? await lockLiveCategory(tx, id, 'update')
+          : await this.findLive(tx, id);
         if (!current) throw new NotFoundException(`Category ${id} does not exist`);
         if (moving && input.parentId !== current.parentId) {
-          await this.checkMove(tx, id, input.parentId ?? null);
+          const parentId = input.parentId ?? null;
+          await this.checkMove(tx, id, parentId);
+          // Its products against the attributes of the new ancestors (FR-013, FR-015).
+          await checkSubtree(tx, id, parentId === null ? [] : await pathTo(tx, parentId));
         }
         // If the row changes meanwhile, the versioned update answers 412 and all of
         // this is rolled back with it.
@@ -192,6 +214,56 @@ export class AdminCategoriesService {
         await this.refuseProductsIn(tx, row.parentId, 'Its parent');
       }
       await assertSlugFree(tx, 'category', row.slug, id);
+      // The ancestors' attributes may have changed while it was deleted.
+      await checkSubtree(tx, id, (await pathTo(tx, id)).slice(0, -1));
+      return this.detail(tx, row);
+    });
+  }
+
+  /**
+   * Replaces the category's own attributes as a set (FR-011, FR-013, research R-9): with
+   * the category's version, which it bumps; refused when a code would repeat along a
+   * path or a product of the subtree would become invalid.
+   */
+  replaceAttributes(
+    id: string,
+    expected: number,
+    attributes: readonly AttributeDto[],
+  ): Promise<CategoryDetailDto> {
+    const errors = attributeSetErrors(attributes);
+    if (errors.length > 0) {
+      throw new BadRequestException({ message: 'The request is invalid', errors });
+    }
+    return this.db.transaction(async (tx) => {
+      // Attributes and moves both change what the subtree's products must satisfy.
+      await lockTreeShape(tx);
+      const row = await updateVersioned(tx, category, 'Category', id, expected, {});
+      await checkSubtree(tx, id, (await pathTo(tx, id)).slice(0, -1), attributes.map(ruleOf));
+
+      // The rows of codes that stay are updated in place, so their ids and history stay;
+      // the others are soft-deleted (the role has no DELETE) or added.
+      const stored = (await attributesOf(tx, [id])).get(id) ?? [];
+      const byCode = new Map(stored.map((a) => [a.code, a]));
+      const kept = new Set(attributes.map((a) => a.code));
+      for (const old of stored) {
+        if (kept.has(old.code)) continue;
+        await tx
+          .update(categoryAttribute)
+          .set({ deletedAt: sql`now()`, updatedAt: sql`now()`, version: sql`version + 1` })
+          .where(eq(categoryAttribute.id, old.id));
+      }
+      for (const attribute of attributes) {
+        const columns = columnsOf(attribute);
+        const old = byCode.get(attribute.code);
+        if (!old) {
+          await tx.insert(categoryAttribute).values({ ...columns, categoryId: id });
+        } else if (changed(old, columns)) {
+          await tx
+            .update(categoryAttribute)
+            .set({ ...columns, updatedAt: sql`now()`, version: sql`version + 1` })
+            .where(eq(categoryAttribute.id, old.id));
+        }
+      }
       return this.detail(tx, row);
     });
   }

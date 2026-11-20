@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -21,6 +22,7 @@ import {
   CategoryDetailDto,
   CategoryTreeDto,
   CreateCategoryDto,
+  ReplaceAttributesDto,
   UpdateCategoryDto,
 } from '@master-commerce/dto';
 import { ApiProblemResponses, Public } from '@master-commerce/service-core';
@@ -85,6 +87,24 @@ export class AdminCategoriesController {
     @Body() body: UpdateCategoryDto,
   ): Promise<CategoryDetailDto> {
     return this.categories.update(id, expectedVersion(ifMatch), body);
+  }
+
+  @Put(':id/attributes')
+  @ApiOperation({
+    summary: "Replace a category's own attributes as a set; needs the category's version",
+  })
+  @ApiOkResponse({ type: CategoryDetailDto })
+  @VersionedWrite()
+  @ApiProblemResponses([
+    409,
+    'A code would repeat along a path, or products of the subtree would become invalid',
+  ])
+  replaceAttributes(
+    @Id() id: string,
+    @Headers('if-match') ifMatch: string | undefined,
+    @Body() body: ReplaceAttributesDto,
+  ): Promise<CategoryDetailDto> {
+    return this.categories.replaceAttributes(id, expectedVersion(ifMatch), body.attributes);
   }
 
   @Delete(':id')

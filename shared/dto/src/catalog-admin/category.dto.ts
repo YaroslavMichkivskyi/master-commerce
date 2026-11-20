@@ -35,6 +35,7 @@ export class AttributeDto {
   code!: string;
 
   @ApiProperty({ example: 'Memory size', minLength: 1, maxLength: 100 })
+  @Trim()
   @IsString()
   @Length(1, 100)
   name!: string;

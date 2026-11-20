@@ -131,6 +131,7 @@ describe('catalog-service against PostgreSQL', () => {
       '/admin/categories/by-slug/{slug}',
       '/admin/categories/tree',
       '/admin/categories/{id}',
+      '/admin/categories/{id}/attributes',
       '/admin/categories/{id}/restore',
       '/categories',
       '/health/live',

@@ -42,7 +42,7 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   tests for every type and rule
 - [x] T012 `src/admin/categories/`: tree, create, read, by-slug, update, move (cycle,
   new parent with products), delete (children, products), restore; integration tests
-- [ ] T013 `PUT /admin/categories/{id}/attributes`: replace as a set, codes unique along
+- [x] T013 `PUT /admin/categories/{id}/attributes`: replace as a set, codes unique along
   the path, the subtree's products validated (R-9) → `409` with the count; the same
   check on a move; integration tests
 
