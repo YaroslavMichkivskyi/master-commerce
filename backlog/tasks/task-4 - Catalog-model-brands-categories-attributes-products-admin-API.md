@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-14T23:48:00Z'
+updated_date: '2026-11-20T14:59:00Z'
 labels:
   - mvp
   - speckit-full
@@ -56,4 +56,11 @@ speckit-full: spec specs/004-catalog-model -> clarify -> plan -> tasks -> implem
 
 <!-- SECTION:NOTES:BEGIN -->
 From the AI review of TASK-2: the category table has plain text columns while CategoryDto limits name length and slug format; one bad row makes the gateway reject the whole list with 502.
+
+Verification (2026-11-20, Windows 11, Node 24, Docker Desktop):
+- Full checks: format:check; turbo run lint typecheck test test:integration build --force — 21/21. catalog-service: 72 unit, 108 integration (+1 on demand); api-gateway: 19 unit, 60 integration.
+- Fresh clone of task-4: pnpm install --frozen-lockfile, the same checks — 21/21.
+- Quickstart (specs/004-catalog-model/quickstart.md) on the local stack through the gateway: scenarios 1-8 answered as written; pnpm dev applied the new migrations to the existing TASK-2/3 database (upgrade path). Scenario 9 (pnpm reset) not run on the owner's data; the schema from scratch is covered by every integration test (Testcontainers, real migrations).
+- NFR-001 (test/nfr-001.int.test.ts, NFR_001=1): 100 220 products, 200 sequential HTTP writes each — create median 8.9 ms (p95 11.6), update median 8.4 ms (p95 10.6); limit 50 ms.
+- The note above (bad rows breaking the public list) is resolved: names, slugs and lengths are CHECK constraints now (US-4).
 <!-- SECTION:NOTES:END -->
