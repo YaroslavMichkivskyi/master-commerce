@@ -52,7 +52,7 @@ the gateway; 1 public DTO field
 |---|---|---|
 | I. Ordinary shop, no speculative features | pass | an ordinary B2C catalog; no partners, visibility, price lists; history, bulk work and price history left to TASK-30…32 |
 | II. Spec is the source of truth | pass, with two rewordings | FR-034 (the category tree is returned whole) and FR-040 (which rules the database holds and which the service holds) are reworded below, before tasks |
-| III. Local first, explicit data access | pass | Drizzle for writes and simple reads; recursive CTEs and the specs check in SQL written by hand (ADR 0005) |
+| III. Local first, explicit data access | pass | Drizzle for writes and simple reads; recursive CTEs of the tree in SQL written by hand (ADR 0005); the specs check in the service (R-8) |
 | IV. Tests ship with the change | pass | R-14: unit, integration with the real migrations, gateway forwarding, the TASK-2 upgrade |
 | V. Observable and documented | pass | every endpoint in both services' OpenAPI; service-core for errors, logs, metrics |
 | VI. No scope creep, decisions recorded | pass | ADR 0021 (gateway forwarding), ADR 0022 (data conventions of service databases) |
