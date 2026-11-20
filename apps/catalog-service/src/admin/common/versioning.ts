@@ -14,6 +14,10 @@ export const etag = (version: number): string => `"${version}"`;
 /**
  * The version a change is based on, from `If-Match`. Missing → `428`; anything that is
  * not one version (`*`, a list, garbage) matches no version → `412`.
+ *
+ * A weak `W/"3"` is read as version 3, on purpose: RFC 9110 compares `If-Match` strongly,
+ * but a proxy that compresses responses weakens the ETags it passes on, and a client
+ * behind it could then never change anything. Our version is exact either way.
  */
 export function expectedVersion(ifMatch: string | undefined): number {
   if (ifMatch === undefined || ifMatch.trim() === '') {

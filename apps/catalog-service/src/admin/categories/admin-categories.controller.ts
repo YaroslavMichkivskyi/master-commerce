@@ -80,7 +80,10 @@ export class AdminCategoriesController {
   })
   @ApiOkResponse({ type: CategoryDetailDto })
   @ApiVersionedWrite()
-  @ApiProblemResponses([409, 'A cycle, a new parent that holds products, or the slug is taken'])
+  @ApiProblemResponses([
+    409,
+    'A cycle, a new parent that holds products, products that would break, or the slug is taken',
+  ])
   update(
     @Id() id: string,
     @Headers('if-match') ifMatch: string | undefined,
