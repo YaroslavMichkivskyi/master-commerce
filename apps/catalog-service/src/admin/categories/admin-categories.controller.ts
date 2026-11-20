@@ -25,8 +25,8 @@ import {
   ReplaceAttributesDto,
   UpdateCategoryDto,
 } from '@master-commerce/dto';
-import { ApiProblemResponses, Public } from '@master-commerce/service-core';
-import { AdminApi, VersionedWrite } from '../common/http.js';
+import { ApiProblemResponses, ApiVersionedWrite, Public } from '@master-commerce/service-core';
+import { AdminApi } from '../common/http.js';
 import { expectedVersion } from '../common/versioning.js';
 import { AdminCategoriesService } from './admin-categories.service.js';
 
@@ -79,7 +79,7 @@ export class AdminCategoriesController {
     summary: 'Rename, reorder, change the slug or move a category (`parentId`, null: top)',
   })
   @ApiOkResponse({ type: CategoryDetailDto })
-  @VersionedWrite()
+  @ApiVersionedWrite()
   @ApiProblemResponses([409, 'A cycle, a new parent that holds products, or the slug is taken'])
   update(
     @Id() id: string,
@@ -94,7 +94,7 @@ export class AdminCategoriesController {
     summary: "Replace a category's own attributes as a set; needs the category's version",
   })
   @ApiOkResponse({ type: CategoryDetailDto })
-  @VersionedWrite()
+  @ApiVersionedWrite()
   @ApiProblemResponses([
     409,
     'A code would repeat along a path, or products of the subtree would become invalid',
@@ -111,7 +111,7 @@ export class AdminCategoriesController {
   @HttpCode(204)
   @ApiOperation({ summary: 'Delete a category with no subcategories and no products' })
   @ApiNoContentResponse({ description: 'Deleted; it can be restored' })
-  @VersionedWrite()
+  @ApiVersionedWrite()
   @ApiProblemResponses([409, 'It has subcategories or products'])
   remove(@Id() id: string, @Headers('if-match') ifMatch: string | undefined): Promise<void> {
     return this.categories.remove(id, expectedVersion(ifMatch));
@@ -121,7 +121,7 @@ export class AdminCategoriesController {
   @HttpCode(200)
   @ApiOperation({ summary: 'Restore a deleted category under its live parent' })
   @ApiOkResponse({ type: CategoryDetailDto })
-  @VersionedWrite()
+  @ApiVersionedWrite()
   @ApiProblemResponses([409, 'The slug is taken, or the parent is deleted or holds products'])
   restore(
     @Id() id: string,

@@ -3,6 +3,7 @@ import { applyDecorators, type INestApplication } from '@nestjs/common';
 import {
   ApiExtension,
   ApiExtraModels,
+  ApiHeader,
   ApiResponse,
   DocumentBuilder,
   getSchemaPath,
@@ -45,6 +46,25 @@ export function ApiProblemResponses(...responses: (number | [number, string])[])
 
 function problemContent() {
   return { [PROBLEM_CONTENT_TYPE]: { schema: { $ref: getSchemaPath(ProblemDto) } } };
+}
+
+/**
+ * A write that needs the version it is based on (`If-Match`): documents the header and
+ * the answers of a conditional request — `404`, `412` stale, `428` missing.
+ */
+export function ApiVersionedWrite() {
+  return applyDecorators(
+    ApiHeader({
+      name: 'If-Match',
+      required: true,
+      description: 'The `ETag` (version) you read, e.g. `"3"`',
+    }),
+    ApiProblemResponses(
+      404,
+      [412, 'It has changed since you read it'],
+      [428, 'If-Match is missing'],
+    ),
+  );
 }
 
 /**

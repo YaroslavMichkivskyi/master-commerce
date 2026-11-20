@@ -25,8 +25,8 @@ import {
   PageQueryDto,
   UpdateBrandDto,
 } from '@master-commerce/dto';
-import { ApiProblemResponses, Public } from '@master-commerce/service-core';
-import { AdminApi, VersionedWrite } from '../common/http.js';
+import { ApiProblemResponses, ApiVersionedWrite, Public } from '@master-commerce/service-core';
+import { AdminApi } from '../common/http.js';
 import { expectedVersion } from '../common/versioning.js';
 import { BrandsService } from './brands.service.js';
 
@@ -74,7 +74,7 @@ export class BrandsController {
   @Patch(':id')
   @ApiOperation({ summary: 'Rename a brand or change its slug; the old slug keeps working' })
   @ApiOkResponse({ type: BrandDto })
-  @VersionedWrite()
+  @ApiVersionedWrite()
   @ApiProblemResponses([409, 'The slug is taken, now or formerly, by another brand'])
   update(
     @Id() id: string,
@@ -88,7 +88,7 @@ export class BrandsController {
   @HttpCode(204)
   @ApiOperation({ summary: 'Delete a brand no live product uses' })
   @ApiNoContentResponse({ description: 'Deleted; it can be restored' })
-  @VersionedWrite()
+  @ApiVersionedWrite()
   @ApiProblemResponses([409, 'Products use this brand'])
   remove(@Id() id: string, @Headers('if-match') ifMatch: string | undefined): Promise<void> {
     return this.brands.remove(id, expectedVersion(ifMatch));
@@ -98,7 +98,7 @@ export class BrandsController {
   @HttpCode(200)
   @ApiOperation({ summary: 'Restore a deleted brand' })
   @ApiOkResponse({ type: BrandDto })
-  @VersionedWrite()
+  @ApiVersionedWrite()
   @ApiProblemResponses([409, 'Another brand has taken its slug'])
   restore(@Id() id: string, @Headers('if-match') ifMatch: string | undefined): Promise<BrandDto> {
     return this.brands.restore(id, expectedVersion(ifMatch));

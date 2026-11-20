@@ -25,8 +25,8 @@ import {
   ProductPageDto,
   UpdateProductDto,
 } from '@master-commerce/dto';
-import { ApiProblemResponses, Public } from '@master-commerce/service-core';
-import { AdminApi, VersionedWrite } from '../common/http.js';
+import { ApiProblemResponses, ApiVersionedWrite, Public } from '@master-commerce/service-core';
+import { AdminApi } from '../common/http.js';
 import { expectedVersion } from '../common/versioning.js';
 import { ProductsService } from './products.service.js';
 
@@ -79,7 +79,7 @@ export class ProductsController {
   @Patch(':id')
   @ApiOperation({ summary: 'Change any of its fields; specs are checked again' })
   @ApiOkResponse({ type: ProductDto })
-  @VersionedWrite()
+  @ApiVersionedWrite()
   @ApiProblemResponses(
     [400, SPECS_400],
     [409, 'The slug or SKU is taken, or the category has subcategories'],
@@ -96,7 +96,7 @@ export class ProductsController {
   @HttpCode(200)
   @ApiOperation({ summary: 'Show the product on the storefront' })
   @ApiOkResponse({ type: ProductDto })
-  @VersionedWrite()
+  @ApiVersionedWrite()
   publish(@Id() id: string, @Headers('if-match') ifMatch: string | undefined): Promise<ProductDto> {
     return this.products.setPublished(id, expectedVersion(ifMatch), true);
   }
@@ -105,7 +105,7 @@ export class ProductsController {
   @HttpCode(200)
   @ApiOperation({ summary: 'Hide the product from the storefront' })
   @ApiOkResponse({ type: ProductDto })
-  @VersionedWrite()
+  @ApiVersionedWrite()
   unpublish(
     @Id() id: string,
     @Headers('if-match') ifMatch: string | undefined,
@@ -117,7 +117,7 @@ export class ProductsController {
   @HttpCode(204)
   @ApiOperation({ summary: 'Delete a product' })
   @ApiNoContentResponse({ description: 'Deleted; it can be restored' })
-  @VersionedWrite()
+  @ApiVersionedWrite()
   remove(@Id() id: string, @Headers('if-match') ifMatch: string | undefined): Promise<void> {
     return this.products.remove(id, expectedVersion(ifMatch));
   }
@@ -126,7 +126,7 @@ export class ProductsController {
   @HttpCode(200)
   @ApiOperation({ summary: 'Restore a deleted product' })
   @ApiOkResponse({ type: ProductDto })
-  @VersionedWrite()
+  @ApiVersionedWrite()
   @ApiProblemResponses([
     409,
     'The slug or SKU is taken, its brand or category is deleted, or its specs no longer fit',

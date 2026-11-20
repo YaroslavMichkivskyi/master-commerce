@@ -56,7 +56,7 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
 - [x] T015 `CatalogClient.forward()`: method, path, query, body, `If-Match`, correlation
   id; `2xx` and `4xx` passed through with body and `ETag`; `5xx` → `502`, down → `503`;
   tests with the stub catalog
-- [ ] T016 `src/catalog/admin/`: the 24 admin endpoints with the shared DTOs and
+- [x] T016 `src/catalog/admin/`: the 24 admin endpoints with the shared DTOs and
   OpenAPI; tests: the OpenAPI lists every admin path, a request goes through
   end to end (US-1 → US-2, AC #1)
 
