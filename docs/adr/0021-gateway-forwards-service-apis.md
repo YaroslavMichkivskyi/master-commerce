@@ -1,6 +1,6 @@
 # 0021. The gateway declares each service endpoint it exposes and forwards it, passing the service's answers through
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-20
 - Deciders: project owner
 

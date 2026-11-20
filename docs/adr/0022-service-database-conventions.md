@@ -1,6 +1,6 @@
 # 0022. Service database conventions: UUIDv7, money in cents, soft delete, versions, cursor paging, least-privilege roles
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-20
 - Deciders: project owner
 
