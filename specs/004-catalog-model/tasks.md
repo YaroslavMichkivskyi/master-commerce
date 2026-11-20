@@ -62,7 +62,7 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
 
 ## Phase 8 — Docs and verification
 - [x] T017 [P] ADR 0021, ADR 0022 + index + roadmap table
-- [ ] T018 [P] `docs/technologies.md`, `README.md` (admin API, `db:migrate`),
+- [x] T018 [P] `docs/technologies.md`, `README.md` (admin API, `db:migrate`),
   `quickstart.md` (US-1 → US-5 by curl through the gateway)
 - [ ] T019 full checks (`format:check`, `turbo run lint typecheck test test:integration
   build --force`), fresh clone, quickstart on Windows, NFR-001 benchmark (R-14); notes

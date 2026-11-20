@@ -46,6 +46,13 @@ Every backend service also answers on the same paths
 | `/health/ready` | its dependencies are reachable and it is not stopping (`503` otherwise) |
 | `/metrics` | Prometheus metrics |
 
+The catalog's admin API — brands, the category tree with the attributes of its
+products, products with their specs — is served by the gateway under
+`/api/v1/admin/catalog/...` (open until sign-in exists). Every change needs the
+version the client read: send the `ETag` of the last answer back as `If-Match`
+([ADR 0022](docs/adr/0022-service-database-conventions.md)). A walk through it with
+curl: [`specs/004-catalog-model/quickstart.md`](specs/004-catalog-model/quickstart.md).
+
 Ports and connection strings are in `.env`. If a port is taken, `pnpm dev` names it;
 change it in `.env`. Logs are JSON lines; set `LOG_PRETTY=true` in `.env` for readable
 ones. Each request's `X-Request-Id` is in every line it causes, in every service.
