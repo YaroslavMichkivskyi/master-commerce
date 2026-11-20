@@ -14,12 +14,12 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   row → one CSV line: quoting, numbers, dates, JSON, PostgreSQL arrays); unit tests
 
 ## Phase 2 — The catalog description (FR-003…FR-006, D-3, D-6)
-- [ ] T004 `src/catalog/`: the tree (about 20 leaves, the seeded six slugs included),
+- [x] T004 `src/catalog/`: the tree (about 20 leaves, the seeded six slugs included),
   attributes of all five types (some on inner categories), about 50 brands with their
   leaves and lines, per leaf: weight, price base, spec ranges and naming; unit tests:
   counts, types used, seeded slugs, every value a leaf can draw allowed by its
   attribute
-- [ ] T005 `src/generate.ts`: rows of brand, category, category_attribute and product
+- [x] T005 `src/generate.ts`: rows of brand, category, category_attribute and product
   in order, as iterables; products per leaf by weight, brand by Zipf, specs, price,
   stock, publication, slug / SKU / id / times (D-3…D-5); unit tests: counts for 1,
   1 000 and an odd scale; unique slugs and SKUs; ids increasing; Zipf slope; shares of
