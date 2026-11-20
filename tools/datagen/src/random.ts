@@ -1,28 +1,23 @@
+import { createHash } from 'node:crypto';
+
 // Seeded pseudo-random numbers (plan D-2). 32-bit integer arithmetic only, so every
 // JavaScript engine on every platform gives the same sequence for the same seed.
 
 const UINT32 = 2 ** 32;
 
-/** FNV-1a over the UTF-16 code units of a string: turns a seed key into 32 bits. */
-function hashKey(key: string): number {
-  let h = 0x811c9dc5;
-  for (let i = 0; i < key.length; i++) {
-    h ^= key.charCodeAt(i);
-    h = Math.imul(h, 0x01000193);
-  }
-  return h >>> 0;
-}
-
-/** splitmix32: spreads one 32-bit value into well-mixed state words. */
-function splitmix32(state: number): () => number {
-  let s = state >>> 0;
-  return () => {
-    s = (s + 0x9e3779b9) >>> 0;
-    let z = s;
-    z = Math.imul(z ^ (z >>> 16), 0x85ebca6b);
-    z = Math.imul(z ^ (z >>> 13), 0xc2b2ae35);
-    return (z ^ (z >>> 16)) >>> 0;
-  };
+/**
+ * The 128-bit state of a key: the first 16 bytes of its SHA-256. A 32-bit hash would
+ * give a million product keys about a hundred pairs of identical streams (the
+ * birthday bound); 128 bits make that practically impossible.
+ */
+function stateOf(key: string): [number, number, number, number] {
+  const digest = createHash('sha256').update(key, 'utf8').digest();
+  return [
+    digest.readUInt32BE(0),
+    digest.readUInt32BE(4),
+    digest.readUInt32BE(8),
+    digest.readUInt32BE(12),
+  ];
 }
 
 /**
@@ -35,12 +30,11 @@ export class Random {
   private c: number;
   private d: number;
 
-  constructor(seed: number) {
-    const mix = splitmix32(seed);
-    this.a = mix();
-    this.b = mix();
-    this.c = mix();
-    this.d = mix();
+  constructor([a, b, c, d]: readonly [number, number, number, number]) {
+    this.a = a >>> 0;
+    this.b = b >>> 0;
+    this.c = c >>> 0;
+    this.d = d >>> 0;
     for (let i = 0; i < 12; i++) this.next(); // leave the seeding state behind
   }
 
@@ -91,7 +85,7 @@ export class Random {
 
 /** The stream of `key` under `seed`: equal keys give equal streams, any other key another. */
 export function stream(seed: string, key: string): Random {
-  return new Random(hashKey(`${seed}\u0000${key}`));
+  return new Random(stateOf(`${seed}\u0000${key}`));
 }
 
 /** Cumulative weights for `index()`; the weights need not sum to 1. */

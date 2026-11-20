@@ -7,7 +7,7 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
 ## Phase 1 — Package and building blocks (FR-001, FR-007, D-1, D-2, D-5)
 - [x] T001 `tools/datagen` package: `package.json` (pinned deps), `tsconfig`, Vitest
   config, lint; builds in turbo with the rest
-- [x] T002 `src/random.ts`: `splitmix32`, `sfc32`, sub-streams by key, integer / float /
+- [x] T002 `src/random.ts`: `sfc32` seeded by SHA-256, sub-streams by key, integer / float /
   pick / weighted pick / chance, Zipf CDF with binary search; unit tests: a pinned
   sequence, equal for equal keys, independent sub-streams, Zipf shape
 - [x] T003 [P] `src/ids.ts` (UUIDv7 from a time and random bits) and `src/csv.ts` (one

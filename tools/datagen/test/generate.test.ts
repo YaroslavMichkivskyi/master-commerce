@@ -90,7 +90,7 @@ describe('determinism (FR-001, AC #1)', () => {
 
   it('gives the pinned hash, on every machine (checked on Windows and in CI on Linux)', () => {
     expect(dataHash({ seed: 'demo', products: 1000, zipf: 1.1 })).toBe(
-      'a2986c3de90df676b9d0e98716c24536af34df8dba063d0118e9e272e7319906',
+      'f627cfb59218ae9e8c9cbe03fdc788db24ab2cfed0a3050be012761f0e1e7921',
     );
   });
 });

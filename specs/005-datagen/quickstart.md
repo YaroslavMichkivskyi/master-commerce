@@ -17,7 +17,7 @@
    pnpm datagen --scale 1k --seed other --no-load
    ```
    The first two print the same `hash:` — the one the unit tests pin
-   (`a2986c3d…`), on Windows, macOS and Linux alike; the third prints another.
+   (`f627cfb5…`), on Windows, macOS and Linux alike; the third prints another.
 
 2. **CSV with the same content (FR-014).**
    `pnpm datagen --scale 1k --seed demo --no-load --out ./datagen-out` writes

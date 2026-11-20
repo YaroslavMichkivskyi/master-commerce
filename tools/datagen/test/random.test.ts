@@ -5,7 +5,7 @@ describe('seeded streams (plan D-2)', () => {
   it('gives the pinned sequence for a seed and key, on every machine', () => {
     const r = stream('demo', 'test');
     expect(Array.from({ length: 5 }, () => r.next())).toEqual([
-      3348820461, 768730707, 3991157489, 221298370, 648173148,
+      2041476243, 2100293564, 582963738, 3541589759, 2737883898,
     ]);
   });
 
@@ -19,6 +19,17 @@ describe('seeded streams (plan D-2)', () => {
     expect(draw('s', 'product:1')).not.toEqual(draw('t', 'product:1'));
     // The separator keeps "a" + "b:c" apart from "a:b" + "c".
     expect(draw('a', 'b:c')).not.toEqual(draw('a:b', 'c'));
+  });
+
+  it('gives distinct streams to many product keys (no 32-bit seed collisions)', () => {
+    // A 32-bit hash of the key gave seed "42" equal streams for product 90054 and
+    // 572040, and dozens more pairs up to a million products.
+    const starts = new Set<string>();
+    for (let i = 0; i < 600_000; i++) {
+      const r = stream('42', `product:${i}`);
+      starts.add(`${r.next()}:${r.next()}`);
+    }
+    expect(starts.size).toBe(600_000);
   });
 
   it('draws integers in range, both ends included, about uniformly', () => {

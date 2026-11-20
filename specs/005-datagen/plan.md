@@ -71,12 +71,13 @@ schema or code; loads as the owner, never as `catalog_app` (FR-010)
   order — the same bytes go to `COPY … (FORMAT csv)` and to the CSV files, so loading
   and writing give one hash. No `toLocaleString`, `localeCompare`, `Intl` or `Date.now`
   anywhere in the package.
-- **D-2. Our own seeded generator.** `sfc32` seeded through `splitmix32` from the seed
-  string: small, fast, well studied, and it gives the same sequence on every JavaScript
-  engine because it is 32-bit integer arithmetic only. A dependency would bring nothing
-  more and could change its sequence on an update. Each table and each product gets
-  its own sub-stream (`seed:product:<i>`), so adding a column to one table later does
-  not shift every other value.
+- **D-2. Our own seeded generator.** `sfc32`, its 128-bit state taken from the SHA-256
+  of the seed and the key: small, fast, well studied, and it gives the same sequence on
+  every JavaScript engine because it is 32-bit integer arithmetic only. A dependency
+  would bring nothing more and could change its sequence on an update. Each table and
+  each product gets its own sub-stream (`seed:product:<i>`), so adding a column to one
+  table later does not shift every other value; 128 bits of state keep a million
+  product streams apart (a 32-bit seed gave some of them equal streams).
 - **D-3. Products per category, then per brand.** Leaves have weights (graphics cards
   and SSDs many, mice and cases fewer); the product count of each leaf is
   `round(N × weight)` with the remainder given to the heaviest leaves, so the sum is N.
@@ -137,7 +138,7 @@ tools/datagen/
   package.json            # "datagen", bin-less; scripts build, lint, typecheck, test, start
   src/
     cli.ts                # parseArgs, .env, runs generate + load, prints the summary
-    random.ts             # splitmix32, sfc32, sub-streams, Zipf CDF, picks (D-2, D-3)
+    random.ts             # sfc32 seeded by SHA-256, sub-streams, Zipf CDF, picks (D-2, D-3)
     ids.ts                # UUIDv7 from a time and random bits (D-5)
     csv.ts                # one row → one CSV line (D-1)
     catalog/              # the fixed description: tree, attributes, brands, lines (D-6)

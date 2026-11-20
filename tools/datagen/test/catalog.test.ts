@@ -151,8 +151,14 @@ describe('what a leaf can draw (FR-005, FR-008, plan D-6)', () => {
       for (const a of l.path) {
         for (const v of a.draw?.choices ?? []) check('draw choice', a.code, v);
       }
-      for (const code of leaf.nameSpecs ?? [])
+      // A spec in the name must always be there: required, or fixed by every model;
+      // an optional one would put "undefined" into some names and slugs.
+      for (const code of leaf.nameSpecs ?? []) {
         expect(byCode.has(code), `${l.def.slug}: ${code}`).toBe(true);
+        const always =
+          byCode.get(code)!.required || leaf.models.every((m) => m.specs?.[code] !== undefined);
+        expect(always, `${l.def.slug}: name spec ${code} may be missing`).toBe(true);
+      }
       expect(leaf.price[0]).toBeGreaterThan(0);
       expect(leaf.price[0]).toBeLessThan(leaf.price[1]);
       expect(leaf.weight).toBeGreaterThan(0);
