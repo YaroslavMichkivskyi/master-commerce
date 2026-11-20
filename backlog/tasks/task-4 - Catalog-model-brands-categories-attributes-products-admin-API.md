@@ -1,11 +1,11 @@
 ---
 id: TASK-4
 title: 'Catalog model: brands, categories, attributes, products, admin API'
-status: In Progress
+status: Done
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-20T22:26:00Z'
+updated_date: '2026-11-20T22:27:00Z'
 labels:
   - mvp
   - speckit-full
@@ -68,3 +68,13 @@ AI review (Claude Code /code-review, high, branch vs origin/dev): 10 findings, e
 - Fixed: null in an update reached NOT NULL columns as a 500 (now 400); the seed re-inserted a renamed seeded category under its old slug; a slug such as '..' turned a gateway by-slug lookup into the catalog's list (now 400); the catalog's OpenAPI of a category change missed one 409 cause.
 - Left as is: gateway timeout on subtree checks (measured 158 ms for 50 220 products, the 2 s limit needs ~10x the MVP catalog); an old .env with the owner URL (the service refuses it with a message naming the fix, once); weak W/ ETags accepted in If-Match (on purpose, a compressing proxy weakens ETags; the reason is in versioning.ts); the privileged-role guard misses a member of the owner role (a misconfiguration net, not a security boundary); copied helpers and per-attribute statements (quality, no effect).
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+The catalog now has its model and an admin API: brands; a category tree of any depth whose categories define typed attributes (select, multi-select, number, boolean, text) inherited down the tree; products in leaf categories with euro prices in cents (VAT included), stock, publication and specs validated against the effective attributes on every write. Every entity has a UUIDv7 id, audit columns, soft delete with restore, a version used with ETag / If-Match (412 stale, 428 missing), cursor-paged lists and a slug history that keeps old links working. Rules of one row are database constraints; rules across rows are checked by the service under row and advisory locks; attribute changes and moves that would break stored products answer 409 with the count. The service runs as a least-privilege role (no DDL, no DELETE), migrations run apart with the owner. api-gateway exposes the 24 endpoints under /api/v1/admin/catalog and forwards them with the catalog's answers (ADR 0021); the data conventions are ADR 0022.
+
+Verified: format, lint, typecheck, unit and integration tests (catalog 72 + 122, gateway 19 + 62, service-core 80), build --force; fresh clone; quickstart on the local stack, including the upgrade of an existing database; NFR-001 create / update median 8.9 / 8.4 ms with 100 220 products (limit 50 ms); AI review with 4 fixes.
+
+Risks: the gateway is coupled to the catalog's paths (covered by a test of every route); admin endpoints are public until TASK-7; deleted rows are kept, purging is later work.
+<!-- SECTION:FINAL_SUMMARY:END -->
