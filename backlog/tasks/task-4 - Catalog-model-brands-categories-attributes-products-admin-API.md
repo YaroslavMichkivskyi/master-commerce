@@ -5,7 +5,7 @@ status: Done
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-20T22:27:00Z'
+updated_date: '2026-11-20T22:34:00Z'
 labels:
   - mvp
   - speckit-full
@@ -41,9 +41,9 @@ Spec: `specs/004-catalog-model/`
 ## Definition of Done
 <!-- DOD:BEGIN -->
 - [x] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
-- [ ] #2 Tests added / updated and green locally and in CI
+- [x] #2 Tests added / updated and green locally and in CI
 - [x] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
-- [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
+- [x] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
 
 ## Implementation Plan
