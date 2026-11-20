@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-20T14:59:00Z'
+updated_date: '2026-11-20T22:26:00Z'
 labels:
   - mvp
   - speckit-full
@@ -32,17 +32,17 @@ Spec: `specs/004-catalog-model/`
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 A 'Graphics cards' category with attributes and a product with valid specs can be created via the API
-- [ ] #2 Specs that violate the category schema are rejected with a Problem Details error
-- [ ] #3 Migrations apply from scratch and are covered by integration tests
-- [ ] #4 The database enforces what the shared DTOs validate (CHECK constraints for name length, slug format, …), so a row the API would reject cannot be stored; writes are validated before they reach the database
+- [x] #1 A 'Graphics cards' category with attributes and a product with valid specs can be created via the API
+- [x] #2 Specs that violate the category schema are rejected with a Problem Details error
+- [x] #3 Migrations apply from scratch and are covered by integration tests
+- [x] #4 The database enforces what the shared DTOs validate (CHECK constraints for name length, slug format, …), so a row the API would reject cannot be stored; writes are validated before they reach the database
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
+- [x] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
 - [ ] #2 Tests added / updated and green locally and in CI
-- [ ] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
+- [x] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
 - [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
 
@@ -63,4 +63,8 @@ Verification (2026-11-20, Windows 11, Node 24, Docker Desktop):
 - Quickstart (specs/004-catalog-model/quickstart.md) on the local stack through the gateway: scenarios 1-8 answered as written; pnpm dev applied the new migrations to the existing TASK-2/3 database (upgrade path). Scenario 9 (pnpm reset) not run on the owner's data; the schema from scratch is covered by every integration test (Testcontainers, real migrations).
 - NFR-001 (test/nfr-001.int.test.ts, NFR_001=1): 100 220 products, 200 sequential HTTP writes each — create median 8.9 ms (p95 11.6), update median 8.4 ms (p95 10.6); limit 50 ms.
 - The note above (bad rows breaking the public list) is resolved: names, slugs and lengths are CHECK constraints now (US-4).
+
+AI review (Claude Code /code-review, high, branch vs origin/dev): 10 findings, each checked against the code.
+- Fixed: null in an update reached NOT NULL columns as a 500 (now 400); the seed re-inserted a renamed seeded category under its old slug; a slug such as '..' turned a gateway by-slug lookup into the catalog's list (now 400); the catalog's OpenAPI of a category change missed one 409 cause.
+- Left as is: gateway timeout on subtree checks (measured 158 ms for 50 220 products, the 2 s limit needs ~10x the MVP catalog); an old .env with the owner URL (the service refuses it with a message naming the fix, once); weak W/ ETags accepted in If-Match (on purpose, a compressing proxy weakens ETags; the reason is in versioning.ts); the privileged-role guard misses a member of the owner role (a misconfiguration net, not a security boundary); copied helpers and per-attribute statements (quality, no effect).
 <!-- SECTION:NOTES:END -->
