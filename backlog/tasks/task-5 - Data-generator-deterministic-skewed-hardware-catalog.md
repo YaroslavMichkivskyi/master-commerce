@@ -1,10 +1,11 @@
 ---
 id: TASK-5
 title: 'Data generator: deterministic, skewed hardware catalog'
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-08T15:32:00Z'
+updated_date: '2026-11-20T22:47:00Z'
 labels:
   - mvp
   - speckit-light
@@ -41,3 +42,9 @@ Spec: `specs/005-datagen/`
 - [ ] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
 - [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+speckit-light: spec specs/005-datagen -> plan -> tasks -> implement
+<!-- SECTION:PLAN:END -->
