@@ -40,6 +40,6 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
 ## Phase 4 — Docs and verification
 - [x] T008 [P] README (filling the catalog), `docs/technologies.md` (generator,
   `pg-copy-streams`), `quickstart.md`
-- [ ] T009 full checks (`format:check`, `turbo run lint typecheck test test:integration
+- [x] T009 full checks (`format:check`, `turbo run lint typecheck test test:integration
   build --force`), fresh clone, the pinned hash on Windows and in CI, NFR-001 (100 000
   timed) and NFR-002 (1 000 000, peak memory) on the local stack; notes in TASK-5
