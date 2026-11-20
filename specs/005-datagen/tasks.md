@@ -38,7 +38,7 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   generated product; `db:migrate` afterwards seeds nothing again
 
 ## Phase 4 — Docs and verification
-- [ ] T008 [P] README (filling the catalog), `docs/technologies.md` (generator,
+- [x] T008 [P] README (filling the catalog), `docs/technologies.md` (generator,
   `pg-copy-streams`), `quickstart.md`
 - [ ] T009 full checks (`format:check`, `turbo run lint typecheck test test:integration
   build --force`), fresh clone, the pinned hash on Windows and in CI, NFR-001 (100 000
