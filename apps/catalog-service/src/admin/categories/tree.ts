@@ -1,3 +1,4 @@
+import { ConflictException } from '@nestjs/common';
 import type { AttributeDto } from '@master-commerce/dto';
 import { and, asc, count, eq, inArray, isNull, sql } from 'drizzle-orm';
 import {
@@ -39,6 +40,33 @@ export async function lockLiveCategory(
     .where(and(eq(category.id, id), liveCategory))
     .for(mode);
   return row;
+}
+
+/**
+ * The live path from the root down to `categoryId`, every row locked `FOR SHARE`: what a
+ * product write depends on. A change of attributes on any of them, or a move, waits for
+ * the product, or the product waits and then reads what they changed (R-5). `undefined`
+ * when the category does not exist or is deleted.
+ */
+export async function lockLivePath(
+  tx: Executor,
+  categoryId: string,
+): Promise<CategoryRow[] | undefined> {
+  // A move committed while we waited changes the path: lock the new one too.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const ids = await pathTo(tx, categoryId);
+    if (ids.length === 0) return undefined;
+    const rows = await tx
+      .select()
+      .from(category)
+      .where(and(inArray(category.id, ids), liveCategory))
+      .orderBy(asc(category.id))
+      .for('share');
+    if (rows.length !== ids.length) return undefined;
+    const again = await pathTo(tx, categoryId);
+    if (again.join() === ids.join()) return ids.map((id) => rows.find((r) => r.id === id)!);
+  }
+  throw new ConflictException('The category tree is being changed; try again');
 }
 
 /** The ids from the root down to `id`, `id` included; empty when it does not exist. */

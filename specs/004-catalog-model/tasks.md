@@ -47,7 +47,7 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   check on a move; integration tests
 
 ## Phase 6 — Products (FR-020…FR-025, US-2, US-3)
-- [ ] T014 `src/admin/products/`: create (leaf category, live brand, specs), list with
+- [x] T014 `src/admin/products/`: create (leaf category, live brand, specs), list with
   filters and cursor, read, by-slug, update (incl. a category change), publish,
   unpublish, delete, restore; integration tests incl. the specs error body and two
   concurrent updates → one `412`

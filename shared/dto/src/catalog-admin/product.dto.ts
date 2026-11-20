@@ -14,7 +14,7 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import { AuditedDto, PageInfoDto, PageQueryDto, SLUG_PATTERN } from './common.dto.js';
+import { AuditedDto, PageInfoDto, PageQueryDto, SLUG_PATTERN, Trim } from './common.dto.js';
 
 export const SKU_PATTERN = /^[A-Z0-9][A-Z0-9-]*$/;
 /** The largest price `integer` cents hold: 21 474 836.47 EUR. */
@@ -60,6 +60,7 @@ export class ProductDto extends AuditedDto {
 
 export class CreateProductDto {
   @ApiProperty({ example: 'ASUS Dual GeForce RTX 4060 8GB', minLength: 1, maxLength: 200 })
+  @Trim()
   @IsString()
   @Length(1, 200)
   name!: string;

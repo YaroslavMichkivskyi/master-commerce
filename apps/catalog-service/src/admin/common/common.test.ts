@@ -59,6 +59,15 @@ describe('PostgreSQL errors', () => {
     await expect(conflictOnUnique(() => Promise.reject(unique), 'taken')).rejects.toThrow(
       ConflictException,
     );
+    const sku = new Error('query failed', {
+      cause: Object.assign(new Error('duplicate key'), { code: '23505', constraint: 'sku_live' }),
+    });
+    await expect(
+      conflictOnUnique(
+        () => Promise.reject(sku),
+        (c) => `taken: ${String(c)}`,
+      ),
+    ).rejects.toThrow('taken: sku_live');
     const other = new Error('connection lost');
     await expect(conflictOnUnique(() => Promise.reject(other), 'taken')).rejects.toBe(other);
   });
