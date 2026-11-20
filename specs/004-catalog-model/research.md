@@ -58,10 +58,13 @@ PostgreSQL 17, Drizzle 0.45 and the packages the catalog already has.
 ## R-5. Category tree (FR-010, FR-013, FR-015)
 
 - **Decision:** adjacency list (`parent_id` → `category.id`). Ancestors and subtrees
-  are read with recursive CTEs; the tree has hundreds of rows, so this is cheap. A
-  move, a new child and a product write lock the rows they depend on
-  (`SELECT … FOR UPDATE` on the category and its ancestors) inside one transaction, so
-  two concurrent writes cannot together break a rule that each checked alone.
+  are read with recursive CTEs; the tree has hundreds of rows, so this is cheap. Each
+  write locks what its rule depends on inside one transaction, so two concurrent
+  writes cannot together break a rule that each checked alone: a new child or a
+  product locks its category (`FOR UPDATE` / `FOR SHARE`), a delete locks the row it
+  deletes, and moves take one transaction-scoped advisory lock on the tree's shape —
+  row locks along two paths would deadlock when two moves cross (A under B, B under
+  A), and moves are rare.
 - **Rejected:** `ltree` / materialised paths — faster subtree reads the MVP does not
   need, and every move rewrites all descendants; a closure table — another table to
   keep in step.

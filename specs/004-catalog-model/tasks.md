@@ -40,7 +40,7 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
 ## Phase 5 — Categories and attributes (FR-010…FR-015, US-1, R-5, R-8, R-9)
 - [x] T011 [P] `src/admin/specs.ts`: `validateSpecs` and effective attributes; unit
   tests for every type and rule
-- [ ] T012 `src/admin/categories/`: tree, create, read, by-slug, update, move (cycle,
+- [x] T012 `src/admin/categories/`: tree, create, read, by-slug, update, move (cycle,
   new parent with products), delete (children, products), restore; integration tests
 - [ ] T013 `PUT /admin/categories/{id}/attributes`: replace as a set, codes unique along
   the path, the subtree's products validated (R-9) → `409` with the count; the same

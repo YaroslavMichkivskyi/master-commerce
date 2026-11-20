@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ServiceCoreModule } from '@master-commerce/service-core';
 import { BrandsModule } from './admin/brands/brands.module.js';
+import { AdminCategoriesModule } from './admin/categories/admin-categories.module.js';
 import { CategoriesModule } from './categories/categories.module.js';
 import { DatabaseModule } from './db/database.module.js';
 import { DatabaseReadiness } from './db/database.readiness.js';
@@ -20,6 +21,7 @@ import { CatalogEnv, ROOT_ENV_FILE } from './env.js';
     DatabaseModule,
     CategoriesModule,
     BrandsModule,
+    AdminCategoriesModule,
   ],
 })
 export class AppModule {}

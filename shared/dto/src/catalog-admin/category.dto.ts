@@ -18,7 +18,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
-import { AuditedDto, SLUG_PATTERN } from './common.dto.js';
+import { AuditedDto, SLUG_PATTERN, Trim } from './common.dto.js';
 
 export const ATTRIBUTE_TYPES = ['select', 'multi_select', 'number', 'boolean', 'text'] as const;
 export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
@@ -161,6 +161,7 @@ export class CategoryTreeDto {
 
 export class CreateCategoryDto {
   @ApiProperty({ example: 'Graphics cards', minLength: 1, maxLength: 100 })
+  @Trim()
   @IsString()
   @Length(1, 100)
   name!: string;
