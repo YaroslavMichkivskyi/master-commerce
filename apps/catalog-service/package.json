@@ -2,7 +2,7 @@
   "name": "catalog-service",
   "version": "0.1.0",
   "private": true,
-  "description": "Catalog of the shop: categories (more with TASK-4)",
+  "description": "Catalog of the shop: brands, the category tree with attributes, products",
   "type": "module",
   "scripts": {
     "build": "nest build",
@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --dir src",
     "test:integration": "vitest run --dir test",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node dist/migrate.js"
   },
   "dependencies": {
     "@master-commerce/dto": "workspace:*",

@@ -8,6 +8,27 @@
       "when": 1794251023185,
       "tag": "0000_init",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794871575229,
+      "tag": "0001_app_role",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794872503258,
+      "tag": "0002_uuid_v7",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1794872535363,
+      "tag": "0003_catalog_model",
+      "breakpoints": true
     }
   ]
 }

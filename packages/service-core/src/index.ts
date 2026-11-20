@@ -8,7 +8,13 @@ export { READINESS_CHECKS, type ReadinessCheck } from './health/readiness.js';
 export { Lifecycle, shutDown } from './lifecycle.js';
 export { httpLoggerOptions, type LogIdentity } from './logging.js';
 export { Metrics, MetricsController } from './metrics/metrics.js';
-export { ApiProblemResponses, type DocsInfo, Public, setupOpenApi } from './openapi.js';
+export {
+  ApiProblemResponses,
+  ApiVersionedWrite,
+  type DocsInfo,
+  Public,
+  setupOpenApi,
+} from './openapi.js';
 export { SERVICE_CORE_OPTIONS, type ServiceCoreOptions } from './options.js';
 export { ServiceCoreModule } from './service-core.module.js';
 export {

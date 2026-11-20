@@ -24,3 +24,5 @@ Decisions that outlive a single feature. Format: MADR (`template.md`); how and w
 | [0018](0018-local-stack-infra-in-compose-apps-on-host.md) | Local stack: infrastructure in Docker Compose, apps on the host | accepted |
 | [0019](0019-test-tooling-vitest-testcontainers.md) | Test tooling: Vitest everywhere, Testcontainers for integration tests | accepted |
 | [0020](0020-service-core.md) | Service core: one library gives every service its config, logs, health, metrics, errors, OpenAPI and shutdown | accepted |
+| [0021](0021-gateway-forwards-service-apis.md) | The gateway declares each service endpoint it exposes and forwards it, passing the service's answers through | accepted |
+| [0022](0022-service-database-conventions.md) | Service database conventions: UUIDv7, money in cents, soft delete, versions, cursor paging, least-privilege roles | accepted |

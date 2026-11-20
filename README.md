@@ -21,10 +21,14 @@ pnpm install
 pnpm dev
 ```
 
-`pnpm dev` creates `.env` from `.env.example` if it is missing, checks that the ports
-are free, starts the infrastructure in Docker Compose (3 × PostgreSQL, RabbitMQ) and
-waits until it is healthy, then runs the apps on the host with hot reload
-(ADR [0018](docs/adr/0018-local-stack-infra-in-compose-apps-on-host.md)):
+`pnpm dev` creates `.env` from `.env.example` if it is missing (or adds the settings an
+older `.env` lacks), checks that the ports are free, starts the infrastructure in Docker
+Compose (3 × PostgreSQL, RabbitMQ) and waits until it is healthy, applies the catalog
+migrations with the database owner (`pnpm --filter catalog-service db:migrate`), then
+runs the apps on the host with hot reload
+(ADR [0018](docs/adr/0018-local-stack-infra-in-compose-apps-on-host.md)). The catalog
+service itself connects as `catalog_app`, a role that can't change the schema or delete
+rows:
 
 | App | URL |
 |---|---|
@@ -41,6 +45,13 @@ Every backend service also answers on the same paths
 | `/health/live` | the process answers |
 | `/health/ready` | its dependencies are reachable and it is not stopping (`503` otherwise) |
 | `/metrics` | Prometheus metrics |
+
+The catalog's admin API — brands, the category tree with the attributes of its
+products, products with their specs — is served by the gateway under
+`/api/v1/admin/catalog/...` (open until sign-in exists). Every change needs the
+version the client read: send the `ETag` of the last answer back as `If-Match`
+([ADR 0022](docs/adr/0022-service-database-conventions.md)). A walk through it with
+curl: [`specs/004-catalog-model/quickstart.md`](specs/004-catalog-model/quickstart.md).
 
 Ports and connection strings are in `.env`. If a port is taken, `pnpm dev` names it;
 change it in `.env`. Logs are JSON lines; set `LOG_PRETTY=true` in `.env` for readable

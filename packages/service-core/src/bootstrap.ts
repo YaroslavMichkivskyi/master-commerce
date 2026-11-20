@@ -1,5 +1,6 @@
 import { type INestApplication, Logger as NestLogger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger } from 'nestjs-pino';
 import { type BaseEnv, ENV, InvalidConfigError } from './env.js';
 import { validationPipe } from './errors/validation.js';
@@ -21,9 +22,9 @@ export async function createServiceApp(appModule: AppModule): Promise<INestAppli
   // a bad config reaches the caller as an error instead of killing the process.
   // autoFlushLogs: false — on such an error the buffer, which holds the same error with
   // its stack in Nest's text format, is dropped: `startService` prints it once.
-  let app: INestApplication;
+  let app: NestExpressApplication;
   try {
-    app = await NestFactory.create(appModule, {
+    app = await NestFactory.create<NestExpressApplication>(appModule, {
       bufferLogs: true,
       autoFlushLogs: false,
       abortOnError: false,
@@ -35,6 +36,9 @@ export async function createServiceApp(appModule: AppModule): Promise<INestAppli
   try {
     app.useLogger(app.get(Logger));
     app.flushLogs();
+    // An `ETag` here is the version of an entity (If-Match), set by the service itself;
+    // Express's own body-hash ETag would put a value no If-Match accepts on every answer.
+    app.set('etag', false);
     // Before the module middleware (the request logger), so the id exists when it logs.
     app.use(requestContext);
     app.use(app.get(Metrics).middleware);

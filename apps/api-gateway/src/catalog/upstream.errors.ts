@@ -1,4 +1,6 @@
-import { BadGatewayException, ServiceUnavailableException } from '@nestjs/common';
+import { STATUS_CODES } from 'node:http';
+import { BadGatewayException, HttpException, ServiceUnavailableException } from '@nestjs/common';
+import type { FieldErrorDto } from '@master-commerce/dto';
 
 /** The upstream could not be reached or did not answer in time → 503. */
 export class UpstreamUnavailableError extends ServiceUnavailableException {
@@ -20,5 +22,29 @@ export class UpstreamBadResponseError extends BadGatewayException {
     reason: string,
   ) {
     super(`${upstream} answered with an error`, { cause: new Error(reason) });
+  }
+}
+
+/**
+ * A `4xx` problem of the upstream: its answer to the client, passed on with its status,
+ * detail and `errors[]`. The gateway's problem filter writes the body again, so `instance`
+ * is the path the client called.
+ */
+export class UpstreamProblem extends HttpException {
+  static from(status: number, body: unknown): UpstreamProblem {
+    const problem = (typeof body === 'object' && body !== null ? body : {}) as {
+      detail?: unknown;
+      errors?: unknown;
+    };
+    const detail = typeof problem.detail === 'string' ? problem.detail : undefined;
+    const errors = Array.isArray(problem.errors) ? (problem.errors as FieldErrorDto[]) : undefined;
+    return new UpstreamProblem(status, detail, errors);
+  }
+
+  private constructor(status: number, detail: string | undefined, errors?: FieldErrorDto[]) {
+    super(
+      { message: detail ?? STATUS_CODES[status] ?? 'Error', ...(errors ? { errors } : {}) },
+      status,
+    );
   }
 }

@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { type Server } from 'node:http';
-import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
+import { type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { type INestApplication } from '@nestjs/common';
 import { CategoryListDto } from '@master-commerce/dto';
 import { plainToInstance } from 'class-transformer';
@@ -9,8 +9,10 @@ import pg from 'pg';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { createApp } from '../src/bootstrap.js';
-import { createPool, prepareDatabase } from '../src/db/database.js';
+import { createPool } from '../src/db/database.js';
+import { migrateDatabase } from '../src/db/migrate.js';
 import { SEED_CATEGORIES } from '../src/db/seed.js';
+import { APP_PASSWORD, startCatalogDatabase } from './support/catalog-database.js';
 
 interface HealthBody {
   status: string;
@@ -26,14 +28,16 @@ interface OpenApiBody {
 // FR-051: the real thread inside the service — migrations, seed, endpoint — on a real Postgres.
 describe('catalog-service against PostgreSQL', () => {
   let container: StartedPostgreSqlContainer;
+  let ownerUrl: string;
   let containerStopped = false;
   let app: INestApplication;
 
   const http = () => request(app.getHttpServer() as Server);
 
   beforeAll(async () => {
-    container = await new PostgreSqlContainer('postgres:17.11-alpine').start();
-    process.env.CATALOG_DATABASE_URL = container.getConnectionUri();
+    const db = await startCatalogDatabase();
+    ({ container, ownerUrl } = db);
+    process.env.CATALOG_DATABASE_URL = db.appUrl;
     app = await createApp();
     await app.init();
   });
@@ -44,9 +48,9 @@ describe('catalog-service against PostgreSQL', () => {
   });
 
   it('migrates and seeds idempotently (FR-002)', async () => {
-    const pool = createPool(container.getConnectionUri());
+    await migrateDatabase(ownerUrl, APP_PASSWORD); // the harness already ran it once
+    const pool = createPool(ownerUrl);
     try {
-      await prepareDatabase(pool); // the app already ran it once
       const { rows } = await pool.query<{ count: string }>('select count(*) from category');
       expect(Number(rows[0]?.count)).toBe(SEED_CATEGORIES.length);
     } finally {
@@ -76,6 +80,28 @@ describe('catalog-service against PostgreSQL', () => {
     expect(body.items.at(-1)).toMatchObject({ name: 'Monitors', slug: 'monitors' });
   });
 
+  it('says which category is the parent, and leaves deleted ones out (FR-014)', async () => {
+    const client = new pg.Client({ connectionString: container.getConnectionUri() });
+    await client.connect();
+    try {
+      await client.query(
+        `insert into category(name, slug, sort_order, parent_id)
+         select 'Gaming monitors', 'gaming-monitors', 80, id from category where slug = 'monitors'`,
+      );
+      await client.query(
+        "insert into category(name, slug, sort_order, deleted_at) values ('Old', 'old', 90, now())",
+      );
+    } finally {
+      await client.end();
+    }
+
+    const { items } = (await http().get('/categories').expect(200)).body as CategoryListDto;
+    const monitors = items.find((c) => c.slug === 'monitors');
+    expect(monitors?.parentId).toBeNull();
+    expect(items.find((c) => c.slug === 'gaming-monitors')?.parentId).toBe(monitors?.id);
+    expect(items.map((c) => c.slug)).not.toContain('old');
+  });
+
   it('GET /health/ready reports the database up (TASK-3 FR-021)', async () => {
     const res = await http().get('/health/ready').expect(200);
     expect((res.body as HealthBody).info?.database?.status).toBe('up');
@@ -97,6 +123,22 @@ describe('catalog-service against PostgreSQL', () => {
     const res = await http().get('/docs-json').expect(200);
     const body = res.body as OpenApiBody;
     expect(Object.keys(body.paths).sort()).toEqual([
+      '/admin/brands',
+      '/admin/brands/by-slug/{slug}',
+      '/admin/brands/{id}',
+      '/admin/brands/{id}/restore',
+      '/admin/categories',
+      '/admin/categories/by-slug/{slug}',
+      '/admin/categories/tree',
+      '/admin/categories/{id}',
+      '/admin/categories/{id}/attributes',
+      '/admin/categories/{id}/restore',
+      '/admin/products',
+      '/admin/products/by-slug/{slug}',
+      '/admin/products/{id}',
+      '/admin/products/{id}/publish',
+      '/admin/products/{id}/restore',
+      '/admin/products/{id}/unpublish',
       '/categories',
       '/health/live',
       '/health/ready',

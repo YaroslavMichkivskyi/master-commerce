@@ -1,9 +1,8 @@
 import { fileURLToPath } from 'node:url';
 import { Logger } from '@nestjs/common';
+import { InvalidConfigError } from '@master-commerce/service-core';
 import { drizzle, type NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import pg from 'pg';
-import { seed } from './seed.js';
 
 export const PG_POOL = Symbol('PG_POOL');
 export const DB = Symbol('DB');
@@ -30,10 +29,25 @@ export function createPool(databaseUrl: string): pg.Pool {
   return pool;
 }
 
-/** Applies pending migrations, then the idempotent seed (FR-002). */
-export async function prepareDatabase(pool: pg.Pool): Promise<Database> {
-  const db = drizzle(pool);
-  await migrate(db, { migrationsFolder: MIGRATIONS_FOLDER });
-  await seed(db);
-  return db;
+/**
+ * The service's connection (FR-043). Migrations are not applied here: the `db:migrate`
+ * step does that with the owner role. A role that could change the schema is refused,
+ * so an old `.env` pointing at the owner does not quietly run the service with it.
+ */
+export async function connectDatabase(pool: pg.Pool): Promise<Database> {
+  const { rows } = await pool.query<{ super: boolean; owns: boolean }>(
+    `SELECT r.rolsuper AS super,
+            EXISTS (SELECT 1 FROM pg_tables
+                    WHERE schemaname = 'public' AND tableowner = current_user) AS owns
+     FROM pg_roles r WHERE r.rolname = current_user`,
+  );
+  if (rows[0]?.super || rows[0]?.owns) {
+    throw new InvalidConfigError(
+      'Invalid configuration, the service cannot start:\n' +
+        '  CATALOG_DATABASE_URL: connects as a superuser or the owner of the schema; ' +
+        'the service runs as catalog_app (see .env.example), migrations use ' +
+        'CATALOG_MIGRATION_URL',
+    );
+  }
+  return drizzle(pool);
 }
