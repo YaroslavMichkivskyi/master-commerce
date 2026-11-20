@@ -53,6 +53,15 @@ version the client read: send the `ETag` of the last answer back as `If-Match`
 ([ADR 0022](docs/adr/0022-service-database-conventions.md)). A walk through it with
 curl: [`specs/004-catalog-model/quickstart.md`](specs/004-catalog-model/quickstart.md).
 
+To fill the catalog with a realistic hardware catalog — about 20 categories with their
+attributes, about 50 brands, products with specs, prices and stock — run
+`pnpm datagen --scale 100k` (also `1k`, `1m` or any number). The same `--seed` always
+gives the same catalog; the summary prints its hash. It loads as the database owner and
+refuses a catalog that already has brands or products unless `--reset` is given, which
+replaces the whole catalog. `--out <dir>` also writes the tables as CSV, `--no-load`
+leaves the database alone; `pnpm datagen --help` lists every option
+([`specs/005-datagen/quickstart.md`](specs/005-datagen/quickstart.md)).
+
 Ports and connection strings are in `.env`. If a port is taken, `pnpm dev` names it;
 change it in `.env`. Logs are JSON lines; set `LOG_PRETTY=true` in `.env` for readable
 ones. Each request's `X-Request-Id` is in every line it causes, in every service.
@@ -61,6 +70,7 @@ ones. Each request's `X-Request-Id` is in every line it causes, in every service
 |---|---|
 | `pnpm stop` | stop the containers, keep the data |
 | `pnpm reset` | stop the containers and delete their data |
+| `pnpm datagen --scale 100k [--reset]` | fill the catalog with generated products |
 | `pnpm lint`, `pnpm typecheck` | ESLint (type-checked) and TypeScript |
 | `pnpm test` | unit tests |
 | `pnpm test:integration` | integration tests on a throwaway PostgreSQL (needs Docker; ADR [0019](docs/adr/0019-test-tooling-vitest-testcontainers.md)) |
