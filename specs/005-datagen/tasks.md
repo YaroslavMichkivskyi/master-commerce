@@ -26,11 +26,11 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   out-of-stock and published; determinism and a pinned hash
 
 ## Phase 3 — Output and loading (FR-010…FR-015, D-7, D-8)
-- [ ] T006 `src/load.ts` + `src/cli.ts` + root script `pnpm datagen`: arguments, `.env`, schema check, refusal /
+- [x] T006 `src/load.ts` + `src/cli.ts` + root script `pnpm datagen`: arguments, `.env`, schema check, refusal /
   `--reset`, `COPY` of each table in one transaction, `ANALYZE`; `--out` CSV files,
   `--no-load`; the summary (parameters, counts, hash, time, peak memory); unit tests of
   the CSV output and the summary
-- [ ] T007 `apps/catalog-service/test/datagen.int.test.ts`: load 2 000 products into a
+- [x] T007 `apps/catalog-service/test/datagen.int.test.ts`: load 2 000 products into a
   migrated database as the owner; every product valid by `validateSpecs` against its
   effective attributes; refusal with products present, `--reset` replaces, a
   categories-only catalog replaced; a load failing half way leaves the tables as

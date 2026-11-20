@@ -12,3 +12,4 @@ export {
 } from './generate.js';
 export { uuidV7 } from './ids.js';
 export { cumulative, Random, stream, zipf } from './random.js';
+export { DatagenError, output, type OutputOptions, type OutputResult } from './load.js';
