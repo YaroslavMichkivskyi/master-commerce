@@ -1,11 +1,11 @@
 ---
 id: TASK-5
 title: 'Data generator: deterministic, skewed hardware catalog'
-status: In Progress
+status: Done
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-20T23:52:00Z'
+updated_date: '2026-11-20T23:53:00Z'
 labels:
   - mvp
   - speckit-light
@@ -30,16 +30,16 @@ Spec: `specs/005-datagen/`
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 The same seed produces the same data hash
-- [ ] #2 100K products load in under 2 minutes locally
-- [ ] #3 Generated products pass the TASK-4 spec validation
+- [x] #1 The same seed produces the same data hash
+- [x] #2 100K products load in under 2 minutes locally
+- [x] #3 Generated products pass the TASK-4 spec validation
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
+- [x] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
 - [ ] #2 Tests added / updated and green locally and in CI
-- [ ] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
+- [x] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
 - [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
 
@@ -65,3 +65,13 @@ AI review (Claude Code /code-review, high, branch vs origin/dev): 10 findings, e
 - After the fix the pinned hash of seed demo, 1 000 products is f627cfb5… (it replaces a2986c3d… above) — the same on Windows and on Linux (node:24-alpine, TZ Asia/Tokyo, de_DE). NFR re-measured in a throwaway catalog_bench: 100 000 products 6.1 s, 74 MB; 1 000 000 products 62.4 s, 110 MB.
 - Left as is: no error listener on the CSV write stream (only a wrong --out path; the process dies, the load rolls back); the URL described after the commit (connection strings here are always postgres:// URLs); partial CSV files after a failed load; --zipf Infinity printed with a stack (odd input); the hash loop in output() next to dataHash() (a test asserts they agree); per-line async iteration (within both NFR); the copied tier spread formula (quality).
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+New tool tools/datagen (pnpm datagen): fills the catalog database with a realistic computer-hardware catalog of any size — 27 categories (21 leaves) with attributes of all five types, some inherited; 51 brands with their product lines; products with names, specs consistent per model, prices that grow with the specs, stock and publication. The same seed gives the same catalog byte for byte (SHA-256 over the rows, 128-bit seeded sfc32 streams, no clock / locale / time zone); products per brand follow Zipf (1.1 by default). Rows stream into COPY in one transaction as the owner: a catalog with brands or products is refused unless --reset; a failed load leaves the database as it was; --out writes the same rows as CSV, --no-load only hashes.
+
+Verified: format, lint, typecheck, unit (datagen 51) and integration tests (catalog-service 130, 8 for datagen: the catalog's own validateSpecs on every generated product, the service as catalog_app on the loaded data), build --force; fresh clone; pinned hash f627cfb5… on Windows and Linux; 100 000 products in 6.1 s, 1 000 000 in 62.4 s with 110 MB; AI review with 3 fixes.
+
+Risks: a change of the catalog description or the generator changes every generated catalog (the pinned hash test makes that visible); --reset replaces the whole local catalog, as documented.
+<!-- SECTION:FINAL_SUMMARY:END -->
