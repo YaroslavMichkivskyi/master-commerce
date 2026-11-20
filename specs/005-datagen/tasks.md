@@ -5,12 +5,12 @@
 Each phase is one or more reviewed commits (`start-task.md` step 6).
 
 ## Phase 1 — Package and building blocks (FR-001, FR-007, D-1, D-2, D-5)
-- [ ] T001 `tools/datagen` package: `package.json` (pinned deps), `tsconfig`, Vitest
-  config, lint; root script `pnpm datagen`; builds in turbo with the rest
-- [ ] T002 `src/random.ts`: `splitmix32`, `sfc32`, sub-streams by key, integer / float /
+- [x] T001 `tools/datagen` package: `package.json` (pinned deps), `tsconfig`, Vitest
+  config, lint; builds in turbo with the rest
+- [x] T002 `src/random.ts`: `splitmix32`, `sfc32`, sub-streams by key, integer / float /
   pick / weighted pick / chance, Zipf CDF with binary search; unit tests: a pinned
   sequence, equal for equal keys, independent sub-streams, Zipf shape
-- [ ] T003 [P] `src/ids.ts` (UUIDv7 from a time and random bits) and `src/csv.ts` (one
+- [x] T003 [P] `src/ids.ts` (UUIDv7 from a time and random bits) and `src/csv.ts` (one
   row → one CSV line: quoting, numbers, dates, JSON, PostgreSQL arrays); unit tests
 
 ## Phase 2 — The catalog description (FR-003…FR-006, D-3, D-6)
@@ -26,7 +26,7 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   out-of-stock and published; determinism and a pinned hash
 
 ## Phase 3 — Output and loading (FR-010…FR-015, D-7, D-8)
-- [ ] T006 `src/load.ts` + `src/cli.ts`: arguments, `.env`, schema check, refusal /
+- [ ] T006 `src/load.ts` + `src/cli.ts` + root script `pnpm datagen`: arguments, `.env`, schema check, refusal /
   `--reset`, `COPY` of each table in one transaction, `ANALYZE`; `--out` CSV files,
   `--no-load`; the summary (parameters, counts, hash, time, peak memory); unit tests of
   the CSV output and the summary
