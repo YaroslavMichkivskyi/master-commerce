@@ -53,7 +53,7 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   concurrent updates → one `412`
 
 ## Phase 7 — Gateway (FR-050, FR-051, R-11)
-- [ ] T015 `CatalogClient.forward()`: method, path, query, body, `If-Match`, correlation
+- [x] T015 `CatalogClient.forward()`: method, path, query, body, `If-Match`, correlation
   id; `2xx` and `4xx` passed through with body and `ETag`; `5xx` → `502`, down → `503`;
   tests with the stub catalog
 - [ ] T016 `src/catalog/admin/`: the 24 admin endpoints with the shared DTOs and
