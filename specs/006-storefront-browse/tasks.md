@@ -15,13 +15,13 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   roadmap table
 
 ## Phase 2 — Contracts and query building blocks (FR-002…FR-005, FR-010, R-2, R-3, R-7, R-9a)
-- [ ] T003 [P] `shared/dto/src/storefront/`: list page, facet, card, category tree,
+- [x] T003 [P] `shared/dto/src/storefront/`: list page, facet, card, category tree,
   product, sitemap DTOs with OpenAPI
-- [ ] T004 `src/storefront/filters.ts`: query parameters → filters against the
+- [x] T004 `src/storefront/filters.ts`: query parameters → filters against the
   category's attributes (unknown ignored, malformed → `400`, the limits of R-9a);
   `search-query.ts`: words → `tsquery` with a prefix last word; unit tests incl.
   injection strings
-- [ ] T005 `src/storefront/list-query.ts`: the list statement (scope, per-group flags,
+- [x] T005 `src/storefront/list-query.ts`: the list statement (scope, per-group flags,
   page with out-of-stock last, total, disjunctive facets, ranges), every value bound;
   unit tests of the statement and its parameters
 
