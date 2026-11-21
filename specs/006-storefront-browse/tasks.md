@@ -6,12 +6,12 @@
 Each phase is one or more reviewed commits (`start-task.md` step 6).
 
 ## Phase 1 — Search document (FR-010, R-4, data-model)
-- [ ] T001 migration `0004_storefront_search.sql` (custom): `catalog_search_document()`,
+- [x] T001 migration `0004_storefront_search.sql` (custom): `catalog_search_document()`,
   `product.search`, the product / brand / category triggers, the GIN and the two
   storefront indexes, existing rows filled; `schema.ts`; integration tests: the
   document on insert, after a product, brand and category rename, after a data
   generator load; `catalog_app` writes still work
-- [ ] T002 ADR 0023 (derived data kept by triggers, amends ADR 0022 §7) + index +
+- [x] T002 ADR 0023 (derived data kept by triggers, amends ADR 0022 §7) + index +
   roadmap table
 
 ## Phase 2 — Contracts and query building blocks (FR-002…FR-005, FR-010, R-2, R-3, R-7, R-9a)

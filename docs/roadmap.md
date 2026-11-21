@@ -96,4 +96,5 @@ MinIO and Mailpit.
 | 0019 | Test tooling: Vitest everywhere, Testcontainers for integration tests |
 | 0020 | Service core: one library for config, logs, health, metrics, errors, OpenAPI and shutdown |
 | 0021 | The gateway declares each service endpoint it exposes and forwards it |
-| 0022 | Service database conventions: UUIDv7, money in cents, soft delete, versions, cursor paging, least-privilege roles |
+| 0022 | Service database conventions: UUIDv7, money in cents, soft delete, versions, cursor paging, least-privilege roles (amended by 0023) |
+| 0023 | Derived data a database computes from its own rows is kept by triggers |
