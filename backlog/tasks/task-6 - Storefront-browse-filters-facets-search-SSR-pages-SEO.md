@@ -1,10 +1,11 @@
 ---
 id: TASK-6
 title: 'Storefront browse: filters, facets, search, SSR pages, SEO'
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-08T15:32:00Z'
+updated_date: '2026-11-21T00:02:00Z'
 labels:
   - mvp
   - speckit-full
@@ -43,3 +44,9 @@ Spec: `specs/006-storefront-browse/`
 - [ ] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
 - [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+speckit-full: spec specs/006-storefront-browse -> clarify -> plan -> tasks -> implement
+<!-- SECTION:PLAN:END -->
