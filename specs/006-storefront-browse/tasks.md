@@ -36,10 +36,10 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   list
 
 ## Phase 4 — Web (FR-030…FR-035, R-6, R-7)
-- [ ] T008 `lib/catalog.ts` (typed client, cache per case), `lib/query.ts` (address ↔
+- [x] T008 `lib/catalog.ts` (typed client, cache per case), `lib/query.ts` (address ↔
   filters, links that keep the query and reset the page), components: breadcrumbs,
   facets, product card, pagination, price; unit tests
-- [ ] T009 pages: home, `/c/[slug]`, `/brands/[slug]`, `/search`, `/p/[slug]`;
+- [x] T009 pages: home, `/c/[slug]`, `/brands/[slug]`, `/search`, `/p/[slug]`;
   redirects of old slugs, `404`, "unavailable"; tests with a stubbed gateway;
   **then the stack is started with generated data and the pages, both Swagger UIs and
   the rest are opened for the owner to see**

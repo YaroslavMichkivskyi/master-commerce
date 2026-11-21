@@ -4,7 +4,7 @@ export type CategoriesResult = { kind: 'ok'; items: CategoryDto[] } | { kind: 'u
 
 const TIMEOUT_MS = 3000;
 
-function gatewayUrl(): string {
+export function gatewayUrl(): string {
   return process.env.GATEWAY_URL ?? 'http://localhost:3001';
 }
 
