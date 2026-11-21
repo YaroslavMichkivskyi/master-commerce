@@ -76,6 +76,7 @@ read by every agent runtime.
 | `docs/playbooks/create-task.md` | new work or a bug has no task yet |
 | `docs/playbooks/start-task.md` | starting any task — branch `task-<N>` / `bug-<N>` from `dev` |
 | `docs/playbooks/speckit-run.md` | a task labelled `speckit-full` / `speckit-light` |
+| `docs/playbooks/test-cases.md` | a task's `tasks.md` exists (write its test cases), or it is implemented (run them before closing) |
 | `docs/playbooks/close-task.md` | a task is implemented — verify, close, push, PR to `dev` |
 | `docs/playbooks/write-adr.md` | a decision outlives the current task |
 | `docs/playbooks/release.md` | moving `dev` to `main`, version tags, `mvp-v1` |

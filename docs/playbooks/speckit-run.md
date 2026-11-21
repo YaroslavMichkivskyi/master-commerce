@@ -38,9 +38,11 @@
 7. **Tasks** (`speckit-tasks`): dependency-ordered, by user story, with file paths;
    independent items marked `[P]` may be given to parallel subagents in separate git
    worktrees.
+   Then write the test cases `specs/<NNN>-<name>/test-cases.md` (`test-cases.md`) and
+   commit them with `tasks.md`.
 8. **Implement** (`speckit-implement`) phase by phase, ticking `[X]` in `tasks.md`,
    committing per phase on the task branch after the owner reviews it (`start-task.md` step 6). Tests with every phase.
-9. Finish with `close-task.md`.
+9. Run the test cases (`test-cases.md`), then finish with `close-task.md`.
 
 ## Upgrading spec-kit
 Stable tags only, never `*.devN`. Reinstall the CLI at the new tag, run
@@ -55,6 +57,6 @@ the upgrade alone (`chore: spec-kit X.Y.Z`) through its own task.
 - spec-kit never pushes or opens PRs — that is `close-task.md`.
 
 ## Done when
-- `specs/<NNN>-<name>/` holds spec, plan, tasks (and research / data-model / contracts
+- `specs/<NNN>-<name>/` holds spec, plan, tasks, test cases (and research / data-model / contracts
   where the plan needs them); every task item is `[X]`; the code is committed on the
   task branch.

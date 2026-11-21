@@ -13,7 +13,9 @@
    merge if the branch is already shared); resolve conflicts and re-run checks.
 3. **Verify, don't assume.** Run lint, typecheck and tests of affected packages
    (`pnpm turbo run lint typecheck test --filter=...[origin/dev]`) and the relevant
-   integration / e2e tests via Docker Compose. UI → exercise it in a browser. A check
+   integration / e2e tests via Docker Compose. UI → exercise it in a browser. A task
+   with `specs/<NNN>-*/test-cases.md` → run them (`test-cases.md`): no `FAIL` left, and
+   the summary line of the run goes to the PR body. A check
    that cannot run is reported as not run, never as passed. CI can also be run by hand
    on the branch before the PR: `gh workflow run ci.yml --ref task-<N>` (inputs `lint`,
    `typecheck`, `test`, `integration`, `scope`).

@@ -9,3 +9,4 @@ __pycache__/
 coverage/
 *.tsbuildinfo
 next-env.d.ts
+test-reports/
