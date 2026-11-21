@@ -4,7 +4,7 @@ title: 'Cart: guest and user cart, merge on sign-in'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-08T15:32:00Z'
+updated_date: '2026-11-21T09:47:00Z'
 labels:
   - mvp
   - speckit-full
@@ -13,6 +13,7 @@ labels:
 dependencies:
   - TASK-6
   - TASK-7
+  - TASK-36
 priority: medium
 ordinal: 9000
 ---

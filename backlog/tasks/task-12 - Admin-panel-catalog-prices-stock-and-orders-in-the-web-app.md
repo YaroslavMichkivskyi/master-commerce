@@ -4,7 +4,7 @@ title: 'Admin panel: catalog, prices, stock and orders in the web app'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-08T15:32:00Z'
+updated_date: '2026-11-21T09:47:00Z'
 labels:
   - mvp
   - speckit-full
@@ -13,6 +13,7 @@ dependencies:
   - TASK-4
   - TASK-7
   - TASK-11
+  - TASK-36
 priority: medium
 ordinal: 12000
 ---

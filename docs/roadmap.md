@@ -29,7 +29,7 @@ Done in order, the tasks give the MVP, frozen by the `mvp-v1` tag.
 ## Map
 
 ```
-1 ─► 2 ─► 3 ─┬─► 4 ─► 5 ─► 6 ──────────────┐
+1 ─► 2 ─► 3 ─┬─► 4 ─► 5 ─► 6 ─► 36 ────────┐
              ├─► 7 ────────────────┐        │
              └─► 8 ─────► 9 ─► 10 ─┴─► 11 ─► 12
                                             │
@@ -48,12 +48,13 @@ Done in order, the tasks give the MVP, frozen by the `mvp-v1` tag.
 | TASK-4 | catalog-model — brands, categories, attributes, products, admin API | speckit-full | 3 |
 | TASK-5 | datagen — deterministic skewed hardware data | speckit-light | 4 |
 | TASK-6 | storefront-browse — filters, facets, FTS, SSR / ISR pages, SEO | speckit-full | 5 |
+| TASK-36 | web-design — design system, storefront UI, rendering / performance / SEO rules, visual tests by test cases | speckit-full | 6 |
 | TASK-7 | identity — sign-up, sign-in, JWT, roles, addresses | speckit-full | 3 |
 | TASK-8 | messaging — `shared/events`, outbox / inbox, RabbitMQ topology | speckit-light | 3 |
-| TASK-9 | cart — guest and user cart, merge on sign-in | speckit-full | 6, 7 |
+| TASK-9 | cart — guest and user cart, merge on sign-in | speckit-full | 6, 7, 36 |
 | TASK-10 | checkout — orders, statuses, payment stub, `order.placed` | speckit-full | 8, 9 |
 | TASK-11 | stock-saga — reservation choreography, compensation | speckit-full | 10 |
-| TASK-12 | admin-panel — catalog, prices, stock, orders in the web app | speckit-full | 4, 7, 11 |
+| TASK-12 | admin-panel — catalog, prices, stock, orders in the web app | speckit-full | 4, 7, 11, 36 |
 | TASK-13 | observability — Prometheus, Grafana, exporters | speckit-light | 3 |
 | TASK-14 | quality-gates — e2e, contract tests, k6 smoke, Lighthouse | speckit-light | 11, 12 |
 | TASK-15 | aws-infra — CDK, budgets, OIDC, `deploy-lambdas` | speckit-light | 2 |
