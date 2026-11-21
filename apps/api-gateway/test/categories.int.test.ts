@@ -199,8 +199,10 @@ describe('api-gateway -> catalog-service', () => {
       .get('/docs-json')
       .expect(200);
     const body = res.body as OpenApiBody;
-    // The admin paths have their own test (admin.int.test.ts).
-    const paths = Object.keys(body.paths).filter((p) => !p.startsWith('/api/v1/admin/'));
+    // The admin and storefront paths have their own tests (admin / storefront .int.test.ts).
+    const paths = Object.keys(body.paths).filter(
+      (p) => !p.startsWith('/api/v1/admin/') && !p.startsWith('/api/v1/catalog/'),
+    );
     expect(paths.sort()).toEqual([
       '/api/v1/categories',
       '/health/live',

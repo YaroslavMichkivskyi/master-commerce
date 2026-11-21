@@ -26,12 +26,12 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   unit tests of the statement and its parameters
 
 ## Phase 3 — Storefront API (FR-001…FR-011, R-1, R-5)
-- [ ] T006 `src/storefront/` service, controller, module: tree with counts, category
+- [x] T006 `src/storefront/` service, controller, module: tree with counts, category
   and brand lists, search, product by slug (former slugs → current), newest, sitemap;
   OpenAPI; integration tests on a generated catalog: every facet count against brute
   force, sorts, paging, inner categories, search relevance and prefixes, unpublished /
   deleted never shown, old slugs, injection attempts, limits → `400`
-- [ ] T007 gateway `src/catalog/storefront.controller.ts`: the routes under
+- [x] T007 gateway `src/catalog/storefront.controller.ts`: the routes under
   `/api/v1/catalog/…`, forwarded, public; tests with the stub catalog and the OpenAPI
   list
 

@@ -18,6 +18,8 @@ export interface StorefrontAttribute {
   name: string;
   type: AttributeType;
   unit: string | null;
+  /** `select` / `multi_select`: the allowed values, in their order (facets follow it). */
+  allowedValues?: readonly string[] | null;
 }
 
 export type AttributeFilter =
