@@ -35,7 +35,7 @@ Done in order, the tasks give the MVP, frozen by the `mvp-v1` tag.
                                             │
          13 (after 3, grows with slices) ───┤
                                             ▼
-                         14 ─► 15 ─► 16 ─► 17 ─► 18 ─► 19 ─► 20 (mvp-v1)
+                         14 ─► 15 ─► 16 ─► 17 ─► 18 ─► 25 ─► 19 ─► 34 ─► 20 (mvp-v1)
 ```
 
 ## Tasks, in execution order
@@ -60,7 +60,9 @@ Done in order, the tasks give the MVP, frozen by the `mvp-v1` tag.
 | TASK-16 | media — product images, presigned upload, thumbnails | speckit-light | 12, 15 |
 | TASK-17 | cloud-bridge — events to SQS, `notify` e-mails | speckit-full | 11, 15 |
 | TASK-18 | seo-automation — on-demand ISR, sitemap Lambda | speckit-light | 6, 17 |
-| TASK-19 | delivery — images, VM deploy, Amplify, releases | speckit-light | 14, 15 |
+| TASK-25 | rate-limits — throttler in the gateway, shared counters, `429` | no-spec | 7, 14 |
+| TASK-19 | delivery — images, VM deploy, Amplify, releases | speckit-light | 14, 15, 25 |
+| TASK-34 | edge-protection — DDoS / bot mitigation in front of the shop, Caddy limits | speckit-light | 19, 25 |
 | TASK-20 | mvp-freeze — review, runbook, merge to `main`, tag `mvp-v1` | no-spec | all |
 
 AWS (TASK-15) is deliberately late: the 6 months of the AWS free plan start when the

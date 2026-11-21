@@ -4,7 +4,7 @@ title: 'MVP freeze: review, runbook, merge to main, tag mvp-v1'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:39:00Z'
-updated_date: '2026-11-12T20:23:00Z'
+updated_date: '2026-11-21T00:12:00Z'
 labels:
   - mvp
   - no-spec
@@ -28,6 +28,8 @@ dependencies:
   - TASK-17
   - TASK-18
   - TASK-19
+  - TASK-25
+  - TASK-34
 priority: medium
 ordinal: 20000
 ---

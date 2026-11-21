@@ -4,13 +4,15 @@ title: 'Gateway: rate limiting for the public API (throttler)'
 status: To Do
 assignee: []
 created_date: '2026-11-11T18:50:00Z'
+updated_date: '2026-11-21T00:11:00Z'
 labels:
-  - post-mvp
   - no-spec
   - backend
+  - mvp
 dependencies:
-  - TASK-20
-priority: low
+  - TASK-7
+  - TASK-14
+priority: medium
 ordinal: 25000
 ---
 
@@ -41,3 +43,9 @@ Scope:
 - [ ] #3 Docs updated (ADR, docs/technologies.md, README / runbook) where needed
 - [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Moved into the MVP (owner, 2026-11-21): the public storefront API (TASK-6) takes free input from anyone, so limits must be in place before the shop goes live (TASK-19). Volume attacks are stopped at the edge (TASK-34), not in the gateway.
+<!-- SECTION:NOTES:END -->
