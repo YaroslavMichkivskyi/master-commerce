@@ -35,7 +35,7 @@ Done in order, the tasks give the MVP, frozen by the `mvp-v1` tag.
                                             │
          13 (after 3, grows with slices) ───┤
                                             ▼
-                         14 ─► 15 ─► 16 ─► 17 ─► 18 ─► 25 ─► 19 ─► 34 ─► 20 (mvp-v1)
+                   37 ─► 14 ─► 15 ─► 16 ─► 17 ─► 18 ─► 25 ─► 19 ─► 34 ─► 20 (mvp-v1)
 ```
 
 ## Tasks, in execution order
@@ -56,6 +56,7 @@ Done in order, the tasks give the MVP, frozen by the `mvp-v1` tag.
 | TASK-11 | stock-saga — reservation choreography, compensation | speckit-full | 10 |
 | TASK-12 | admin-panel — catalog, prices, stock, orders in the web app | speckit-full | 4, 7, 11, 36 |
 | TASK-13 | observability — Prometheus, Grafana, exporters | speckit-light | 3 |
+| TASK-37 | storefront-speed — large-category lists within NFR-001, measured at 1 000 000 products | speckit-light | 6 |
 | TASK-14 | quality-gates — e2e, contract tests, k6 smoke, Lighthouse | speckit-light | 11, 12 |
 | TASK-15 | aws-infra — CDK, budgets, OIDC, `deploy-lambdas` | speckit-light | 2 |
 | TASK-16 | media — product images, presigned upload, thumbnails | speckit-light | 12, 15 |
