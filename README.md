@@ -85,6 +85,7 @@ ones. Each request's `X-Request-Id` is in every line it causes, in every service
 | `pnpm datagen --scale 100k [--reset]` | fill the catalog with generated products |
 | `pnpm lint`, `pnpm typecheck` | ESLint (type-checked) and TypeScript |
 | `pnpm test` | unit tests |
+| `pnpm --filter catalog-service test:nfr` | storefront speed on 100 000 generated products (on demand, a few minutes; P95 per NFR) |
 | `pnpm test:integration` | integration tests on a throwaway PostgreSQL (needs Docker; ADR [0019](docs/adr/0019-test-tooling-vitest-testcontainers.md)) |
 | `pnpm format` / `pnpm format:check` | Prettier |
 | `pnpm --filter <app> <script>` | one app only, e.g. `pnpm --filter catalog-service test` |

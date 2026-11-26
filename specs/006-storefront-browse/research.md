@@ -54,7 +54,12 @@ rejected.
   published). It is set by triggers: on product insert or update of those columns, and
   on a change of a brand's or category's name (updating that brand's / category's
   products). A query becomes `to_tsquery` of its words joined by `&`, the last one as a
-  prefix (`60:*`); ranking by `ts_rank_cd`.
+  prefix (`60:*`); ranking by `ts_rank` (the field weights).
+- **Ranking function, measured (T012):** `ts_rank_cd` (cover density: also rewards the
+  words standing close together) cost ~310 ms for the 7 906 matches of `gaming laptop`
+  in 100 000 products, `ts_rank` ~23 ms, and pushed the search P95 over NFR-002.
+  Product names are a few words long, so proximity adds little to the weights; `ts_rank`
+  is used.
 - **Why:** the document needs columns of three tables. Triggers keep it right whoever
   writes — the service, the data generator's `COPY`, a manual fix — with the definition
   in one place. ADR 0022 keeps triggers out of *rules* (the service must answer them

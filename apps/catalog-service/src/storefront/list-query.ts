@@ -109,7 +109,9 @@ export function listStatement(query: ListQuery): SQL {
         : sql`p.search @@ to_tsquery('english', ${scope.tsquery})`;
   const rank =
     scope.kind === 'search'
-      ? sql`ts_rank_cd(p.search, to_tsquery('english', ${scope.tsquery}))`
+      ? // ts_rank, not ts_rank_cd: the same field weights, ~13 times cheaper on thousands
+        // of matches; the word proximity ts_rank_cd adds means little in short names (R-4).
+        sql`ts_rank(p.search, to_tsquery('english', ${scope.tsquery}))`
       : sql`0`;
 
   // The filter groups; values of one group combine with OR, groups with AND (FR-002).

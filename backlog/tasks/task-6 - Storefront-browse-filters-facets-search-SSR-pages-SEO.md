@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-21T00:02:00Z'
+updated_date: '2026-11-26T23:20:00Z'
 labels:
   - mvp
   - speckit-full
@@ -50,3 +50,13 @@ Spec: `specs/006-storefront-browse/`
 <!-- SECTION:PLAN:BEGIN -->
 speckit-full: spec specs/006-storefront-browse -> clarify -> plan -> tasks -> implement
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Speed, measured 2026-11-27 (T012, `pnpm --filter catalog-service test:nfr`: fresh PostgreSQL 17.11, 100 000 products of seed demo, 15 timed runs per query after 3 warm-up runs, in-process HTTP on Windows 11):
+- Category lists (5 categories x 5 queries: unfiltered, sorted, two brands, brand + attribute + price + stock, page 40): P95 175.5 ms (NFR-001 <= 200 ms); the slowest query is the unfiltered Components list (38 664 products, inner category), P95 ~265 ms on its own.
+- Searches (10 queries, plain and filtered + sorted): P95 36.1 ms (NFR-002 <= 300 ms). With ts_rank_cd it was 310 ms (gaming laptop: 7 906 matches, ranking ~260 ms of it); switched to ts_rank (research R-4).
+- Data generator with the search triggers: 100 000 products 16.4-17.2 s (was 6.1 s before the triggers; NFR-001 of TASK-5 < 120 s), 1 000 000 products 177.6 s, peak memory 111 MB.
+- Full checks (format:check, turbo lint typecheck test test:integration build --force): 25/25; fresh clone of task-6 on Windows: install + lint typecheck test build 23/23.
+<!-- SECTION:NOTES:END -->

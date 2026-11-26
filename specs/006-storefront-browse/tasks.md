@@ -51,10 +51,10 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
 
 ## Phase 6 — Docs and verification
 - [x] T011 [P] README (storefront, public API), `docs/technologies.md`, `quickstart.md`
-- [ ] T012 NFR test (on demand, 100 000 generated products: P95 of filtered / sorted
+- [x] T012 NFR test (on demand, 100 000 generated products: P95 of filtered / sorted
   lists and of searches); the data generator's load time re-measured with the
   triggers; full checks (`format:check`, `turbo run lint typecheck test
-  test:integration build --force`), fresh clone, quickstart on Windows; notes in TASK-6
+  test:integration build --force`), fresh clone; notes in TASK-6
 - [ ] T013 run the test cases ([test-cases.md](test-cases.md), `docs/playbooks/test-cases.md`)
-  on the 100 000-product catalog; failures fixed as reviewed steps and re-run; Coverage and
+  on the 100 000-product catalog, the quickstart walked on Windows; failures fixed as reviewed steps and re-run; Coverage and
   Result columns updated, the summary line in the PR

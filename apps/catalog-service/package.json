@@ -12,6 +12,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run --dir src",
     "test:integration": "vitest run --dir test",
+    "test:nfr": "vitest run --dir nfr --silent=false",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node dist/migrate.js"
   },

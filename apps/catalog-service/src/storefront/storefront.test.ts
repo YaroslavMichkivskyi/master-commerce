@@ -186,7 +186,7 @@ describe('listStatement (R-2, R-9a)', () => {
     });
     expect(sql).not.toContain('rtx');
     expect(params).toContain('rtx & 60:*');
-    expect(sql).toContain('ts_rank_cd');
+    expect(sql).toContain('ts_rank(p.search');
     expect(sql).toMatch(/ORDER BY in_stock DESC, rank DESC, id ASC/);
   });
 

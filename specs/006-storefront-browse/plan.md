@@ -71,7 +71,7 @@ robots, sitemap
 | FR-006 | subtree ids, effective attributes of the category | int: an inner category lists its leaves' products, filters by shared attributes |
 | FR-007 | card with highlights from the leaf's first three attributes | int / unit: highlights by attribute order |
 | FR-008 | product by slug with specs by attribute; former slugs answer the current (R-5) | int: specs order and units; old product / category / brand slug |
-| FR-010, FR-011 | `product.search` + triggers, prefix `tsquery`, `ts_rank_cd` (R-4) | unit: query → tsquery; int: relevance, prefix, brand rename updates the document, brand / category facets |
+| FR-010, FR-011 | `product.search` + triggers, prefix `tsquery`, `ts_rank` (R-4) | unit: query → tsquery; int: relevance, prefix, brand rename updates the document, brand / category facets |
 | Security (R-9a) | bound parameters only, codes from attribute rows, words-only search, input limits, escaped JSON-LD, own-path redirects | unit + int: injection strings in every parameter, limits → `400`; web: a `</script>` in a name stays inside the JSON-LD |
 | FR-020 | gateway controller forwarding `/api/v1/catalog/…` | gateway int: every route, OpenAPI, public |
 | FR-030…FR-033 | Next pages under `app/` (R-6) | web: each page renders from a stubbed gateway |
