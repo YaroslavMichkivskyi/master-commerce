@@ -50,7 +50,7 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   tests
 
 ## Phase 6 — Docs and verification
-- [ ] T011 [P] README (storefront, public API), `docs/technologies.md`, `quickstart.md`
+- [x] T011 [P] README (storefront, public API), `docs/technologies.md`, `quickstart.md`
 - [ ] T012 NFR test (on demand, 100 000 generated products: P95 of filtered / sorted
   lists and of searches); the data generator's load time re-measured with the
   triggers; full checks (`format:check`, `turbo run lint typecheck test

@@ -53,6 +53,18 @@ version the client read: send the `ETag` of the last answer back as `If-Match`
 ([ADR 0022](docs/adr/0022-service-database-conventions.md)). A walk through it with
 curl: [`specs/004-catalog-model/quickstart.md`](specs/004-catalog-model/quickstart.md).
 
+The storefront (http://localhost:3000) is rendered on the server: the home page,
+categories (`/c/<slug>`), brands (`/brands/<slug>`), products (`/p/<slug>`) and search
+(`/search?q=`). Filters, the sort and the page live in the address, so every state can
+be reloaded and shared; old addresses of renamed items redirect permanently. Search
+engines get titles, descriptions, canonical URLs (`noindex` on filtered and search
+pages), `Product` / `BreadcrumbList` structured data, `/robots.txt` and a sitemap at
+`/sitemap.xml`; `SITE_URL` in `.env` is the address they are built with. The pages read
+the public, read-only catalog API of the gateway under `/api/v1/catalog/...`: the
+category tree with counts, category and brand lists with facets, search, a product by
+slug, the newest products, the sitemap
+([`specs/006-storefront-browse/quickstart.md`](specs/006-storefront-browse/quickstart.md)).
+
 To fill the catalog with a realistic hardware catalog — about 20 categories with their
 attributes, about 50 brands, products with specs, prices and stock — run
 `pnpm datagen --scale 100k` (also `1k`, `1m` or any number). The same `--seed` always
