@@ -1,8 +1,10 @@
 import type { ProductSpecDto } from '@master-commerce/dto';
+import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
-import { Breadcrumbs, StockBadge, Unavailable } from '../../../components/storefront';
+import { Breadcrumbs, JsonLd, StockBadge, Unavailable } from '../../../components/storefront';
 import { catalog } from '../../../lib/catalog';
 import { euros } from '../../../lib/query';
+import { breadcrumbList, clip, noindex, productLd } from '../../../lib/seo';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -14,6 +16,20 @@ function specText(spec: ProductSpecDto): string {
   const text =
     typeof v === 'boolean' ? (v ? 'Yes' : 'No') : Array.isArray(v) ? v.join(', ') : String(v);
   return spec.unit && typeof v === 'number' ? `${text} ${spec.unit}` : text;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const answer = await catalog.product((await params).slug);
+  if (answer.kind === 'unavailable') return noindex('Unavailable');
+  if (answer.kind !== 'ok') return {};
+  const p = answer.data;
+  return {
+    title: p.name,
+    description: clip(
+      `${p.name} by ${p.brand.name}, ${euros(p.priceCents)} with VAT. ${p.description}`,
+    ),
+    alternates: { canonical: `/p/${p.slug}` },
+  };
 }
 
 /** A product page, complete server-rendered HTML (FR-033, AC #2). */
@@ -31,15 +47,20 @@ export default async function ProductPage({ params }: Props) {
   const p = answer.data;
   if (p.slug !== slug) permanentRedirect(`/p/${p.slug}`);
 
+  const trail = [
+    { name: 'Home', path: '/' },
+    ...p.category.path.map((c) => ({ name: c.name, path: `/c/${c.slug}` })),
+    { name: p.category.name, path: `/c/${p.category.slug}` },
+    { name: p.name, path: `/p/${p.slug}` },
+  ];
   return (
     <main>
+      <JsonLd data={productLd(p)} />
+      <JsonLd data={breadcrumbList(trail)} />
       <Breadcrumbs
-        trail={[
-          { name: 'Home', href: '/' },
-          ...p.category.path.map((c) => ({ name: c.name, href: `/c/${c.slug}` })),
-          { name: p.category.name, href: `/c/${p.category.slug}` },
-          { name: p.name },
-        ]}
+        trail={trail.map((c, i) =>
+          i < trail.length - 1 ? { name: c.name, href: c.path } : { name: c.name },
+        )}
       />
       <h1>{p.name}</h1>
       <div className="product">

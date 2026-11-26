@@ -1,5 +1,6 @@
 import type { FacetDto, ProductCardDto, ProductListPageDto } from '@master-commerce/dto';
 import { euros, flatten, href, pageHref, rangeOf, type SearchParams, toggle } from '../lib/query';
+import { jsonLd } from '../lib/seo';
 
 // Building blocks of the storefront pages (TASK-6 FR-031…FR-033). Server components; a
 // filter is a link (or a GET form for a range), so every state has an address.
@@ -305,6 +306,11 @@ export function ListView({
       </section>
     </div>
   );
+}
+
+/** Structured data for search engines, escaped by `jsonLd` (FR-041). */
+export function JsonLd({ data }: { data: unknown }) {
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(data) }} />;
 }
 
 export function Unavailable() {

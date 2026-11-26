@@ -1,5 +1,8 @@
 import { ProductGrid, Unavailable } from '../components/storefront';
+import type { Metadata } from 'next';
 import { catalog } from '../lib/catalog';
+
+export const metadata: Metadata = { alternates: { canonical: '/' } };
 
 /** Home: the top categories and the newest products (FR-030). */
 export default async function HomePage() {

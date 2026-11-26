@@ -4,7 +4,7 @@
 
 Paths in Coverage are relative to the app: `catalog` = `apps/catalog-service`,
 `gateway` = `apps/api-gateway`, `web` = `apps/web`. A file name with `›` names the
-test. Coverage of the SEO cases is filled in with T010.
+test.
 
 | ID | Goal | Preconditions | Steps | Expected | Kind | Coverage | Result |
 |---|---|---|---|---|---|---|---|
@@ -33,8 +33,8 @@ test. Coverage of the SEO cases is filled in with T010.
 | TC-22 | Unfiltered pages are cached, filtered ones are not (FR-035) | TC-00 | 1. Open `/c/ssds`, change a product's price in `ssds` through the admin API, reload 2. Reload after 5 minutes 3. Repeat with `/c/ssds?sort=price-asc` | 1: the old price; 2: the new price; 3: the new price at once | UI | `web` `app/storefront.test.tsx` › caches an unfiltered list for 5 minutes, › renders breadcrumbs… (`no-store`); manual | NOT RUN |
 | TC-23 | The search document follows renames (FR-010) | TC-00 | 1. Rename a brand through the admin API 2. Search the new name | Its products are found by the new name, not by the old one | API | `catalog` `test/search-document.int.test.ts` › follows a rename of the brand and of the category | NOT RUN |
 | TC-24 | The gateway serves the public API, documented (FR-020) | TC-00 | 1. Open `http://localhost:3001/docs` 2. Call each `/api/v1/catalog/…` operation without a token | 8 storefront operations, each with a summary, schemas and errors; every call answers without authentication | API | `gateway` `test/storefront.int.test.ts` › documents the 8 storefront operations…; manual | NOT RUN |
-| TC-25 | Title, description, canonical; noindex on filtered pages (FR-040, US-5) | TC-00 | 1. View the head of `/`, `/c/ssds`, `/c/ssds?page=2`, `/c/ssds?brand=x`, `/search?q=ssd`, `/p/<slug>` | Each has a title and a description; canonical on category, brand, product and numbered pages; filtered, sorted and search pages `noindex, follow` with the unfiltered canonical | UI | — (T010) | NOT RUN |
-| TC-26 | Structured data (FR-041) | TC-00 | 1. View the page source of `/p/<slug>` and `/c/ssds` 2. Check them with a structured-data validator | `Product` with name, brand, SKU, description, URL, offer (price, EUR, availability); `BreadcrumbList` on category and brand pages; `<` in a name is escaped | UI | — (T010) | NOT RUN |
-| TC-27 | robots.txt and the sitemap (FR-042, US-5) | TC-00 | 1. Open `/robots.txt` 2. Open the sitemap index and one products part | Search pages disallowed, the sitemap named; categories, brands and every published product listed, at most 50 000 addresses per file | UI | — (T010) | NOT RUN |
+| TC-25 | Title, description, canonical; noindex on filtered pages (FR-040, US-5) | TC-00 | 1. View the head of `/`, `/c/ssds`, `/c/ssds?page=2`, `/c/ssds?brand=x`, `/search?q=ssd`, `/p/<slug>` | Each has a title and a description; canonical on category, brand, product and numbered pages; filtered, sorted and search pages `noindex, follow` with the unfiltered canonical | UI | `web` `app/seo.test.tsx` › metadata of list pages; manual | NOT RUN |
+| TC-26 | Structured data (FR-041) | TC-00 | 1. View the page source of `/p/<slug>` and `/c/ssds` 2. Check them with a structured-data validator | `Product` with name, brand, SKU, description, URL, offer (price, EUR, availability); `BreadcrumbList` on category and brand pages; `<` in a name is escaped | UI | `web` `app/seo.test.tsx` › the product page; manual (validator) | NOT RUN |
+| TC-27 | robots.txt and the sitemap (FR-042, US-5) | TC-00 | 1. Open `/robots.txt` 2. Open the sitemap index and one products part | Search pages disallowed, the sitemap named; categories, brands and every published product listed, at most 50 000 addresses per file | UI | `web` `app/seo.test.tsx` › robots.txt and the sitemap; manual | NOT RUN |
 | TC-28 | A filtered, sorted category list is fast (NFR-001, AC #1) | TC-00 | 1. Run the NFR test (T012) | P95 ≤ 200 ms | API | — (T012) | NOT RUN |
 | TC-29 | Search is fast (NFR-002) | TC-00 | 1. Run the NFR test (T012) | P95 ≤ 300 ms | API | — (T012) | NOT RUN |

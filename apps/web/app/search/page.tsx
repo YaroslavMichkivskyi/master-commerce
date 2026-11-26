@@ -1,10 +1,18 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { ListView, Unavailable } from '../../components/storefront';
 import { catalog } from '../../lib/catalog';
 import { flatten, href, normaliseRanges, type SearchParams } from '../../lib/query';
+import { noindex } from '../../lib/seo';
 
 interface Props {
   searchParams: Promise<SearchParams>;
+}
+
+/** Search pages are never indexed (FR-040, robots.txt too). */
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const q = flatten(await searchParams).q?.trim();
+  return noindex(q ? `Search: ${q.slice(0, 80)}` : 'Search');
 }
 
 /** Search results, filtered and paged like a category (FR-030, US-3). */

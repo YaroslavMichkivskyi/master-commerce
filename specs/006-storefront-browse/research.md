@@ -96,9 +96,17 @@ rejected.
 - **Decision:** Next `generateMetadata` per page (title, description, canonical from
   `SITE_URL`); `robots: noindex, follow` when the query has anything but `page`;
   JSON-LD `Product` (with `Offer`, `InStock` / `OutOfStock`, `priceCurrency: EUR`) and
-  `BreadcrumbList` as `<script type="application/ld+json">`; `app/robots.ts`;
-  `app/sitemap.ts` with `generateSitemaps` reading a storefront sitemap endpoint in
-  parts of 50 000 products.
+  `BreadcrumbList` as `<script type="application/ld+json">` (`<`, `>`, `&` escaped);
+  `app/robots.ts`; a sitemap index `app/sitemap.xml/route.ts` and its files
+  `app/sitemaps/[file]/route.ts` (`pages.xml`, `products-<n>.xml`) reading the storefront
+  sitemap endpoints in parts of 50 000 products.
+- **Why route handlers, not `generateSitemaps`:** `generateSitemaps` fixes the list of
+  files at build time, when there is no catalog to ask (CI, image builds); the index read
+  per request always matches the catalog. A product part (~6 MB) is over the data
+  cache's 2 MB item limit, so it is fetched per request.
+- The metadata and the page of a route ask for the same answer; `lib/catalog.ts` wraps
+  the request in React `cache()` so it is made once per render (a fetch with a timeout
+  signal is not deduplicated by React itself).
 
 ## R-9a. Security of a public, query-heavy API
 

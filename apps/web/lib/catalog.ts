@@ -6,6 +6,7 @@ import type {
   StorefrontProductDto,
   StorefrontTreeDto,
 } from '@master-commerce/dto';
+import { cache } from 'react';
 import { gatewayUrl } from './gateway';
 import type { SearchParams } from './query';
 
@@ -18,10 +19,31 @@ const TIMEOUT_MS = 3000;
 export type Answer<T> =
   { kind: 'ok'; data: T } | { kind: 'not-found' } | { kind: 'invalid' } | { kind: 'unavailable' };
 
+type Fetched = { status: number; body: unknown } | undefined;
+
+/**
+ * One request per address and render: the metadata and the page of a route ask for the
+ * same list, and a fetch with a timeout signal is not deduplicated by React itself.
+ */
+const load = cache(async (address: string, store: boolean): Promise<Fetched> => {
+  const url = new URL(address);
+  try {
+    const res = await fetch(url, {
+      headers: { accept: 'application/json' },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+      ...(store ? { next: { revalidate: REVALIDATE_SECONDS } } : { cache: 'no-store' as const }),
+    });
+    return { status: res.status, body: res.ok ? ((await res.json()) as unknown) : undefined };
+  } catch {
+    return undefined;
+  }
+});
+
 async function get<T>(
   path: string,
   query: SearchParams = {},
   check?: (body: unknown) => boolean,
+  { store = true }: { store?: boolean } = {},
 ): Promise<Answer<T>> {
   const url = new URL(`/api/v1/catalog${path}`, gatewayUrl());
   for (const [key, value] of Object.entries(query)) {
@@ -29,24 +51,16 @@ async function get<T>(
       url.searchParams.append(key, v);
     }
   }
-  const filtered = url.searchParams.size > 0;
-  try {
-    const res = await fetch(url, {
-      headers: { accept: 'application/json' },
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-      ...(filtered ? { cache: 'no-store' as const } : { next: { revalidate: REVALIDATE_SECONDS } }),
-    });
-    if (res.status === 404) return { kind: 'not-found' };
-    if (res.status === 400) return { kind: 'invalid' };
-    if (!res.ok) return { kind: 'unavailable' };
-    const body: unknown = await res.json();
-    // A 200 of another shape (a proxy, a foreign process) is "unavailable", never a crash.
-    if (typeof body !== 'object' || body === null || (check && !check(body)))
-      return { kind: 'unavailable' };
-    return { kind: 'ok', data: body as T };
-  } catch {
+  // A query (filters, sort, page, search) is fetched per request (FR-035).
+  const res = await load(url.href, store && url.searchParams.size === 0);
+  if (!res) return { kind: 'unavailable' };
+  if (res.status === 404) return { kind: 'not-found' };
+  if (res.status === 400) return { kind: 'invalid' };
+  const body = res.body;
+  // A 200 of another shape (a proxy, a foreign process) is "unavailable", never a crash.
+  if (res.status >= 300 || typeof body !== 'object' || body === null || (check && !check(body)))
     return { kind: 'unavailable' };
-  }
+  return { kind: 'ok', data: body as T };
 }
 
 const hasItems = (b: unknown) => Array.isArray((b as { items?: unknown }).items);
@@ -65,6 +79,9 @@ export const catalog = {
       {},
       (b) => typeof (b as { slug?: unknown }).slug === 'string',
     ),
-  sitemap: () => get<SitemapDto>('/sitemap'),
-  sitemapPart: (part: number) => get<SitemapPartDto>(`/sitemap/products/${part}`, {}, hasItems),
+  sitemap: () =>
+    get<SitemapDto>('/sitemap', {}, (b) => typeof (b as SitemapDto).productParts === 'number'),
+  // A part is up to 50 000 entries — over the data cache's item limit, so not stored.
+  sitemapPart: (part: number) =>
+    get<SitemapPartDto>(`/sitemap/products/${part}`, {}, hasItems, { store: false }),
 };

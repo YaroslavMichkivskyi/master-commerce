@@ -1,11 +1,26 @@
+import type { Metadata } from 'next';
 import { notFound, permanentRedirect, redirect } from 'next/navigation';
-import { Breadcrumbs, ListView, Unavailable } from '../../../components/storefront';
+import { Breadcrumbs, JsonLd, ListView, Unavailable } from '../../../components/storefront';
 import { catalog } from '../../../lib/catalog';
 import { href, normaliseRanges, type SearchParams } from '../../../lib/query';
+import { breadcrumbList, listMetadata, noindex } from '../../../lib/seo';
 
 interface Props {
   params: Promise<{ slug: string }>;
   searchParams: Promise<SearchParams>;
+}
+
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const query = await searchParams;
+  const answer = await catalog.category(slug, query);
+  if (answer.kind === 'unavailable') return noindex('Unavailable');
+  if (answer.kind !== 'ok') return {};
+  const { category, total, page } = answer.data;
+  return listMetadata(`/c/${category!.slug}`, query, page, {
+    title: category!.name,
+    description: `${category!.name}: ${total} ${total === 1 ? 'product' : 'products'}. Compare prices with VAT, specifications and availability.`,
+  });
 }
 
 /** A category with everything below it, filtered from the address (FR-030…FR-032). */
@@ -33,14 +48,18 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   if (category.slug !== slug)
     permanentRedirect(href(`/c/${category.slug}`, query, {}, { keepPage: true }));
 
+  const trail = [
+    { name: 'Home', path: '/' },
+    ...category.path.map((c) => ({ name: c.name, path: `/c/${c.slug}` })),
+    { name: category.name, path },
+  ];
   return (
     <main>
+      <JsonLd data={breadcrumbList(trail)} />
       <Breadcrumbs
-        trail={[
-          { name: 'Home', href: '/' },
-          ...category.path.map((c) => ({ name: c.name, href: `/c/${c.slug}` })),
-          { name: category.name },
-        ]}
+        trail={trail.map((c, i) =>
+          i < trail.length - 1 ? { name: c.name, href: c.path } : { name: c.name },
+        )}
       />
       <h1>{category.name}</h1>
       {category.children.length > 0 ? (

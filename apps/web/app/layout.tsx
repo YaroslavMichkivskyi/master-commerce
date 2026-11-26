@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { catalog } from '../lib/catalog';
+import { siteUrl } from '../lib/seo';
 import './globals.css';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl()),
   title: { default: 'master-commerce — computer hardware', template: '%s — master-commerce' },
   description: 'CPUs, graphics cards, storage, peripherals, laptops and more.',
 };

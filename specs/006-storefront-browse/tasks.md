@@ -45,8 +45,8 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   the rest are opened for the owner to see**
 
 ## Phase 5 — SEO (FR-040…FR-042, R-8)
-- [ ] T010 `generateMetadata` (title, description, canonical, `noindex` on filters),
-  JSON-LD `Product` and `BreadcrumbList` (escaped), `robots.ts`, `sitemap.ts` in parts;
+- [x] T010 `generateMetadata` (title, description, canonical, `noindex` on filters),
+  JSON-LD `Product` and `BreadcrumbList` (escaped), `robots.ts`, the sitemap index and its files in parts (R-8);
   tests
 
 ## Phase 6 — Docs and verification
