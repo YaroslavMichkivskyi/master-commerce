@@ -27,7 +27,7 @@ phase — they are the regression suite for behaviour and SEO.
 - [X] T006 ADR 0024 (styling: Tailwind v4 with own components) + index + roadmap list
 
 ## Phase 3 — UI primitives (FR-003, FR-020)
-- [ ] T007 [P] `components/ui/`: button (primary / secondary / ghost, sizes, disabled),
+- [X] T007 [P] `components/ui/`: button (primary / secondary / ghost, sizes, disabled),
   input, number input, checkbox, range (from / to), badge (stock, count), price
   (tabular, VAT note), skeleton, image placeholder (4:3, 1:1), icons (inline SVG);
   focus ring token, 24 px minimum targets; Vitest render tests (roles, labels, states)

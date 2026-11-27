@@ -32,8 +32,9 @@ Recorded in **ADR 0024** (styling).
 cool tint, not pure grey), text at ≥ 7:1 where possible, two saturated accents:
 - primary accent: electric violet-blue (buttons, links, focus ring, active filters);
 - secondary accent: neon cyan / lime for "in stock", sale and highlights;
-- a primary → secondary gradient only on large accents (logo mark, hero band, primary
-  button hover), never behind body text.
+- a primary → secondary gradient only on large accents (logo mark, hero band), never
+  behind text — its cyan / lime end is too light for white or dark text alike, so the
+  primary button darkens on hover instead.
 Exact values are picked in the tokens step and every text / background pair is
 checked for 4.5:1 (text) and 3:1 (UI parts, focus ring) in both themes by a unit test
 that computes WCAG contrast from the token values, so a later token change cannot
