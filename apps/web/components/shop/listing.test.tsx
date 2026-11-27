@@ -5,7 +5,7 @@ import { Filters } from './filters';
 import { Breadcrumbs, Pagination, ResultCount, SortControl } from './list-controls';
 import { ListView } from './list-view';
 import { ProductCard } from './product-card';
-import { ListSkeleton, NoResults, NotFoundState, NothingFound, Unavailable } from './states';
+import { NoResults, NotFoundState, NothingFound, Unavailable } from './states';
 
 // The listing parts rendered on the server (FR-003, FR-012, FR-013, FR-021, edge cases).
 // The phone panel's modal behaviour is checked in the browser (phase 7).
@@ -140,6 +140,9 @@ describe('list controls', () => {
     );
     expect(html).toContain('<option value="name" selected="">Name</option>');
     expect(html).not.toContain('Relevance');
+    // A pick applies at once with JavaScript; without it, the button in <noscript>.
+    expect(html).toMatch(/<select[^>]*data-auto-submit="true"/);
+    expect(html).toMatch(/<noscript><button type="submit"[^>]*>Apply<\/button><\/noscript>/);
   });
 
   it('the result count is a polite live region', () => {
@@ -225,12 +228,5 @@ describe('states', () => {
     expect(html).toMatch(/<h1[^>]*>Nothing found for “zzz”<\/h1>/);
     expect(html).toContain('href="/c/storage"');
     expect(render(<NothingFound query="" />)).toMatch(/<h1[^>]*>Search<\/h1>/);
-  });
-
-  it('loading keeps the card sizes and is announced as busy', () => {
-    const html = render(<ListSkeleton cards={4} />);
-    expect(html).toContain('aria-busy="true"');
-    expect(html.match(/aspect-4\/3/g)).toHaveLength(4);
-    expect(html).toContain('Loading products');
   });
 });

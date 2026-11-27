@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
 import { ButtonLink } from '../ui/button';
 import { BoxIcon, FilterIcon, SearchIcon } from '../ui/icons';
-import { ImagePlaceholder, Skeleton } from '../ui/placeholder';
 
-// The designed states of a page (FR-003, US-3): empty, unavailable, not found, loading.
-// Each says what happened and offers a way on, never bare text.
+// The designed states of a page (FR-003, US-3): empty, unavailable, not found. Each says
+// what happened and offers a way on, never bare text. No loading state: pages are sent
+// whole, never streamed, so their HTTP status is true (ADR 0025).
 
 export function StatePanel({
   icon,
@@ -112,31 +112,5 @@ export function NotFoundState() {
       The page does not exist or the product is no longer sold. Search above or start from the
       categories.
     </StatePanel>
-  );
-}
-
-/** The loading state of a list: cards of the final size, so nothing moves on arrival. */
-export function ListSkeleton({ cards = 8 }: { cards?: number }) {
-  return (
-    <div aria-busy="true" className="flex flex-col gap-4">
-      <span className="sr-only" role="status">
-        Loading products…
-      </span>
-      <Skeleton className="h-5 w-40" />
-      <ul className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-3 xl:grid-cols-4">
-        {Array.from({ length: cards }, (_, i) => (
-          <li
-            key={i}
-            aria-hidden="true"
-            className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-3 md:p-4"
-          >
-            <ImagePlaceholder ratio="4/3" />
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-2/3" />
-            <Skeleton className="h-6 w-1/3" />
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }

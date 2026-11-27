@@ -64,9 +64,12 @@ price and pages through the results, then opens a product.
   categories and their subcategories appears.
 - Given a product has no image yet (TASK-16), then its card and page show a neutral
   placeholder of the final image size, so adding images later moves nothing.
-- Given a page is loading, empty or failing (catalog unavailable, nothing found,
-  product not found), then it shows a designed state with a way on (back to the
-  category, the categories list, retry), not bare text.
+- Given a page is empty or failing (catalog unavailable, nothing found, product not
+  found), then it shows a designed state with a way on (back to the category, the
+  categories list, retry), not bare text.
+- Given a slow connection, when the customer follows a link, then the current page stays
+  until the next one arrives whole, and nothing on it shifts (pages are not streamed, so
+  their HTTP status stays true — ADR 0025).
 
 ### US-4 — Use the shop with a keyboard or a screen reader
 **Acceptance**
@@ -126,7 +129,8 @@ price and pages through the results, then opens a product.
   search and category menu; footer; button; text and number inputs; checkbox; range
   (from / to) filter; filter panel (column on desktop, overlay on phone) with applied
   filters; product card; price; stock badge; breadcrumbs; sort control; pagination;
-  empty, error, not-found and loading states; image placeholder.
+  empty, error and not-found states; image placeholder. *(A loading state was dropped at
+  the owner's review of phase 6, 2026-11-28: a page is never streamed, ADR 0025.)*
 - **FR-004** The choice of styling approach MUST be recorded in an ADR with the options
   weighed. *(TASK-36 AC #1)*
 - **FR-005** The shop MUST have a light and a dark theme. On the first visit the theme

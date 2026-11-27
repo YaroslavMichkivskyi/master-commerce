@@ -4,6 +4,7 @@ import { Button, buttonClass } from '../ui/button';
 import { cx } from '../ui/cx';
 import { ChevronRightIcon, CloseIcon } from '../ui/icons';
 import { Select } from '../ui/input';
+import { AutoSubmit } from './auto-submit';
 import { KeepQuery } from './filters';
 
 // The controls around a list (FR-003, FR-012, FR-021, edge cases): breadcrumbs, the result
@@ -114,7 +115,10 @@ export const SORT_LABELS: Record<string, string> = {
   name: 'Name',
 };
 
-/** A GET form, so it works without JavaScript; a new sort goes back to page 1. */
+/**
+ * A GET form, so it works without JavaScript; a new sort goes back to page 1. With
+ * JavaScript picking an option applies it, as in most shops.
+ */
 export function SortControl({
   path,
   params,
@@ -135,16 +139,20 @@ export function SortControl({
       <label htmlFor="sort" className="text-sm text-muted">
         Sort
       </label>
-      <Select id="sort" name="sort" defaultValue={sort} className="text-sm">
+      <Select id="sort" name="sort" defaultValue={sort} className="text-sm" data-auto-submit>
         {options.map((o) => (
           <option key={o} value={o}>
             {SORT_LABELS[o]}
           </option>
         ))}
       </Select>
-      <Button type="submit" variant="secondary">
-        Apply
-      </Button>
+      {/* With JavaScript a pick applies at once (AutoSubmit); without it, this button. */}
+      <noscript>
+        <Button type="submit" variant="secondary">
+          Apply
+        </Button>
+      </noscript>
+      <AutoSubmit />
     </form>
   );
 }

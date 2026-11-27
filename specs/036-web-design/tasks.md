@@ -49,7 +49,8 @@ phase — they are the regression suite for behaviour and SEO.
   count and the modal enhancer island (R-6, built in place, not as a `<dialog>`);
   applied-filter chips; result count in a polite live region
 - [X] T013 [P] sort control (GET form, no JS needed), pagination (short stable set,
-  none for one page), breadcrumbs, empty / error / not-found / loading states
+  none for one page), breadcrumbs, empty / error / not-found states (the loading state
+  was built and removed in phase 6: pages are not streamed, ADR 0025)
 - [X] T014 Vitest: links of chips and pagination keep the query (reuse `lib/query.ts`),
   counts, states
 
@@ -78,14 +79,15 @@ phase — they are the regression suite for behaviour and SEO.
   `shared/dto/**`, the workflow), report artifact on failure
 
 ## Phase 8 — Rules and docs (FR-031, FR-044, R-10)
-- [ ] T024 `docs/web-guidelines.md`; `AGENTS.md` Map row + rule line; README web
+- [ ] T024 ADR 0025: a paragraph on why pages are not streamed (no `loading.tsx`: the
+  status would be sent before 404 / 308 is known); `docs/web-guidelines.md`; `AGENTS.md` Map row + rule line; README web
   section; `docs/technologies.md` rows (Tailwind CSS, Inter / Fontsource, Playwright,
   axe-core, Lighthouse; Next.js ISR row: on demand for product pages); reference check
   of every name cited
 
 ## Phase 9 — Manual cases and close (FR-043, US-4, US-5)
 - [ ] T025 keyboard walk-through, screen-reader spot check, Lighthouse (3 runs each,
-  medians), loading state under throttling → `test-cases.md` results
+  medians), a slow connection (TC-32) → `test-cases.md` results
 - [ ] T026 run all test cases (`test-cases.md` playbook), report, then `close-task.md`
 
 ## Dependencies
