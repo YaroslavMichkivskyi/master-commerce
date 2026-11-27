@@ -51,6 +51,7 @@ export {
   SitemapPartDto,
   STOREFRONT_PAGE_MAX,
   STOREFRONT_PAGE_SIZE,
+  STOREFRONT_PARAMETERS,
   STOREFRONT_SORTS,
   StorefrontBrandDto,
   StorefrontCategoryDto,

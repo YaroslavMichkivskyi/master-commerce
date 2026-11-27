@@ -3,6 +3,7 @@ import {
   type FieldErrorDto,
   SLUG_PATTERN,
   STOREFRONT_PAGE_MAX,
+  STOREFRONT_PARAMETERS,
   STOREFRONT_SORTS,
   type StorefrontSort,
 } from '@master-commerce/dto';
@@ -47,7 +48,7 @@ export const LIMITS = {
 } as const;
 
 /** Parameter names that win over an attribute with the same code (research R-7). */
-export const RESERVED = new Set(['brand', 'price', 'stock', 'sort', 'page', 'q', 'category']);
+export const RESERVED: ReadonlySet<string> = new Set(STOREFRONT_PARAMETERS);
 
 /** `min-max`, either side optional; numbers with an optional fraction. */
 // At most 15 digits a side, so a value stays a finite number (a facet echoes it back).

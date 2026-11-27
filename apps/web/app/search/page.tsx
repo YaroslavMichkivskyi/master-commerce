@@ -28,7 +28,11 @@ export default async function SearchPage({ searchParams }: Props) {
   if (answer?.kind === 'invalid' && !answer.fields.includes('q'))
     redirect(withoutRefused('/search', query, answer.fields));
   const list = answer?.kind === 'ok' ? answer.data : undefined;
-  if (list && list.total > 0) {
+  // Filters that narrow a search to nothing keep the list view: its facets and empty state
+  // are how they are taken off. "Nothing found" is for the words alone.
+  // Only the filters search reads: a tracking parameter (`utm_source`, `gclid`) is not one.
+  const narrowed = ['brand', 'price', 'stock', 'category'].some((k) => flatten(query)[k]);
+  if (list && (list.total > 0 || narrowed)) {
     return (
       <main>
         <h1>Results for “{list.query}”</h1>

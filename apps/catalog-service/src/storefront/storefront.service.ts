@@ -28,7 +28,7 @@ import {
   type SnapshotCategory,
   subtreeOf,
 } from './catalog-snapshot.js';
-import { type ListFilters, parseFilters, type StorefrontAttribute } from './filters.js';
+import { type ListFilters, parseFilters, RESERVED, type StorefrontAttribute } from './filters.js';
 import {
   type FacetRow,
   type ListItemRow,
@@ -108,7 +108,11 @@ export class StorefrontService {
   async categoryList(slug: string, query: RawQuery): Promise<ProductListPageDto> {
     const snapshot = await loadSnapshot(this.db);
     const current = await this.resolve(snapshot, 'category', slug);
-    const attributes = effectiveAttributes(snapshot, current.id).filter((a) => a.type !== 'text');
+    // A code taken by a list parameter (an attribute made before the admin refused such
+    // codes) gets no filter and no facet, or it would merge with the built-in one.
+    const attributes = effectiveAttributes(snapshot, current.id).filter(
+      (a) => a.type !== 'text' && !RESERVED.has(a.code),
+    );
     const filters = parseFilters(query, attributes, { search: false, categoryFilter: false });
     const page = await this.list(snapshot, {
       scope: { kind: 'category', categoryIds: subtreeOf(snapshot, current.id) },
@@ -268,7 +272,8 @@ export class StorefrontService {
         updatedAt: c.updatedAt.toISOString(),
       })),
       brands: brands.map((b) => ({ slug: b.slug, updatedAt: b.updatedAt.toISOString() })),
-      productParts: Math.max(1, Math.ceil((total?.n ?? 0) / SITEMAP_PART)),
+      // No products for sale: no product file, rather than one that answers 404.
+      productParts: Math.ceil((total?.n ?? 0) / SITEMAP_PART),
     };
   }
 

@@ -24,7 +24,7 @@ afterEach(() => vi.unstubAllGlobals());
 
 describe('home', () => {
   it('shows the top categories with their counts and the newest products', async () => {
-    stubGateway({
+    const seen = stubGateway({
       [`${C}/categories`]: {
         body: {
           items: [
@@ -35,6 +35,10 @@ describe('home', () => {
       [`${C}/new`]: { body: { items: [listPage().items[0]] } },
     });
     const html = render(await HomePage());
+    // The newest products are cached although their request has a limit.
+    expect(seen.find((s) => s.url.pathname.endsWith('/new'))!.init.next).toEqual({
+      revalidate: 300,
+    });
     expect(html).toContain('href="/c/components"');
     expect(html).toContain('120 products');
     expect(html).toContain('New in');
@@ -190,6 +194,20 @@ describe('search', () => {
     expect(html).toContain('<strong>Relevance</strong>');
   });
 
+  it('keeps the list and its facets when filters narrow a search to nothing', async () => {
+    stubGateway({
+      [`${C}/search`]: {
+        body: listPage({ total: 0, items: [], pageCount: 1, category: undefined, query: 'rtx' }),
+      },
+    });
+    const html = render(
+      await SearchPage({ searchParams: Promise.resolve({ q: 'rtx', brand: 'asus' }) }),
+    );
+    expect(html).not.toContain('Nothing found');
+    expect(html).toContain('No products match these filters.');
+    expect(html).toContain('href="/search?q=rtx"'); // the ticked brand unticks
+  });
+
   it('drops a refused filter of a search and keeps the query', async () => {
     stubGateway({
       [`${C}/search`]: {
@@ -216,6 +234,10 @@ describe('search', () => {
     const html = render(await SearchPage({ searchParams: Promise.resolve({ q: 'zzz' }) }));
     expect(html).toContain('Nothing found for “zzz”');
     expect(html).toContain('href="/c/storage"');
+    // A tracking parameter is not a filter: still "nothing found".
+    expect(
+      render(await SearchPage({ searchParams: Promise.resolve({ q: 'zzz', utm_source: 'mail' }) })),
+    ).toContain('Nothing found for “zzz”');
     expect(render(await SearchPage({ searchParams: Promise.resolve({}) }))).toContain(
       '<h1>Search</h1>',
     );

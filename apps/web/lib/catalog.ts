@@ -62,7 +62,11 @@ async function get<T>(
   path: string,
   query: SearchParams = {},
   check?: (body: unknown) => boolean,
-  { store = true }: { store?: boolean } = {},
+  /**
+   * Whether the answer goes to the 5-minute data cache. Default: only without a query, so
+   * filters, sorts, pages and searches are fresh per request (FR-035).
+   */
+  { store }: { store?: boolean } = {},
 ): Promise<Answer<T>> {
   const url = new URL(`/api/v1/catalog${path}`, gatewayUrl());
   for (const [key, value] of Object.entries(query)) {
@@ -71,7 +75,7 @@ async function get<T>(
     }
   }
   // A query (filters, sort, page, search) is fetched per request (FR-035).
-  const res = await load(url.href, store && url.searchParams.size === 0);
+  const res = await load(url.href, store ?? url.searchParams.size === 0);
   if (!res) return { kind: 'unavailable' };
   if (res.status === 404) return { kind: 'not-found' };
   if (res.status === 400) {
@@ -92,7 +96,9 @@ const hasItems = (b: unknown) => Array.isArray((b as { items?: unknown }).items)
 
 export const catalog = {
   tree: () => get<StorefrontTreeDto>('/categories', {}, hasItems),
-  newest: (limit = 12) => get<ProductCardListDto>('/new', { limit: String(limit) }, hasItems),
+  // The newest products of the home page are the same for everyone: cached, query or not.
+  newest: (limit = 12) =>
+    get<ProductCardListDto>('/new', { limit: String(limit) }, hasItems, { store: true }),
   category: (slug: string, query: SearchParams) =>
     get<ProductListPageDto>(`/categories/${encodeURIComponent(slug)}/products`, query, hasItems),
   brand: (slug: string, query: SearchParams) =>

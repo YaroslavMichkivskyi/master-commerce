@@ -139,6 +139,7 @@ export class StorefrontController {
 
   @Get('sitemap/products/:part')
   @ApiOperation({ summary: 'One part of the products in the sitemap' })
+  @ApiProblemResponses(404)
   @ApiOkResponse({ type: SitemapPartDto })
   sitemapPart(@Param('part', ParseIntPipe) part: number): Promise<SitemapPartDto> {
     if (part < 0 || part > 1000) throw new NotFoundException('No such part');

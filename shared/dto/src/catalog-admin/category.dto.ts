@@ -8,6 +8,7 @@ import {
   IsBoolean,
   IsIn,
   IsInt,
+  IsNotIn,
   IsNumber,
   IsOptional,
   IsString,
@@ -18,6 +19,7 @@ import {
   Min,
   ValidateNested,
 } from 'class-validator';
+import { STOREFRONT_PARAMETERS } from '../storefront/storefront.dto.js';
 import { AuditedDto, OmittableNotNull, SLUG_PATTERN, Trim } from './common.dto.js';
 
 export const ATTRIBUTE_TYPES = ['select', 'multi_select', 'number', 'boolean', 'text'] as const;
@@ -29,9 +31,17 @@ export type AttributeType = (typeof ATTRIBUTE_TYPES)[number];
  * catalog-service, which answers `400` naming the field.
  */
 export class AttributeDto {
-  @ApiProperty({ example: 'memory_size', pattern: '^[a-z][a-z0-9_]*$', maxLength: 50 })
+  @ApiProperty({
+    example: 'memory_size',
+    pattern: '^[a-z][a-z0-9_]*$',
+    maxLength: 50,
+    description: `Not a storefront list parameter (${STOREFRONT_PARAMETERS.join(', ')}): the code is a filter name in the shop's addresses`,
+  })
   @Matches(/^[a-z][a-z0-9_]*$/)
   @Length(1, 50)
+  @IsNotIn([...STOREFRONT_PARAMETERS], {
+    message: `code must not be one of ${STOREFRONT_PARAMETERS.join(', ')} (storefront parameters)`,
+  })
   code!: string;
 
   @ApiProperty({ example: 'Memory size', minLength: 1, maxLength: 100 })
@@ -56,7 +66,8 @@ export class AttributeDto {
   @ApiPropertyOptional({
     type: [String],
     example: ['GDDR6', 'GDDR6X'],
-    description: '`select` and `multi_select` only, required for them',
+    description:
+      '`select` and `multi_select` only, required for them; no commas (several values of a filter are joined with commas in the addresses of the shop)',
   })
   @IsOptional()
   @IsArray()
@@ -64,6 +75,7 @@ export class AttributeDto {
   @ArrayUnique()
   @IsString({ each: true })
   @Length(1, 100, { each: true })
+  @Matches(/^[^,]*$/, { each: true, message: 'allowedValues must not contain commas' })
   allowedValues?: string[];
 
   @ApiPropertyOptional({ example: 'GB', maxLength: 20, description: '`number` only' })

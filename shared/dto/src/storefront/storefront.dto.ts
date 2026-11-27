@@ -7,6 +7,16 @@ export const STOREFRONT_PAGE_SIZE = 24;
 export const STOREFRONT_PAGE_MAX = 100;
 export const STOREFRONT_SORTS = ['new', 'price-asc', 'price-desc', 'name', 'relevance'] as const;
 export type StorefrontSort = (typeof STOREFRONT_SORTS)[number];
+/** Query parameters of a storefront list; no attribute may take one of them as its code. */
+export const STOREFRONT_PARAMETERS = [
+  'brand',
+  'price',
+  'stock',
+  'sort',
+  'page',
+  'q',
+  'category',
+] as const;
 
 /** A link in a breadcrumb trail or to a related page. */
 export class CrumbDto {
@@ -287,7 +297,11 @@ export class SitemapDto {
   @ApiProperty({ type: () => [SitemapEntryDto] })
   brands!: SitemapEntryDto[];
 
-  @ApiProperty({ example: 3, description: 'Parts of at most 50 000 products' })
+  @ApiProperty({
+    example: 3,
+    minimum: 0,
+    description: 'Parts of at most 50 000 products; 0 when no product is for sale',
+  })
   productParts!: number;
 }
 

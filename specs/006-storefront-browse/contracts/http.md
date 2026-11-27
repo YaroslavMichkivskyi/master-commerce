@@ -33,7 +33,7 @@ parameters and attribute codes the category does not have are ignored.
 | `GET /storefront/search?q=` | `200` list page with brand and category facets; `400` for an empty `q` |
 | `GET /storefront/products/{slug}` | `200` product (below); `404` unknown, deleted or unpublished |
 | `GET /storefront/new?limit=12` | `200` `{ items: [card] }`, newest published products |
-| `GET /storefront/sitemap` | `200` `{ categories: [{ slug, updatedAt }], brands: [...], productParts: n }` |
+| `GET /storefront/sitemap` | `200` `{ categories: [{ slug, updatedAt }], brands: [...], productParts: n }`; `n` is 0 when no product is for sale |
 | `GET /storefront/sitemap/products/{part}` | `200` `{ items: [{ slug, updatedAt }] }`, at most 50 000 |
 
 A read by slug with a former slug answers the entity with its **current** slug; the
