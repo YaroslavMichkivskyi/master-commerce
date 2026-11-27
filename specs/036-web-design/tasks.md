@@ -41,15 +41,15 @@ phase — they are the regression suite for behaviour and SEO.
   return; Vitest for the server parts
 
 ## Phase 5 — Listing parts (FR-003, FR-012, FR-021, edge cases, R-6)
-- [ ] T011 product card (placeholder, name clamp with full name in `title`, brand,
+- [X] T011 product card (placeholder, name clamp with full name in `title`, brand,
   highlights, price, stock badge with text + icon, equal heights), card grid
-- [ ] T012 filters: facet groups (first 8 values + "Show all (N)"), ranges with
+- [X] T012 filters: facet groups (first 8 values + "Show all (N)"), ranges with
   "Apply", "in stock only"; desktop column; phone `<details>` panel with the applied
-  count and the `<dialog>` enhancer island; applied-filter chips; result count in a
-  polite live region
-- [ ] T013 [P] sort control (GET form, no JS needed), pagination (short stable set,
+  count and the modal enhancer island (R-6, built in place, not as a `<dialog>`);
+  applied-filter chips; result count in a polite live region
+- [X] T013 [P] sort control (GET form, no JS needed), pagination (short stable set,
   none for one page), breadcrumbs, empty / error / not-found / loading states
-- [ ] T014 Vitest: links of chips and pagination keep the query (reuse `lib/query.ts`),
+- [X] T014 Vitest: links of chips and pagination keep the query (reuse `lib/query.ts`),
   counts, states
 
 ## Phase 6 — Pages (FR-010, FR-011, FR-014, US-1…US-3)

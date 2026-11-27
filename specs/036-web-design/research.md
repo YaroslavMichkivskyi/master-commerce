@@ -119,6 +119,10 @@ on-demand revalidation" becomes this table; on-demand stays TASK-18).
 - **Phone filter panel**: a `<details>` overlay without JS; with JS the island upgrades
   it to a modal `<dialog>` (focus kept inside while open, `Escape` closes, focus
   returns to the "Filters" button). The button shows the applied-filter count.
+  *Built (phase 5):* the island does not move the panel into a `<dialog>` (its nodes are
+  rendered by React and the desktop column needs them where they are); it makes the open
+  panel modal in place: the rest of the page `inert`, `role="dialog"` + `aria-modal`,
+  focus into the panel, `Escape` closes, focus back on the button.
 - **Filters** stay links and a GET form as in TASK-6 (price / number ranges submit with
   an "Apply" button); applied filters become removable chips (links).
 - **Announcements**: the result heading ("1 234 products") is in a polite live region;

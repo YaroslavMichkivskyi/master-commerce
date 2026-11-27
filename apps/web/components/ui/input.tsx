@@ -1,7 +1,7 @@
-import type { InputHTMLAttributes, ReactNode } from 'react';
+import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from 'react';
 import { cx } from './cx';
 
-// Text and number fields (FR-003, FR-020). A field always has a name for assistive
+// Text, number and select fields (FR-003, FR-020). A field always has a name for assistive
 // technology: a visible <label> through `label`, or `aria-label`.
 
 const FIELD =
@@ -20,6 +20,11 @@ export function Input({ label, className, ...rest }: Props) {
   ) : (
     input
   );
+}
+
+/** A drop-down of fixed options (the sort control). */
+export function Select({ className, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) {
+  return <select className={cx(FIELD, 'w-auto pr-8', className)} {...rest} />;
 }
 
 /** A number field: `step="any"`, a decimal keypad on phones, figures of one width. */
