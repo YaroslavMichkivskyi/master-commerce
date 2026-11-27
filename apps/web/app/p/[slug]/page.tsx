@@ -10,6 +10,14 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+// ISR (ADR 0025): no product is built with the app (a build has no catalog to ask); each
+// one is rendered on its first visit, kept and rendered again in the background at most
+// every 5 minutes. Statuses stay real: an unknown slug is a 404, an old one a 308.
+export const revalidate = 300;
+export function generateStaticParams(): { slug: string }[] {
+  return [];
+}
+
 /** A spec as shown in the table: "12 GB", "Yes", "HDMI 2.1, USB-C". */
 function specText(spec: ProductSpecDto): string {
   const v = spec.value;

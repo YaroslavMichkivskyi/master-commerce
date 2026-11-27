@@ -8,17 +8,14 @@ tests of TASK-6 (`app/storefront.test.tsx`, `app/seo.test.tsx`) stay green after
 phase — they are the regression suite for behaviour and SEO.
 
 ## Phase 1 — Rendering spike and decision (FR-030, R-5)
-- [ ] T001 `cacheComponents: true` in `next.config.ts`; category and product pages
-  moved to it (shell + `Suspense` holes, `'use cache'` + `cacheLife` + `cacheTag` in
-  `lib/catalog.ts`, errors thrown, never cached); remove `force-dynamic` / segment
-  options the mode forbids; Vitest: cache placement per case, gateway call count per
-  page (NFR-003)
-- [ ] T002 measure today's build vs the spike (production build, 1k seed): TTFB and
-  LCP of `/c/graphics-cards` unfiltered / filtered and of a product page, cold and warm;
-  `next build` route table (partial prerender marks)
-- [ ] T003 ADR 0025 (rendering strategy, amends ADR 0008) with the numbers; ADR 0008
-  "Amended by" line; ADR index; roadmap ADR list. **Fallback** if the spike fails: the
-  R-5 fallback, recorded in the ADR instead
+- [X] T001 spike: `cacheComponents` with shells, `'use cache'` data and a fresh price
+  part, built and measured — rejected (soft 404 / redirects, slower lists); fallback:
+  product pages by ISR on demand (`revalidate = 300`, `generateStaticParams` → `[]`);
+  `app/rendering.test.ts` pins each page's rendering
+- [X] T002 measured TASK-6 build vs spike vs fallback on the 90 002-product local
+  catalog: response times, statuses, `x-nextjs-cache`, route tables
+- [X] T003 ADR 0025 (rendering strategy, amends ADR 0008) with the numbers; ADR 0008
+  status; ADR index; roadmap ADR list; research R-5 outcome, plan updated
 
 ## Phase 2 — Styling foundation (FR-001, FR-002, FR-004, FR-006, R-1, R-2, R-4)
 - [ ] T004 dependencies pinned (`tailwindcss`, `@tailwindcss/postcss`,
@@ -57,8 +54,8 @@ phase — they are the regression suite for behaviour and SEO.
 ## Phase 6 — Pages (FR-010, FR-011, FR-014, US-1…US-3)
 - [ ] T015 home and category pages rebuilt (phone / tablet / desktop layouts)
 - [ ] T016 brand and search pages rebuilt
-- [ ] T017 product page rebuilt (above-the-fold block, fresh price / stock / offer
-  hole, description, specs table)
+- [ ] T017 product page rebuilt (above-the-fold block, description, specs table),
+  still ISR (ADR 0025)
 - [ ] T018 not-found and error pages rebuilt; `components/storefront.tsx` and every
   TASK-6 class removed (`git grep` of the old class names returns nothing); TASK-6
   Vitest suites green unchanged in behaviour (markup assertions updated only)
@@ -80,8 +77,9 @@ phase — they are the regression suite for behaviour and SEO.
 
 ## Phase 8 — Rules and docs (FR-031, FR-044, R-10)
 - [ ] T024 `docs/web-guidelines.md`; `AGENTS.md` Map row + rule line; README web
-  section; `docs/technologies.md` rows (Tailwind CSS, Inter / Fontsource, Cache
-  Components, Playwright, axe-core, Lighthouse); reference check of every name cited
+  section; `docs/technologies.md` rows (Tailwind CSS, Inter / Fontsource, Playwright,
+  axe-core, Lighthouse; Next.js ISR row: on demand for product pages); reference check
+  of every name cited
 
 ## Phase 9 — Manual cases and close (FR-043, US-4, US-5)
 - [ ] T025 keyboard walk-through, screen-reader spot check, Lighthouse (3 runs each,

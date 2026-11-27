@@ -11,7 +11,7 @@ Decisions that outlive a single feature. Format: MADR (`template.md`); how and w
 | [0005](0005-drizzle-orm-and-raw-sql.md) | Drizzle ORM, hand-written SQL for hot-path queries | accepted |
 | [0006](0006-rabbitmq-outbox-inbox.md) | RabbitMQ with Transactional Outbox / Inbox | accepted |
 | [0007](0007-choreography-saga.md) | Choreography for the stock-reservation saga | accepted |
-| [0008](0008-nextjs-app-router-ssr-isr.md) | Next.js App Router with SSR / ISR for SEO | accepted |
+| [0008](0008-nextjs-app-router-ssr-isr.md) | Next.js App Router with SSR / ISR for SEO | accepted, amended by 0025 |
 | [0009](0009-postgres-fts-no-elasticsearch.md) | Search on PostgreSQL FTS, no Elasticsearch | accepted |
 | [0010](0010-lambda-async-only-cdk.md) | AWS Lambda for asynchronous work only; IaC with AWS CDK | accepted |
 | [0011](0011-deploy-vm-compose-amplify.md) | Deployment: VM with Docker Compose, web on Amplify | accepted |
@@ -27,3 +27,4 @@ Decisions that outlive a single feature. Format: MADR (`template.md`); how and w
 | [0021](0021-gateway-forwards-service-apis.md) | The gateway declares each service endpoint it exposes and forwards it, passing the service's answers through | accepted |
 | [0022](0022-service-database-conventions.md) | Service database conventions: UUIDv7, money in cents, soft delete, versions, cursor paging, least-privilege roles | accepted, amended by 0023 |
 | [0023](0023-derived-data-by-triggers.md) | Derived data a database computes from its own rows is kept by triggers | accepted |
+| [0025](0025-rendering-strategy.md) | Rendering strategy: product pages by ISR, lists per request with a data cache | accepted |

@@ -67,7 +67,15 @@ prices and specs.
 per request; only the data fetches of unfiltered lists are cached for 300 s. The home
 page is `force-dynamic`. That is "SSR with a data cache", not the ISR ADR 0008 intended.
 
-**Decision.** Enable Next.js **Cache Components** (`cacheComponents: true`, Next
+**Outcome of the spike (2026-11-27) — the fallback was taken.** Cache Components turned
+`notFound()` and redirects of list pages into `200` responses (a `noindex` page, a
+client-side redirect), was slower for unfiltered lists and needs a catalog at build.
+Chosen instead, in **ADR 0025** with the measurements: product pages by ISR on demand
+(`revalidate = 300`, none at build), lists, search and home per request with the 5-minute
+data cache of unfiltered answers; price and stock up to 5 minutes old until TASK-18. The
+original proposal is kept below for the record.
+
+**Proposed (rejected).** Enable Next.js **Cache Components** (`cacheComponents: true`, Next
 16.4) — a static shell per route, prerendered and kept, with dynamic parts streamed into
 the same response — and place each page as follows:
 
