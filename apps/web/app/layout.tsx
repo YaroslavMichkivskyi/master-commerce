@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { catalog } from '../lib/catalog';
 import { siteUrl } from '../lib/seo';
+import { inter } from './fonts';
 import './globals.css';
+// The TASK-6 styles until the pages are rebuilt (specs/036-web-design, phase 6).
+import './legacy.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
@@ -14,7 +17,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const tree = await catalog.tree();
   const top = tree.kind === 'ok' ? tree.data.items : [];
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <body>
         <header className="site">
           <a href="/" className="logo">

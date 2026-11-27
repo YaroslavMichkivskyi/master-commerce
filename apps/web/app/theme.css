@@ -1,0 +1,89 @@
+/*
+ * Design tokens (ADR 0024, specs/036-web-design R-1, R-2). The only place in the web app
+ * where raw colours, sizes and breakpoints are written; every utility and every rule reads
+ * these variables.
+ *
+ * Colours are `light-dark(<light>, <dark>)`: the theme follows `color-scheme`, which is the
+ * device setting unless `data-theme` on <html> fixes it (R-3). `app/theme.test.ts` checks the
+ * WCAG contrast of every text / UI pair in both themes, so keep the values plain hex.
+ */
+
+@theme {
+  /* Only our tokens: Tailwind's default palette and fonts are not available. */
+  --color-*: initial;
+  --font-*: initial;
+
+  /* Surfaces: near-white / near-black with a slight cool tint. */
+  --color-bg: light-dark(#f5f6fb, #0a0c14);
+  --color-surface: light-dark(#ffffff, #121522);
+  --color-surface-2: light-dark(#eceef7, #1a1e2f);
+  --color-border: light-dark(#dde1ee, #272c40);
+  --color-border-strong: light-dark(#767d97, #6e7592);
+
+  /* Text. */
+  --color-text: light-dark(#0f1222, #eef0ff);
+  --color-muted: light-dark(#4a5169, #a4aac4);
+
+  /* Primary accent: electric violet-blue — buttons, links, active filters. */
+  --color-accent: light-dark(#5232f0, #8f7fff);
+  --color-accent-hover: light-dark(#3f1fd6, #a99dff);
+  --color-on-accent: light-dark(#ffffff, #0a0c14);
+  --color-accent-soft: light-dark(#ebe7ff, #241e4d);
+
+  /* Secondary accent: neon cyan / lime — highlights and the gradient end, never body text
+   * in the light theme. */
+  --color-glow: light-dark(#00b8d9, #2ee6ff);
+  --color-lime: light-dark(#5fd300, #b6ff3b);
+
+  /* States. */
+  --color-success: light-dark(#087443, #3ee8a0);
+  --color-success-soft: light-dark(#dcf7ea, #0f2e22);
+  --color-danger: light-dark(#c01f3c, #ff7088);
+  --color-danger-soft: light-dark(#fde6ea, #3a1520);
+  --color-focus: light-dark(#5232f0, #2ee6ff);
+
+  /* Type: Inter (app/fonts.ts) with a size-adjusted fallback. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Code', Menlo, monospace;
+
+  /* Widths: content at most 1440 px; breakpoints match the 390 / 768 / 1280 test widths. */
+  --container-page: 90rem;
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+
+  /* Shape. */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.625rem;
+  --radius-lg: 1rem;
+  --radius-pill: 9999px;
+  --shadow-card: 0 1px 2px rgb(15 18 34 / 0.06), 0 4px 16px rgb(15 18 34 / 0.06);
+  --shadow-pop: 0 8px 32px rgb(15 18 34 / 0.18);
+}
+
+/* The theme: the device's unless <html data-theme> fixes it. */
+:root {
+  color-scheme: light dark;
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+/* Accent gradient: large accents only (logo mark, hero band, primary button hover). */
+@utility bg-accent-gradient {
+  background-image: linear-gradient(
+    120deg,
+    var(--color-accent) 0%,
+    var(--color-glow) 70%,
+    var(--color-lime) 100%
+  );
+}
+
+/* Prices and specs: figures of one width, so columns line up. */
+@utility figures {
+  font-variant-numeric: tabular-nums;
+}

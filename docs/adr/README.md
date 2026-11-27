@@ -27,4 +27,5 @@ Decisions that outlive a single feature. Format: MADR (`template.md`); how and w
 | [0021](0021-gateway-forwards-service-apis.md) | The gateway declares each service endpoint it exposes and forwards it, passing the service's answers through | accepted |
 | [0022](0022-service-database-conventions.md) | Service database conventions: UUIDv7, money in cents, soft delete, versions, cursor paging, least-privilege roles | accepted, amended by 0023 |
 | [0023](0023-derived-data-by-triggers.md) | Derived data a database computes from its own rows is kept by triggers | accepted |
+| [0024](0024-styling-tailwind-own-components.md) | Styling: Tailwind CSS v4 with our own components and design tokens | accepted |
 | [0025](0025-rendering-strategy.md) | Rendering strategy: product pages by ISR, lists per request with a data cache | accepted |

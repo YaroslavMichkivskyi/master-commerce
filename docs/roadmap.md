@@ -98,4 +98,5 @@ MinIO and Mailpit.
 | 0021 | The gateway declares each service endpoint it exposes and forwards it |
 | 0022 | Service database conventions: UUIDv7, money in cents, soft delete, versions, cursor paging, least-privilege roles (amended by 0023) |
 | 0023 | Derived data a database computes from its own rows is kept by triggers |
+| 0024 | Styling: Tailwind CSS v4 with our own components and design tokens |
 | 0025 | Rendering strategy: product pages by ISR, lists per request with a data cache |

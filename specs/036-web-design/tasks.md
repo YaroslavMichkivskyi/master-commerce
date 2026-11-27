@@ -18,12 +18,13 @@ phase — they are the regression suite for behaviour and SEO.
   status; ADR index; roadmap ADR list; research R-5 outcome, plan updated
 
 ## Phase 2 — Styling foundation (FR-001, FR-002, FR-004, FR-006, R-1, R-2, R-4)
-- [ ] T004 dependencies pinned (`tailwindcss`, `@tailwindcss/postcss`,
+- [X] T004 dependencies pinned (`tailwindcss`, `@tailwindcss/postcss`,
   `@fontsource-variable/inter`), `postcss.config.mjs`, `app/theme.css` tokens (light /
   dark, accents, type scale, spacing, radius, shadow, breakpoints), `app/globals.css`
-  base layer, `app/fonts.ts`; ESLint rule against arbitrary values; `components/ui/cx.ts`
-- [ ] T005 unit test: WCAG contrast of every text / UI token pair in both themes
-- [ ] T006 ADR 0024 (styling: Tailwind v4 with own components) + index + roadmap list
+  base layer, `app/fonts.ts`; ESLint rule against arbitrary values; `components/ui/cx.ts`;
+  the TASK-6 styles moved to `app/legacy.css` until phase 6
+- [X] T005 unit test: WCAG contrast of every text / UI token pair in both themes
+- [X] T006 ADR 0024 (styling: Tailwind v4 with own components) + index + roadmap list
 
 ## Phase 3 — UI primitives (FR-003, FR-020)
 - [ ] T007 [P] `components/ui/`: button (primary / secondary / ghost, sizes, disabled),
@@ -56,8 +57,8 @@ phase — they are the regression suite for behaviour and SEO.
 - [ ] T016 brand and search pages rebuilt
 - [ ] T017 product page rebuilt (above-the-fold block, description, specs table),
   still ISR (ADR 0025)
-- [ ] T018 not-found and error pages rebuilt; `components/storefront.tsx` and every
-  TASK-6 class removed (`git grep` of the old class names returns nothing); TASK-6
+- [ ] T018 not-found and error pages rebuilt; `components/storefront.tsx`, `app/legacy.css`
+  and every TASK-6 class removed (`git grep` of the old class names returns nothing); TASK-6
   Vitest suites green unchanged in behaviour (markup assertions updated only)
 - [ ] T019 **the stack is started with generated data and the pages are opened for the
   owner to see** at three widths, both themes
