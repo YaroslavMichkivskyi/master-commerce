@@ -8,8 +8,6 @@ import { siteUrl } from '../lib/seo';
 import { themeScript } from '../lib/theme';
 import { inter } from './fonts';
 import './globals.css';
-// The TASK-6 styles until the pages are rebuilt (specs/036-web-design, phase 6).
-import './legacy.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
@@ -28,10 +26,14 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       </head>
       <body className="flex flex-col">
         <SiteHeader tree={top} />
-        {/* The skip link's target; the pages bring their own <main> until phase 6. */}
-        <div id="main" tabIndex={-1} className="flex-1 outline-none">
+        {/* The one <main> of every page, the skip link's target; a page brings its content. */}
+        <main
+          id="main"
+          tabIndex={-1}
+          className="mx-auto w-full max-w-page flex-1 px-4 py-6 outline-none md:py-8"
+        >
           {children}
-        </div>
+        </main>
         <SiteFooter tree={top} />
         <MenuEnhancer />
       </body>

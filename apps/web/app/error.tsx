@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 import { startTransition } from 'react';
-import { Unavailable } from '../components/storefront';
+import { Unavailable } from '../components/shop/states';
+import { Button } from '../components/ui/button';
 
 // A page that could not be rendered — the catalog unavailable (CatalogUnavailableError) or
 // anything unexpected: a 5xx with the "unavailable" message, never a stack trace (TASK-6
@@ -21,11 +22,12 @@ export default function ErrorPage({
       reset();
     });
   return (
-    <main>
-      <Unavailable />
-      <button type="button" onClick={retry}>
-        Try again
-      </button>
-    </main>
+    <Unavailable
+      retry={
+        <Button type="button" onClick={retry}>
+          Try again
+        </Button>
+      }
+    />
   );
 }

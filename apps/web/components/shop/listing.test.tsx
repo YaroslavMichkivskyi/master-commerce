@@ -5,7 +5,7 @@ import { Filters } from './filters';
 import { Breadcrumbs, Pagination, ResultCount, SortControl } from './list-controls';
 import { ListView } from './list-view';
 import { ProductCard } from './product-card';
-import { ListSkeleton, NoResults, NotFoundState, Unavailable } from './states';
+import { ListSkeleton, NoResults, NotFoundState, NothingFound, Unavailable } from './states';
 
 // The listing parts rendered on the server (FR-003, FR-012, FR-013, FR-021, edge cases).
 // The phone panel's modal behaviour is checked in the browser (phase 7).
@@ -186,17 +186,27 @@ describe('states', () => {
     expect(render(<NoResults clearHref={P} filtered={false} />)).toContain('href="/"');
   });
 
-  it('unavailable is an alert with a retry', () => {
-    const html = render(<Unavailable retryHref={P} />);
+  it('unavailable is an alert with the retry it is given', () => {
+    const html = render(<Unavailable retry={<button type="button">Try again</button>} />);
     expect(html).toMatch(/^<section role="alert"/);
     expect(html).toContain('<h1');
-    expect(html).toContain(`href="${P}"`);
+    expect(html).toContain('>Try again</button>');
   });
 
   it('not found has one heading and a way on', () => {
-    const html = render(<NotFoundState what="product" />);
+    const html = render(<NotFoundState />);
     expect(html.match(/<h1/g)).toHaveLength(1);
-    expect(html).toContain('Product not found');
+    expect(html).toContain('Page not found');
+    expect(html).toContain('href="/"');
+  });
+
+  it('nothing found is the page heading with the suggestions; "Search" before any words', () => {
+    const html = render(
+      <NothingFound query="zzz" suggestions={<a href="/c/storage">Storage</a>} />,
+    );
+    expect(html).toMatch(/<h1[^>]*>Nothing found for “zzz”<\/h1>/);
+    expect(html).toContain('href="/c/storage"');
+    expect(render(<NothingFound query="" />)).toMatch(/<h1[^>]*>Search<\/h1>/);
   });
 
   it('loading keeps the card sizes and is announced as busy', () => {

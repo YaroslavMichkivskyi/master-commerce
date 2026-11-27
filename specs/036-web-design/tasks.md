@@ -53,11 +53,11 @@ phase — they are the regression suite for behaviour and SEO.
   counts, states
 
 ## Phase 6 — Pages (FR-010, FR-011, FR-014, US-1…US-3)
-- [ ] T015 home and category pages rebuilt (phone / tablet / desktop layouts)
-- [ ] T016 brand and search pages rebuilt
-- [ ] T017 product page rebuilt (above-the-fold block, description, specs table),
+- [X] T015 home and category pages rebuilt (phone / tablet / desktop layouts)
+- [X] T016 brand and search pages rebuilt
+- [X] T017 product page rebuilt (above-the-fold block, description, specs table),
   still ISR (ADR 0025)
-- [ ] T018 not-found and error pages rebuilt; `components/storefront.tsx`, `app/legacy.css`
+- [X] T018 not-found and error pages rebuilt; `components/storefront.tsx`, `app/legacy.css`
   and every TASK-6 class removed (`git grep` of the old class names returns nothing); TASK-6
   Vitest suites green unchanged in behaviour (markup assertions updated only)
 - [ ] T019 **the stack is started with generated data and the pages are opened for the

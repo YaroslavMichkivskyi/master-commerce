@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect, redirect } from 'next/navigation';
-import { Breadcrumbs, JsonLd, ListView } from '../../../components/storefront';
+import { JsonLd } from '../../../components/shop/json-ld';
+import { ListView } from '../../../components/shop/list-view';
+import { PageHead } from '../../../components/shop/page-head';
 import { CatalogUnavailableError, catalog } from '../../../lib/catalog';
 import { href, normaliseRanges, type SearchParams, withoutRefused } from '../../../lib/query';
 import { breadcrumbList, listMetadata, noindex } from '../../../lib/seo';
@@ -41,18 +43,18 @@ export default async function BrandPage({ params, searchParams }: Props) {
     permanentRedirect(href(`/brands/${brand.slug}`, query, {}, { keepPage: true }));
 
   return (
-    <main>
+    <>
       <JsonLd
         data={breadcrumbList([
           { name: 'Home', path: '/' },
           { name: brand.name, path },
         ])}
       />
-      <Breadcrumbs
+      <PageHead
         trail={[{ name: 'Home', href: '/' }, { name: 'Brands' }, { name: brand.name }]}
+        title={brand.name}
       />
-      <h1>{brand.name}</h1>
       <ListView path={path} params={query} list={list} />
-    </main>
+    </>
   );
 }

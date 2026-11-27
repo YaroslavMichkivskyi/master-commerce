@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { ListView } from '../../components/storefront';
+import { ListView } from '../../components/shop/list-view';
+import { CategoryPills, PageHead } from '../../components/shop/page-head';
+import { NothingFound } from '../../components/shop/states';
 import { CatalogUnavailableError, catalog } from '../../lib/catalog';
 import { flatten, href, normaliseRanges, type SearchParams, withoutRefused } from '../../lib/query';
 import { noindex } from '../../lib/seo';
@@ -34,32 +36,23 @@ export default async function SearchPage({ searchParams }: Props) {
   const narrowed = ['brand', 'price', 'stock', 'category'].some((k) => flatten(query)[k]);
   if (list && (list.total > 0 || narrowed)) {
     return (
-      <main>
-        <h1>Results for “{list.query}”</h1>
+      <>
+        <PageHead title={`Results for “${list.query}”`} />
         <ListView path="/search" params={query} list={list} search />
-      </main>
+      </>
     );
   }
 
   // Nothing found, or nothing searched: suggest the categories (US-3).
   const tree = await catalog.tree();
   return (
-    <main>
-      <h1>{q ? `Nothing found for “${q}”` : 'Search'}</h1>
-      <p>
-        {q
-          ? 'Check the spelling, use fewer words, or browse the categories:'
-          : 'Type what you are looking for above, or browse the categories:'}
-      </p>
-      {tree.kind === 'ok' ? (
-        <ul className="subcategories">
-          {tree.data.items.map((c) => (
-            <li key={c.id}>
-              <a href={`/c/${c.slug}`}>{c.name}</a>
-            </li>
-          ))}
-        </ul>
-      ) : null}
-    </main>
+    <NothingFound
+      query={q}
+      suggestions={
+        tree.kind === 'ok' ? (
+          <CategoryPills items={tree.data.items} label="Categories" />
+        ) : undefined
+      }
+    />
   );
 }

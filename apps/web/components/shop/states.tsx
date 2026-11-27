@@ -62,52 +62,54 @@ export function NoResults({ clearHref, filtered }: { clearHref: string; filtered
   );
 }
 
-/** A search that found nothing. */
-export function NothingFound({ query }: { query: string }) {
+/**
+ * A search that found nothing, or nothing searched yet: the whole page (its `h1`), with
+ * the categories to go on from (`suggestions`, left out while the catalog is down).
+ */
+export function NothingFound({ query, suggestions }: { query: string; suggestions?: ReactNode }) {
   return (
     <StatePanel
+      heading="h1"
       icon={<SearchIcon />}
-      title={`Nothing found for “${query}”`}
-      actions={
-        <ButtonLink href="/" variant="secondary">
-          Browse the categories
-        </ButtonLink>
-      }
+      title={query ? `Nothing found for “${query}”` : 'Search'}
+      actions={suggestions}
     >
-      Check the spelling or try fewer words.
+      {query
+        ? 'Check the spelling, use fewer words, or browse the categories:'
+        : 'Type what you are looking for above, or browse the categories:'}
     </StatePanel>
   );
 }
 
-/** The catalog did not answer (a 5xx): retry the same address. */
-export function Unavailable({ retryHref }: { retryHref?: string }) {
+/** The catalog did not answer (a 5xx); `retry` is the error page's button. */
+export function Unavailable({ retry }: { retry?: ReactNode }) {
   return (
     <StatePanel
       alert
       heading="h1"
       icon={<BoxIcon />}
       title="The catalog is unavailable right now"
-      actions={retryHref ? <ButtonLink href={retryHref}>Try again</ButtonLink> : undefined}
+      actions={retry}
     >
       Please try again in a moment.
     </StatePanel>
   );
 }
 
-/** A page or product that does not exist. */
-export function NotFoundState({ what = 'page' }: { what?: 'page' | 'product' }) {
+/** A page or product that does not exist (a 404). */
+export function NotFoundState() {
   return (
     <StatePanel
       heading="h1"
       icon={<SearchIcon />}
-      title={what === 'product' ? 'Product not found' : 'Page not found'}
+      title="Page not found"
       actions={
         <ButtonLink href="/" variant="secondary">
           Browse the categories
         </ButtonLink>
       }
     >
-      It may have been removed, or the address is mistyped. Search above or start from the
+      The page does not exist or the product is no longer sold. Search above or start from the
       categories.
     </StatePanel>
   );

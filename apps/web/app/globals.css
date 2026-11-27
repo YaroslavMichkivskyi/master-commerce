@@ -1,6 +1,4 @@
 /* Tailwind and the design tokens (ADR 0024); everything else is utilities in components. */
-/* `legacy`: the TASK-6 styles until the pages are rebuilt (app/legacy.css). */
-@layer theme, base, legacy, components, utilities;
 @import 'tailwindcss';
 @import './theme.css';
 
