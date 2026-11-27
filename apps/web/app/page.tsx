@@ -1,28 +1,43 @@
-import { fetchCategories } from '../lib/gateway';
+import { ProductGrid } from '../components/storefront';
+import type { Metadata } from 'next';
+import { CatalogUnavailableError, catalog } from '../lib/catalog';
 
-// Rendered per request for now; ISR with on-demand revalidation comes with TASK-6 / TASK-18.
+export const metadata: Metadata = { alternates: { canonical: '/' } };
+
+// Rendered per request, never at build time: a build has no catalog to ask, and a home
+// page frozen as "unavailable" must not be served. The tree is still cached for 5 minutes
+// in the data cache (lib/catalog.ts).
 export const dynamic = 'force-dynamic';
 
+/** Home: the top categories and the newest products (FR-030). */
 export default async function HomePage() {
-  const result = await fetchCategories();
+  const [tree, newest] = await Promise.all([catalog.tree(), catalog.newest(12)]);
+  if (tree.kind !== 'ok') throw new CatalogUnavailableError();
 
   return (
     <main>
       <h1>Computer hardware</h1>
       <h2>Categories</h2>
-      {result.kind === 'unavailable' ? (
-        <p role="alert">The catalog is unavailable right now. Please try again later.</p>
-      ) : result.items.length === 0 ? (
+      {tree.data.items.length === 0 ? (
         <p>No categories yet.</p>
       ) : (
-        <ul>
-          {result.items.map((c) => (
-            <li key={c.id} data-slug={c.slug}>
+        <div className="home-categories">
+          {tree.data.items.map((c) => (
+            <a key={c.id} href={`/c/${c.slug}`} data-slug={c.slug}>
               {c.name}
-            </li>
+              <small>
+                {c.productCount} {c.productCount === 1 ? 'product' : 'products'}
+              </small>
+            </a>
           ))}
-        </ul>
+        </div>
       )}
+      {newest.kind === 'ok' && newest.data.items.length > 0 ? (
+        <>
+          <h2>New in</h2>
+          <ProductGrid items={newest.data.items} />
+        </>
+      ) : null}
     </main>
   );
 }

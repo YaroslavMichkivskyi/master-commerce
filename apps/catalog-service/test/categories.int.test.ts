@@ -143,6 +143,14 @@ describe('catalog-service against PostgreSQL', () => {
       '/health/live',
       '/health/ready',
       '/metrics',
+      '/storefront/brands/{slug}/products',
+      '/storefront/categories',
+      '/storefront/categories/{slug}/products',
+      '/storefront/new',
+      '/storefront/products/{slug}',
+      '/storefront/search',
+      '/storefront/sitemap',
+      '/storefront/sitemap/products/{part}',
     ]);
     expect(body.components.schemas).toHaveProperty('CategoryListDto');
     expect(body.components.schemas).toHaveProperty('ProblemDto');

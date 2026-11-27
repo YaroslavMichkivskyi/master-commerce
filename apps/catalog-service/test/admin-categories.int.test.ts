@@ -335,6 +335,18 @@ describe('admin: categories', () => {
       await http().put(`/admin/categories/${c.id}/attributes`).send({ attributes: [] }).expect(428);
     });
 
+    it('refuses a code the storefront uses as a parameter, and values with commas', async () => {
+      const c = await create('attr-storefront-names');
+      for (const code of ['price', 'brand', 'sort', 'category']) {
+        const res = await put(c, [{ ...memory, code }]).expect(400);
+        expect(JSON.stringify(res.body)).toContain('storefront parameters');
+      }
+      const ports = { code: 'ports', name: 'Ports', type: 'multi_select', required: false };
+      const comma = await put(c, [{ ...ports, allowedValues: ['HDMI 2.1, USB-C'] }]).expect(400);
+      expect(JSON.stringify(comma.body)).toContain('must not contain commas');
+      await put(c, [{ ...ports, allowedValues: ['HDMI 2.1', 'USB-C'] }]).expect(200);
+    });
+
     it('keeps the row of a code that stays, and soft-deletes the dropped one', async () => {
       const c = await create('attr-rows');
       const first = (await put(c, [memory, chipset]).expect(200)).body as CategoryDetailDto;

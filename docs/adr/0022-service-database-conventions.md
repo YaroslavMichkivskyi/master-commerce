@@ -1,6 +1,6 @@
 # 0022. Service database conventions: UUIDv7, money in cents, soft delete, versions, cursor paging, least-privilege roles
 
-- Status: accepted
+- Status: accepted; amended by [0023](0023-derived-data-by-triggers.md) (triggers for derived data, §7)
 - Date: 2026-11-20
 - Deciders: project owner
 

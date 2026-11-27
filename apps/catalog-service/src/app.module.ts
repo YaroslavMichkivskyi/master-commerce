@@ -3,6 +3,7 @@ import { ServiceCoreModule } from '@master-commerce/service-core';
 import { BrandsModule } from './admin/brands/brands.module.js';
 import { AdminCategoriesModule } from './admin/categories/admin-categories.module.js';
 import { ProductsModule } from './admin/products/products.module.js';
+import { StorefrontModule } from './storefront/storefront.module.js';
 import { CategoriesModule } from './categories/categories.module.js';
 import { DatabaseModule } from './db/database.module.js';
 import { DatabaseReadiness } from './db/database.readiness.js';
@@ -24,6 +25,7 @@ import { CatalogEnv, ROOT_ENV_FILE } from './env.js';
     BrandsModule,
     AdminCategoriesModule,
     ProductsModule,
+    StorefrontModule,
   ],
 })
 export class AppModule {}

@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 import {
   boolean,
   check,
+  customType,
   foreignKey,
   index,
   integer,
@@ -20,6 +21,11 @@ import {
 
 const SLUG = `'^[a-z0-9]+(-[a-z0-9]+)*$'`;
 const live = sql`deleted_at IS NULL`;
+/** What the storefront shows (TASK-6): live and published. */
+const onSale = sql`deleted_at IS NULL AND published`;
+
+/** PostgreSQL full-text document; written by the database itself (TASK-6 research R-4). */
+const tsvector = customType<{ data: string }>({ dataType: () => 'tsvector' });
 
 /** UUIDv7 made by the database (FR-035, research R-1). */
 const id = () =>
@@ -174,6 +180,10 @@ export const product = pgTable(
     stock: integer('stock').notNull().default(0),
     specs: jsonb('specs').$type<Record<string, unknown>>().notNull().default({}),
     published: boolean('published').notNull().default(false),
+    /** Set by trigger from name, brand, category and description (TASK-6 data-model). */
+    search: tsvector('search')
+      .notNull()
+      .default(sql`''::tsvector`),
     ...common(),
   },
   (t) => [
@@ -183,6 +193,10 @@ export const product = pgTable(
     index('product_category_live').on(t.categoryId, t.id).where(live),
     index('product_brand_live').on(t.brandId, t.id).where(live),
     index('product_published_live').on(t.published, t.id).where(live),
+    // The storefront: search and its scopes, on what is for sale (TASK-6 research R-2, R-4).
+    index('product_search_live').using('gin', t.search).where(onSale),
+    index('product_storefront_category').on(t.categoryId).where(onSale),
+    index('product_storefront_brand').on(t.brandId).where(onSale),
     check('product_sku_format', sql`sku ~ '^[A-Z0-9][A-Z0-9-]*$' AND char_length(sku) <= 40`),
     check('product_price_positive', sql`price_cents > 0`),
     check('product_stock_not_negative', sql`stock >= 0`),

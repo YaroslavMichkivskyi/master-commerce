@@ -29,6 +29,13 @@
       "when": 1794872535363,
       "tag": "0003_catalog_model",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1795220055667,
+      "tag": "0004_storefront_search",
+      "breakpoints": true
     }
   ]
 }
