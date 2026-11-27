@@ -1,11 +1,11 @@
 ---
 id: TASK-6
 title: 'Storefront browse: filters, facets, search, SSR pages, SEO'
-status: In Progress
+status: Done
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-26T23:20:00Z'
+updated_date: '2026-11-27T00:50:00Z'
 labels:
   - mvp
   - speckit-full
@@ -32,16 +32,16 @@ Spec: `specs/006-storefront-browse/`
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 On 100K products, filter + sort answers with P95 < 200 ms locally
-- [ ] #2 A product page is served as complete HTML with JSON-LD
-- [ ] #3 Filter state survives reload and sharing via the URL
+- [x] #1 On 100K products, filter + sort answers with P95 < 200 ms locally
+- [x] #2 A product page is served as complete HTML with JSON-LD
+- [x] #3 Filter state survives reload and sharing via the URL
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
-- [ ] #2 Tests added / updated and green locally and in CI
-- [ ] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
+- [x] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
+- [x] #2 Tests added / updated and green locally and in CI
+- [x] #3 Docs updated (spec, ADR, README / runbook) where behaviour changed
 - [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
 
@@ -60,3 +60,9 @@ Speed, measured 2026-11-27 (T012, `pnpm --filter catalog-service test:nfr`: fres
 - Data generator with the search triggers: 100 000 products 16.4-17.2 s (was 6.1 s before the triggers; NFR-001 of TASK-5 < 120 s), 1 000 000 products 177.6 s, peak memory 111 MB.
 - Full checks (format:check, turbo lint typecheck test test:integration build --force): 25/25; fresh clone of task-6 on Windows: install + lint typecheck test build 23/23.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Storefront browse: a public read-only catalog API (tree with counts, category and brand lists with disjunctive facets, full-text search ranked by ts_rank with a prefix last word, product by slug with former slugs, newest, sitemap) forwarded by the gateway under /api/v1/catalog; server-rendered pages with filters, sort and page in the address, 308 for old slugs, refused filters dropped while the rest stay, 500 with an unavailable page; SEO (metadata, canonical / noindex rules, Product and BreadcrumbList JSON-LD, robots.txt, sitemap in parts of 50 000). Search document kept by triggers (ADR 0023). Verified: turbo lint typecheck test test:integration build 25/25, fresh clone 23/23, test:nfr at 100 000 products - lists P95 179.9 ms, searches P95 37.7 ms; 29/29 test cases pass on the running stack; AI review (/code-review) findings fixed or recorded in the PR. Risks: large inner categories near the list target (TASK-37); stricter admin attribute validation for legacy rows.
+<!-- SECTION:FINAL_SUMMARY:END -->
