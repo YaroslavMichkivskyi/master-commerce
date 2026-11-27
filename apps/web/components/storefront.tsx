@@ -165,7 +165,16 @@ export function Facets({
               {(facet.values ?? []).map((v) => (
                 <li key={v.value}>
                   <a
-                    href={href(path, params, { [facet.code]: toggle(flat[facet.code], v.value) })}
+                    href={href(path, params, {
+                      // One category at a time (the catalog takes one subtree); the
+                      // other facets take several values.
+                      [facet.code]:
+                        facet.code === 'category'
+                          ? v.selected
+                            ? undefined
+                            : v.value
+                          : toggle(flat[facet.code], v.value),
+                    })}
                     className={v.selected ? 'on' : v.count === 0 ? 'empty' : ''}
                     rel="nofollow"
                   >

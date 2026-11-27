@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { CatalogUnavailableError } from '../lib/catalog';
 import { listPage, productPage, render, stubGateway, thrown } from '../test/gateway-stub';
+import ErrorPage from './error';
 import BrandPage from './brands/[slug]/page';
 import CategoryPage from './c/[slug]/page';
 import ProductPage from './p/[slug]/page';
@@ -33,9 +35,13 @@ describe('home', () => {
     expect(html).toContain('€649.99');
   });
 
-  it('shows "unavailable" when the gateway fails', async () => {
+  it('fails with CatalogUnavailableError when the gateway fails, so the answer is a 5xx', async () => {
     stubGateway({ [`${C}/categories`]: { status: 503, body: { status: 503 } } });
-    expect(render(await HomePage())).toContain('The catalog is unavailable right now');
+    await expect(HomePage()).rejects.toBeInstanceOf(CatalogUnavailableError);
+    // …and the error page says so, without details.
+    const html = render(<ErrorPage error={new CatalogUnavailableError()} reset={() => {}} />);
+    expect(html).toContain('The catalog is unavailable right now');
+    expect(html).not.toContain('CatalogUnavailableError');
   });
 });
 
@@ -79,6 +85,48 @@ describe('a category page', () => {
     expect(await thrown(() => category('graphics-cards', { page: 'abc' }))).toBe(
       'NEXT_REDIRECT;replace;/c/graphics-cards;307;',
     );
+  });
+
+  it('drops only the fields the catalog refused and keeps the other filters', async () => {
+    stubGateway({
+      [`${C}/categories/graphics-cards/products`]: {
+        status: 400,
+        body: { status: 400, errors: [{ field: 'price', messages: ['…'] }] },
+      },
+    });
+    expect(
+      await thrown(() =>
+        category('graphics-cards', { brand: 'palit', price: '1.234-', sort: 'name', page: '3' }),
+      ),
+    ).toBe('NEXT_REDIRECT;replace;/c/graphics-cards?brand=palit&page=3&sort=name;307;');
+  });
+
+  it('ticks one category at a time on a list with a category facet', async () => {
+    stubGateway({
+      [`${C}/search`]: {
+        body: listPage({
+          category: undefined,
+          query: 'corsair',
+          facets: [
+            {
+              code: 'category',
+              name: 'Category',
+              kind: 'values',
+              values: [
+                { value: 'memory', label: 'Memory', count: 4, selected: true },
+                { value: 'power-supplies', label: 'Power supplies', count: 3, selected: false },
+              ],
+            },
+          ],
+        }),
+      },
+    });
+    const html = render(
+      await SearchPage({ searchParams: Promise.resolve({ q: 'corsair', category: 'memory' }) }),
+    );
+    expect(html).toContain('href="/search?category=power-supplies&amp;q=corsair"');
+    expect(html).toContain('href="/search?q=corsair"');
+    expect(html).not.toContain('memory%2Cpower-supplies');
   });
 
   it('answers 404 for an unknown category', async () => {
@@ -134,6 +182,20 @@ describe('search', () => {
     const html = render(await SearchPage({ searchParams: Promise.resolve({ q: 'RTX 60' }) }));
     expect(html).toContain('Results for “rtx 60”');
     expect(html).toContain('<strong>Relevance</strong>');
+  });
+
+  it('drops a refused filter of a search and keeps the query', async () => {
+    stubGateway({
+      [`${C}/search`]: {
+        status: 400,
+        body: { status: 400, errors: [{ field: 'category', messages: ['…'] }] },
+      },
+    });
+    expect(
+      await thrown(() =>
+        SearchPage({ searchParams: Promise.resolve({ q: 'corsair', category: 'a,b' }) }),
+      ),
+    ).toBe('NEXT_REDIRECT;replace;/search?q=corsair;307;');
   });
 
   it('suggests the categories when nothing is found or nothing is asked', async () => {

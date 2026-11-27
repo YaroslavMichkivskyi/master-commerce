@@ -141,7 +141,11 @@ export class StorefrontService {
       .where(and(eq(brand.slug, slug), isNull(brand.deletedAt)));
     const found = row ?? (await this.formerBrand(slug));
     if (!found) throw new NotFoundException(`No brand has the slug "${slug}"`);
-    const filters = parseFilters(query, [], { search: false, categoryFilter: true });
+    // The page is the brand: a `brand` parameter is ignored (contracts/http.md).
+    const filters = {
+      ...parseFilters(query, [], { search: false, categoryFilter: true }),
+      brands: [],
+    };
     const page = await this.list(snapshot, {
       scope: { kind: 'brand', brandId: found.id },
       filters,
@@ -388,6 +392,7 @@ export function facetsOf(
     selected: readonly string[],
     label: (value: string, row?: FacetRow) => string,
     order?: readonly string[] | null,
+    countOfSelected?: (value: string, counted: readonly FacetRow[]) => number,
   ) => {
     const counted = (byCode.get(code) ?? []).filter((r) => r.value !== null);
     const values: FacetValueDto[] = counted.map((r) => ({
@@ -396,10 +401,15 @@ export function facetsOf(
       count: r.count ?? 0,
       selected: selected.includes(r.value!),
     }));
-    // A selected value no product has keeps its box, with 0.
+    // A selected value no product has keeps its box, with 0 (or what it stands for).
     for (const s of selected) {
       if (!values.some((v) => v.value === s))
-        values.push({ value: s, label: label(s), count: 0, selected: true });
+        values.push({
+          value: s,
+          label: label(s),
+          count: countOfSelected?.(s, counted) ?? 0,
+          selected: true,
+        });
     }
     const rank = (v: FacetValueDto) => {
       const i = order?.indexOf(v.value) ?? -1;
@@ -441,6 +451,17 @@ export function facetsOf(
       'Category',
       filters.category ? [filters.category] : [],
       (v, r) => r?.label ?? snapshot.bySlug.get(v)?.name ?? v,
+      null,
+      // Products are counted by their own (leaf) category; a selected inner category
+      // stands for the leaves under it.
+      (v, counted) => {
+        const node = snapshot.bySlug.get(v);
+        if (!node) return 0;
+        const under = new Set(subtreeOf(snapshot, node.id));
+        return counted
+          .filter((r) => under.has(snapshot.bySlug.get(r.value!)?.id ?? ''))
+          .reduce((sum, r) => sum + (r.count ?? 0), 0);
+      },
     );
   }
   for (const a of attributes) {

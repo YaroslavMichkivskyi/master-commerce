@@ -12,14 +12,15 @@ generated from code (ADR 0014). Every endpoint is `@Public()` and read-only.
 | Parameter | Meaning |
 |---|---|
 | `brand` | brand slugs, comma-separated (brand pages: ignored) |
-| `price` | euros, `min-max`, either side optional (`200-`, `-500`) |
+| `price` | euros, `min-max`, either side optional (`200-`, `-500`); a "to" over €21 474 836.47 (the column's limit) is no upper bound, a "from" over it finds nothing |
 | `stock` | `in` → in stock only |
 | `sort` | `new` (default), `price-asc`, `price-desc`, `name`, `relevance` (search default) |
-| `page` | 1…100, default 1 |
-| `category` | search only: a category slug (its subtree) |
+| `page` | a whole number from 1, default 1; past 100 (or past the last page) the last page that may be shown is answered |
+| `category` | search and brand pages: one category slug (its subtree) |
 | `<attribute code>` | values comma-separated; for `number` attributes `min-max` |
 
-Malformed values (`page=abc`, `price=x`) → `400` problem with `errors[]`. Unknown
+Malformed values (`page=abc`, `page=0`, `price=x`) → `400` problem with `errors[]`, each
+offending parameter named in `field`; the web drops those and keeps the rest. Unknown
 parameters and attribute codes the category does not have are ignored.
 
 ## Endpoints

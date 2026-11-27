@@ -90,9 +90,26 @@ describe('parseFilters (FR-002, R-7, R-9a)', () => {
     expect(f.attributes).toEqual([]);
   });
 
+  it('answers the last page that may be shown for a page past the limit', () => {
+    expect(parseFilters({ page: '101' }, ATTRIBUTES, category).page).toBe(100);
+    expect(parseFilters({ page: '999999999999' }, ATTRIBUTES, category).page).toBe(100);
+  });
+
+  it('keeps a price the column can hold: a huge "to" is no limit, a huge "from" the most', () => {
+    expect(parseFilters({ price: '-99999999999' }, ATTRIBUTES, category).price).toEqual({});
+    expect(parseFilters({ price: '99999999999-' }, ATTRIBUTES, category).price).toEqual({
+      min: 2_147_483_647,
+    });
+    expect(parseFilters({ price: '200-21474836.46' }, ATTRIBUTES, category).price).toEqual({
+      min: 20000,
+      max: 2_147_483_646,
+    });
+  });
+
   it.each([
     [{ page: '0' }, ['page']],
-    [{ page: '101' }, ['page']],
+    [{ page: '-1' }, ['page']],
+    [{ price: '1234567890123-' }, ['price']],
     [{ page: '1; DROP TABLE product' }, ['page']],
     [{ sort: 'relevance' }, ['sort']],
     [{ sort: 'price; DELETE FROM product' }, ['sort']],

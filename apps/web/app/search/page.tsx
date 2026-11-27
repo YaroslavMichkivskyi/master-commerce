@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
-import { ListView, Unavailable } from '../../components/storefront';
-import { catalog } from '../../lib/catalog';
-import { flatten, href, normaliseRanges, type SearchParams } from '../../lib/query';
+import { ListView } from '../../components/storefront';
+import { CatalogUnavailableError, catalog } from '../../lib/catalog';
+import { flatten, href, normaliseRanges, type SearchParams, withoutRefused } from '../../lib/query';
 import { noindex } from '../../lib/seo';
 
 interface Props {
@@ -23,13 +23,10 @@ export default async function SearchPage({ searchParams }: Props) {
   const q = flatten(query).q?.trim() ?? '';
 
   const answer = q ? await catalog.search(query) : undefined;
-  if (answer?.kind === 'unavailable') {
-    return (
-      <main>
-        <Unavailable />
-      </main>
-    );
-  }
+  if (answer?.kind === 'unavailable') throw new CatalogUnavailableError();
+  // A refused filter is dropped and the rest kept; a refused query is "nothing found".
+  if (answer?.kind === 'invalid' && !answer.fields.includes('q'))
+    redirect(withoutRefused('/search', query, answer.fields));
   const list = answer?.kind === 'ok' ? answer.data : undefined;
   if (list && list.total > 0) {
     return (

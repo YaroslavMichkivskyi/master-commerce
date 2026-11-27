@@ -55,6 +55,6 @@ Each phase is one or more reviewed commits (`start-task.md` step 6).
   lists and of searches); the data generator's load time re-measured with the
   triggers; full checks (`format:check`, `turbo run lint typecheck test
   test:integration build --force`), fresh clone; notes in TASK-6
-- [ ] T013 run the test cases ([test-cases.md](test-cases.md), `docs/playbooks/test-cases.md`)
+- [x] T013 run the test cases ([test-cases.md](test-cases.md), `docs/playbooks/test-cases.md`)
   on the 100 000-product catalog, the quickstart walked on Windows; failures fixed as reviewed steps and re-run; Coverage and
   Result columns updated, the summary line in the PR

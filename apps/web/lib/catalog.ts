@@ -17,7 +17,22 @@ export const REVALIDATE_SECONDS = 300;
 const TIMEOUT_MS = 3000;
 
 export type Answer<T> =
-  { kind: 'ok'; data: T } | { kind: 'not-found' } | { kind: 'invalid' } | { kind: 'unavailable' };
+  | { kind: 'ok'; data: T }
+  | { kind: 'not-found' }
+  /** The catalog refused the query; `fields` are the parameters it named. */
+  | { kind: 'invalid'; fields: string[] }
+  | { kind: 'unavailable' };
+
+/**
+ * Thrown by a page when the catalog cannot answer: `app/error.tsx` shows the message and
+ * the response is a 5xx, so monitors and crawlers see the failure (spec, edge cases).
+ */
+export class CatalogUnavailableError extends Error {
+  constructor() {
+    super('The catalog is unavailable');
+    this.name = 'CatalogUnavailableError';
+  }
+}
 
 type Fetched = { status: number; body: unknown } | undefined;
 
@@ -33,7 +48,11 @@ const load = cache(async (address: string, store: boolean): Promise<Fetched> => 
       signal: AbortSignal.timeout(TIMEOUT_MS),
       ...(store ? { next: { revalidate: REVALIDATE_SECONDS } } : { cache: 'no-store' as const }),
     });
-    return { status: res.status, body: res.ok ? ((await res.json()) as unknown) : undefined };
+    const readBody = res.ok || res.status === 400;
+    return {
+      status: res.status,
+      body: readBody ? ((await res.json().catch(() => undefined)) as unknown) : undefined,
+    };
   } catch {
     return undefined;
   }
@@ -55,7 +74,13 @@ async function get<T>(
   const res = await load(url.href, store && url.searchParams.size === 0);
   if (!res) return { kind: 'unavailable' };
   if (res.status === 404) return { kind: 'not-found' };
-  if (res.status === 400) return { kind: 'invalid' };
+  if (res.status === 400) {
+    const errors = (res.body as { errors?: { field?: unknown }[] } | undefined)?.errors;
+    const fields = Array.isArray(errors)
+      ? errors.map((e) => e.field).filter((f): f is string => typeof f === 'string')
+      : [];
+    return { kind: 'invalid', fields };
+  }
   const body = res.body;
   // A 200 of another shape (a proxy, a foreign process) is "unavailable", never a crash.
   if (res.status >= 300 || typeof body !== 'object' || body === null || (check && !check(body)))

@@ -5,6 +5,7 @@ import {
   href,
   isFiltered,
   normaliseRanges,
+  withoutRefused,
   pageHref,
   rangeOf,
   toggle,
@@ -61,6 +62,17 @@ describe('addresses', () => {
     expect(rangeOf('200-500')).toEqual({ min: '200', max: '500' });
     expect(rangeOf('-500')).toEqual({ min: undefined, max: '500' });
     expect(rangeOf(undefined)).toEqual({});
+  });
+
+  it('drops the refused fields, or goes to the bare page when none is in the address', () => {
+    expect(withoutRefused('/c/gpus', { brand: 'asus', price: 'x', page: '3' }, ['price'])).toBe(
+      '/c/gpus?brand=asus&page=3',
+    );
+    expect(withoutRefused('/c/gpus', { brand: 'asus', page: '0' }, ['page'])).toBe(
+      '/c/gpus?brand=asus',
+    );
+    expect(withoutRefused('/c/gpus', { brand: 'asus' }, ['colour'])).toBe('/c/gpus');
+    expect(withoutRefused('/c/gpus', { brand: 'asus' }, [])).toBe('/c/gpus');
   });
 
   it('prints euros with VAT as the shop does', () => {

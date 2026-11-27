@@ -1,6 +1,6 @@
 # 0023. Derived data a database computes from its own rows is kept by triggers
 
-- Status: proposed
+- Status: accepted
 - Date: 2026-11-21
 - Deciders: project owner
 

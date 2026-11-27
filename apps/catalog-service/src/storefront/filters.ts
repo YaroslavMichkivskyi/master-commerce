@@ -51,7 +51,9 @@ export const RESERVED = new Set(['brand', 'price', 'stock', 'sort', 'page', 'q',
 
 /** `min-max`, either side optional; numbers with an optional fraction. */
 const RANGE = /^(-?\d+(?:\.\d+)?)?-(-?\d+(?:\.\d+)?)?$/;
-const PRICE = /^(\d+(?:\.\d{1,2})?)?-(\d+(?:\.\d{1,2})?)?$/;
+const PRICE = /^(\d{1,12}(?:\.\d{1,2})?)?-(\d{1,12}(?:\.\d{1,2})?)?$/;
+/** The largest price the `price_cents` column holds (PostgreSQL `integer`). */
+export const PRICE_CENTS_MAX = 2_147_483_647;
 
 type RawQuery = Readonly<Record<string, unknown>>;
 
@@ -104,8 +106,13 @@ export function parseFilters(
     if (!m || (m[1] === undefined && m[2] === undefined)) {
       fail('price', 'price must be euros as min-max, e.g. 200-500, 200- or -500');
     } else {
-      if (m[1] !== undefined) price.min = Math.round(Number(m[1]) * 100);
-      if (m[2] !== undefined) price.max = Math.round(Number(m[2]) * 100);
+      // Beyond what a price can be: a "from" that high finds nothing, a "to" that high is
+      // no upper bound — never a number the column cannot compare with.
+      if (m[1] !== undefined) price.min = Math.min(Math.round(Number(m[1]) * 100), PRICE_CENTS_MAX);
+      if (m[2] !== undefined) {
+        const max = Math.round(Number(m[2]) * 100);
+        if (max < PRICE_CENTS_MAX) price.max = max;
+      }
       if (price.min !== undefined && price.max !== undefined && price.min > price.max) {
         fail('price', 'the lowest price must not be above the highest');
       }
@@ -121,11 +128,12 @@ export function parseFilters(
   const sortText = text(query, 'sort') ?? (options.search ? 'relevance' : 'new');
   if (!sorts.includes(sortText)) fail('sort', `sort must be one of ${sorts.join(', ')}`);
 
+  // A page past the paging limit answers the last page that may be shown (spec, edge
+  // cases); only a page that is not a whole number from 1 is refused.
   const pageText = text(query, 'page') ?? '1';
-  const page = /^\d{1,3}$/.test(pageText) ? Number(pageText) : NaN;
-  if (!(page >= 1 && page <= STOREFRONT_PAGE_MAX)) {
-    fail('page', `page must be a whole number from 1 to ${STOREFRONT_PAGE_MAX}`);
-  }
+  const asked = /^\d{1,12}$/.test(pageText) ? Number(pageText) : NaN;
+  if (!(asked >= 1)) fail('page', 'page must be a whole number from 1');
+  const page = Math.min(asked, STOREFRONT_PAGE_MAX);
 
   let category: string | undefined;
   if (options.categoryFilter) {

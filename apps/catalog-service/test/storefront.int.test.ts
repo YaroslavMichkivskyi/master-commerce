@@ -257,7 +257,7 @@ describe('storefront API', () => {
       },
     );
 
-    it('pages on, answers the last page when asked beyond it, refuses page 101', async () => {
+    it('pages on, answers the last page when asked beyond it or past page 100', async () => {
       const first = await list('/storefront/categories/components/products');
       const second = await list('/storefront/categories/components/products', { page: '2' });
       expect(second.page).toBe(2);
@@ -265,10 +265,34 @@ describe('storefront API', () => {
       const beyond = await list('/storefront/categories/graphics-cards/products', { page: '100' });
       expect(beyond.page).toBe(beyond.pageCount);
       expect(beyond.items.length).toBeGreaterThan(0);
+      const past = await list('/storefront/categories/components/products', { page: '101' });
+      // Past the limit: page 100, which is then the last page there is.
+      expect(past.page).toBe(past.pageCount);
+      expect(past.items.length).toBeGreaterThan(0);
       await http()
         .get('/storefront/categories/components/products')
-        .query({ page: '101' })
+        .query({ page: '0' })
         .expect(400);
+      // A price over what the column holds is no upper bound, never a 500.
+      const huge = await list('/storefront/categories/components/products', {
+        price: '-99999999999',
+      });
+      expect(huge.total).toBe(first.total);
+      expect((await list('/storefront/search', { q: 'rtx', price: '99999999999-' })).total).toBe(0);
+    });
+
+    it('ignores brand= on a brand page and counts a selected inner category by its leaves', async () => {
+      const brandSlug = rows.find((r) => r.published)!.brand;
+      const path = `/storefront/brands/${brandSlug}/products`;
+      const all = await list(path);
+      expect((await list(path, { brand: 'some-other-brand' })).total).toBe(all.total);
+
+      const inner = categories.find((c) => categories.some((x) => x.parentId === c.id))!;
+      const chosen = await list(path, { category: inner.slug });
+      const facet = chosen.facets.find((f) => f.code === 'category')!;
+      const selected = facet.values!.find((v) => v.value === inner.slug)!;
+      expect(selected.selected).toBe(true);
+      expect(selected.count).toBe(chosen.total);
     });
 
     it('answers 404 for an unknown or malformed category', async () => {

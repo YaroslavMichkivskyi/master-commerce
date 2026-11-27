@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect, redirect } from 'next/navigation';
-import { Breadcrumbs, JsonLd, ListView, Unavailable } from '../../../components/storefront';
-import { catalog } from '../../../lib/catalog';
-import { href, normaliseRanges, type SearchParams } from '../../../lib/query';
+import { Breadcrumbs, JsonLd, ListView } from '../../../components/storefront';
+import { CatalogUnavailableError, catalog } from '../../../lib/catalog';
+import { href, normaliseRanges, type SearchParams, withoutRefused } from '../../../lib/query';
 import { breadcrumbList, listMetadata, noindex } from '../../../lib/seo';
 
 interface Props {
@@ -33,14 +33,8 @@ export default async function BrandPage({ params, searchParams }: Props) {
 
   const answer = await catalog.brand(slug, query);
   if (answer.kind === 'not-found') notFound();
-  if (answer.kind === 'invalid') redirect(path);
-  if (answer.kind === 'unavailable') {
-    return (
-      <main>
-        <Unavailable />
-      </main>
-    );
-  }
+  if (answer.kind === 'invalid') redirect(withoutRefused(path, query, answer.fields));
+  if (answer.kind === 'unavailable') throw new CatalogUnavailableError();
   const list = answer.data;
   const brand = list.brand!;
   if (brand.slug !== slug)

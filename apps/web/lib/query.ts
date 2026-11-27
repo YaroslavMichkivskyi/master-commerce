@@ -86,3 +86,15 @@ const EURO = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR'
 
 /** `€1,299.99`, VAT included. */
 export const euros = (cents: number) => EURO.format(cents / 100);
+
+/**
+ * Where a list the catalog refused goes (spec, edge cases): the same address without the
+ * fields it named, so the other filters stay; the bare page when none of them is in it.
+ */
+export function withoutRefused(path: string, params: SearchParams, fields: readonly string[]) {
+  const present = fields.filter((f) => flatten(params)[f] !== undefined);
+  if (present.length === 0) return path;
+  return href(path, params, Object.fromEntries(present.map((f) => [f, undefined])), {
+    keepPage: !present.includes(PAGE),
+  });
+}

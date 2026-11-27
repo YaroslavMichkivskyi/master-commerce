@@ -47,7 +47,11 @@ function ApiListQuery(): MethodDecorator {
       }),
       ApiQuery({ name: 'stock', required: false, enum: ['in'] }),
       ApiQuery({ name: 'sort', required: false, enum: STOREFRONT_SORTS }),
-      ApiQuery({ name: 'page', required: false, description: '1…100' }),
+      ApiQuery({
+        name: 'page',
+        required: false,
+        description: 'From 1; past 100 or the last page, the last page that may be shown',
+      }),
     ]) {
       d(target, key, descriptor);
     }

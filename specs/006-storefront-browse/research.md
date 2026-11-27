@@ -127,7 +127,8 @@ tested:
   is built from them, so no `tsquery` syntax (`&`, `|`, `!`, `:`, quotes) from the user
   reaches PostgreSQL; an empty result of that is `400`.
 - **Bounded work per request:** `q` at most 200 characters and 10 words; at most 50
-  values per filter and 30 filters; page at most 100; ranges must be numbers; anything
+  values per filter and 30 filters; page at most 100 (a larger one answers page 100); prices
+  within what `price_cents` holds; ranges must be numbers; anything
   malformed is `400` with `errors[]`, anything else unknown is ignored. The service
   role's `statement_timeout` (5 s, ADR 0022) stops a runaway query.
 - **No data beyond the storefront's:** only published products of live categories and

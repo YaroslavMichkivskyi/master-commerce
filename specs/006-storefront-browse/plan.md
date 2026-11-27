@@ -67,7 +67,7 @@ robots, sitemap
 | FR-001 | `src/storefront/` module, published + live only (R-1) | int: unpublished, deleted, product of a deleted brand never listed |
 | FR-002, FR-003 | one list statement with per-group flags and facets (R-2) | int: each facet count = brute-force count over the generated products; ranges = min / max of the others |
 | FR-004 | `ORDER BY in_stock DESC, <sort>, id` | int: every sort; out-of-stock after in-stock |
-| FR-005 | page / offset / `count(*) OVER ()`, limit 100 (R-3) | int: total, page count, last page, page 101 refused |
+| FR-005 | page / offset / `count(*) OVER ()`, limit 100 (R-3) | int: total, page count, last page, page 101 answers the last page that may be shown |
 | FR-006 | subtree ids, effective attributes of the category | int: an inner category lists its leaves' products, filters by shared attributes |
 | FR-007 | card with highlights from the leaf's first three attributes | int / unit: highlights by attribute order |
 | FR-008 | product by slug with specs by attribute; former slugs answer the current (R-5) | int: specs order and units; old product / category / brand slug |

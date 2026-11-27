@@ -1,8 +1,8 @@
 import type { ProductSpecDto } from '@master-commerce/dto';
 import type { Metadata } from 'next';
 import { notFound, permanentRedirect } from 'next/navigation';
-import { Breadcrumbs, JsonLd, StockBadge, Unavailable } from '../../../components/storefront';
-import { catalog } from '../../../lib/catalog';
+import { Breadcrumbs, JsonLd, StockBadge } from '../../../components/storefront';
+import { CatalogUnavailableError, catalog } from '../../../lib/catalog';
 import { euros } from '../../../lib/query';
 import { breadcrumbList, clip, noindex, productLd } from '../../../lib/seo';
 
@@ -37,13 +37,7 @@ export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
   const answer = await catalog.product(slug);
   if (answer.kind === 'not-found' || answer.kind === 'invalid') notFound();
-  if (answer.kind === 'unavailable') {
-    return (
-      <main>
-        <Unavailable />
-      </main>
-    );
-  }
+  if (answer.kind === 'unavailable') throw new CatalogUnavailableError();
   const p = answer.data;
   if (p.slug !== slug) permanentRedirect(`/p/${p.slug}`);
 
