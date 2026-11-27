@@ -135,5 +135,5 @@ specs/036-web-design/{research,quickstart,tasks,test-cases}.md
 ## Decided with the owner
 
 - Look: calm density and type, bright slightly-neon accents, both themes (spec
-  clarifications). Theme: device + remembered switch. Two-level mega-menu.
+  clarifications). Theme: device on the first visit, kept; light / dark switch. Two-level mega-menu.
 - Styling: Tailwind v4 with our own components, no shadcn/ui for now. Font: Inter.

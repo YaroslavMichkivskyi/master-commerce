@@ -1,4 +1,4 @@
-import { type AppliedFilter, GAP, pageNumbers, productCount } from '../../lib/listing';
+import { type AppliedFilter, formatCount, GAP, pageNumbers, productCount } from '../../lib/listing';
 import { pageHref, type SearchParams } from '../../lib/query';
 import { Button, buttonClass } from '../ui/button';
 import { cx } from '../ui/cx';
@@ -40,11 +40,33 @@ export function Breadcrumbs({ trail }: { trail: readonly Crumb[] }) {
   );
 }
 
-/** The number of products found, announced when it changes (FR-021). */
-export function ResultCount({ total }: { total: number }) {
+/**
+ * The number of products found and which of them this page shows ("25–48", "page 2 of
+ * 100"), announced when it changes (FR-021).
+ */
+export function ResultCount({
+  total,
+  page = 1,
+  pageSize = 0,
+  pageCount = 1,
+  shown = 0,
+}: {
+  total: number;
+  page?: number;
+  pageSize?: number;
+  pageCount?: number;
+  shown?: number;
+}) {
+  const first = (page - 1) * pageSize + 1;
   return (
-    <div role="status" aria-live="polite" aria-atomic="true">
+    <div role="status" aria-live="polite" aria-atomic="true" className="flex flex-col">
       <h2 className="figures text-base font-semibold text-text">{productCount(total)}</h2>
+      {shown > 0 && pageCount > 1 ? (
+        <p className="figures text-sm text-muted">
+          {formatCount(first)}–{formatCount(first + shown - 1)} shown
+          {page > 1 ? `, page ${page} of ${pageCount}` : ''}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -113,14 +135,14 @@ export function SortControl({
       <label htmlFor="sort" className="text-sm text-muted">
         Sort
       </label>
-      <Select id="sort" name="sort" defaultValue={sort} className="h-8 text-sm">
+      <Select id="sort" name="sort" defaultValue={sort} className="text-sm">
         {options.map((o) => (
           <option key={o} value={o}>
             {SORT_LABELS[o]}
           </option>
         ))}
       </Select>
-      <Button type="submit" variant="secondary" size="sm">
+      <Button type="submit" variant="secondary">
         Apply
       </Button>
     </form>

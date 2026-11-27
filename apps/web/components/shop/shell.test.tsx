@@ -1,7 +1,7 @@
 import type { StorefrontCategoryNodeDto } from '@master-commerce/dto';
 import { runInNewContext } from 'node:vm';
 import { describe, expect, it } from 'vitest';
-import { nextChoice, readChoice, themeScript } from '../../lib/theme';
+import { currentTheme, otherTheme, themeScript } from '../../lib/theme';
 import { render } from '../../test/gateway-stub';
 import { SiteFooter } from './footer';
 import { SiteHeader } from './header';
@@ -82,38 +82,51 @@ describe('theme', () => {
     expect(render(<ThemeSwitch />)).toBe('<span aria-hidden="true" class="size-10"></span>');
   });
 
-  it('the switch goes light → dark → device → light', () => {
-    expect(nextChoice('light')).toBe('dark');
-    expect(nextChoice('dark')).toBe('device');
-    expect(nextChoice('device')).toBe('light');
+  it('the switch has two positions: light ⇄ dark', () => {
+    expect(otherTheme('light')).toBe('dark');
+    expect(otherTheme('dark')).toBe('light');
   });
 
-  it('a stored value other than light / dark means the device theme', () => {
-    expect(readChoice('dark')).toBe('dark');
-    expect(readChoice(null)).toBe('device');
-    expect(readChoice('blue')).toBe('device');
+  it('the page theme is the one the head script set, else the device one', () => {
+    expect(currentTheme({ dataset: { theme: 'light' } }, true)).toBe('light');
+    expect(currentTheme({ dataset: {} }, true)).toBe('dark');
+    expect(currentTheme({ dataset: {} }, false)).toBe('light');
   });
 
-  const run = (stored: string | null, throws = false) => {
+  /** Runs the head script; answers the theme set and what was stored. */
+  const run = (stored: string | null, deviceDark = false, throws = false) => {
     const dataset: Record<string, string> = {};
+    const kept: Record<string, string> = {};
     const localStorage = {
       getItem: () => {
         if (throws) throw new Error('blocked');
         return stored;
       },
+      setItem: (k: string, v: string) => {
+        kept[k] = v;
+      },
     };
-    runInNewContext(themeScript, { localStorage, document: { documentElement: { dataset } } });
-    return dataset.theme;
+    const matchMedia = () => ({ matches: deviceDark });
+    runInNewContext(themeScript, {
+      localStorage,
+      matchMedia,
+      document: { documentElement: { dataset } },
+    });
+    return { theme: dataset.theme, kept: kept.theme };
   };
 
-  it('the head script sets data-theme from a stored choice only', () => {
-    expect(run('dark')).toBe('dark');
-    expect(run('light')).toBe('light');
-    expect(run(null)).toBeUndefined();
-    expect(run('<script>')).toBeUndefined();
+  it('the head script applies a stored theme and stores nothing new', () => {
+    expect(run('dark')).toEqual({ theme: 'dark', kept: undefined });
+    expect(run('light', true)).toEqual({ theme: 'light', kept: undefined });
   });
 
-  it('the head script survives blocked storage', () => {
-    expect(run('dark', true)).toBeUndefined();
+  it('on the first visit it takes the device theme and keeps it', () => {
+    expect(run(null, true)).toEqual({ theme: 'dark', kept: 'dark' });
+    expect(run(null, false)).toEqual({ theme: 'light', kept: 'light' });
+    expect(run('<script>', true)).toEqual({ theme: 'dark', kept: 'dark' });
+  });
+
+  it('with storage blocked it leaves the device theme to CSS', () => {
+    expect(run('dark', true, true)).toEqual({ theme: undefined, kept: undefined });
   });
 });

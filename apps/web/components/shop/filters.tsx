@@ -73,9 +73,15 @@ function ValueFacet({
       <ul className="flex flex-col gap-0.5">{first.map(link)}</ul>
       {rest.length > 0 ? (
         // Open when a value in the hidden part is selected, so the selection shows.
-        <details className="group mt-1" open={rest.some((v) => v.selected) || undefined}>
-          <summary className="inline-flex min-h-8 items-center text-sm font-semibold text-accent group-open:hidden">
-            Show all ({values.length})
+        // Open, the summary moves under the list and reads "Show less" (a browser that cannot
+        // lay out <details> as flex keeps it above).
+        <details
+          className="group mt-1 flex flex-col"
+          open={rest.some((v) => v.selected) || undefined}
+        >
+          <summary className="inline-flex min-h-8 items-center self-start text-sm font-semibold text-accent group-open:order-last">
+            <span className="group-open:hidden">Show all ({values.length})</span>
+            <span className="hidden group-open:inline">Show less</span>
           </summary>
           <ul className="flex flex-col gap-0.5">{rest.map(link)}</ul>
         </details>

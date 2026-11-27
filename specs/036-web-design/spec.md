@@ -129,10 +129,10 @@ price and pages through the results, then opens a product.
   empty, error, not-found and loading states; image placeholder.
 - **FR-004** The choice of styling approach MUST be recorded in an ADR with the options
   weighed. *(TASK-36 AC #1)*
-- **FR-005** The shop MUST have a light and a dark theme. By default the theme follows
-  the device's setting; a switch in the header lets the visitor pick light, dark or
-  "device", the choice is remembered for later visits, and a page never flashes the
-  other theme while loading. Without JavaScript the device setting applies.
+- **FR-005** The shop MUST have a light and a dark theme. On the first visit the theme
+  is the device's setting and is remembered; a two-position switch in the header (light /
+  dark) changes it, the choice is remembered for later visits, and a page never flashes
+  the other theme while loading. Without JavaScript the device setting applies.
 - **FR-006** The look MUST be calm and airy in layout and type (moderate density,
   plenty of white space, readable text), with vivid, saturated accent colours — a
   bright, slightly neon accent and a second contrasting one, gradients allowed on
@@ -243,6 +243,8 @@ price and pages through the results, then opens a product.
   otherwise varied, not uniform (FR-006).
 - Q: Light / dark theme? → A: both; follow the device by default, plus a header switch
   remembered per visitor (FR-005).
+- Q (owner's review of phase 6, 2026-11-28): A "device" position on the switch? → A: no;
+  two positions, light / dark; the device theme of the first visit is stored (FR-005).
 - Q: Header category menu? → A: a two-level mega-menu — top categories with their
   subcategories (FR-007).
 

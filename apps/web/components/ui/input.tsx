@@ -1,5 +1,6 @@
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from 'react';
 import { cx } from './cx';
+import { ChevronDownIcon } from './icons';
 
 // Text, number and select fields (FR-003, FR-020). A field always has a name for assistive
 // technology: a visible <label> through `label`, or `aria-label`.
@@ -22,9 +23,27 @@ export function Input({ label, className, ...rest }: Props) {
   );
 }
 
-/** A drop-down of fixed options (the sort control). */
+/**
+ * A drop-down of fixed options (the sort control): our own arrow instead of the browser's,
+ * a pointer, and — where the browser can style it (`.select` in globals.css) — a list that
+ * looks like the field; elsewhere the list is the system one.
+ */
 export function Select({ className, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select className={cx(FIELD, 'w-auto pr-8', className)} {...rest} />;
+  return (
+    <span className="relative inline-flex">
+      <select
+        className={cx(
+          FIELD,
+          // `appearance` is set by `.select` in globals.css (a utility would override the
+          // customizable list there).
+          'select w-auto cursor-pointer py-0 pr-9 hover:border-accent',
+          className,
+        )}
+        {...rest}
+      />
+      <ChevronDownIcon className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted" />
+    </span>
+  );
 }
 
 /** A number field: `step="any"`, a decimal keypad on phones, figures of one width. */

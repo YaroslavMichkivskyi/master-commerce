@@ -36,7 +36,8 @@ phase — they are the regression suite for behaviour and SEO.
 - [X] T008 header: logo (text + gradient mark), search form, "Catalog" `<details>`
   mega-menu from the tree (two levels, full-screen on phones), footer; landmarks
 - [X] T009 theme: inline head script, `data-theme`, `prefers-color-scheme` fallback,
-  three-state switch island (hidden without JS)
+  two-state switch island (hidden without JS); the first visit's device theme stored
+  (changed at the owner's review in phase 6)
 - [X] T010 menu enhancer island: `Escape`, outside click, close on navigation, focus
   return; Vitest for the server parts
 

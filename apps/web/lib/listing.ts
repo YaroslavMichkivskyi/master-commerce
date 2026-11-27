@@ -88,5 +88,8 @@ export function clearFiltersHref(path: string, params: SearchParams, facets: rea
 
 const COUNT = new Intl.NumberFormat('en-IE');
 
+/** "38,664": a count as every page writes it. */
+export const formatCount = (n: number) => COUNT.format(n);
+
 /** "1 product", "1,234 products". */
-export const productCount = (n: number) => `${COUNT.format(n)} ${n === 1 ? 'product' : 'products'}`;
+export const productCount = (n: number) => `${formatCount(n)} ${n === 1 ? 'product' : 'products'}`;

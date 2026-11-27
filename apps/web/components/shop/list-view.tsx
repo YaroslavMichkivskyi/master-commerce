@@ -29,7 +29,13 @@ export function ListView({
       <Filters path={path} params={params} facets={list.facets} total={list.total} />
       <section aria-label="Products" className="flex min-w-0 flex-1 flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <ResultCount total={list.total} />
+          <ResultCount
+            total={list.total}
+            page={list.page}
+            pageSize={list.pageSize}
+            pageCount={list.pageCount}
+            shown={list.items.length}
+          />
           <SortControl path={path} params={params} sort={list.sort} search={search} />
         </div>
         <AppliedChips filters={applied} clearHref={clearHref} />

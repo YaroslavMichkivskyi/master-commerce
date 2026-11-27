@@ -25,16 +25,28 @@ export function Logo() {
 
 export function SearchForm() {
   return (
-    <form method="get" action="/search" role="search" className="flex w-full">
+    // One focus ring around the field and its button together (the field's own ring would
+    // run under the button).
+    <form
+      method="get"
+      action="/search"
+      role="search"
+      className="flex w-full rounded-md focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus"
+    >
       <Input
         type="search"
         name="q"
         placeholder="Search products"
         aria-label="Search products"
         maxLength={200}
-        className="rounded-r-none"
+        className="rounded-r-none focus-visible:outline-none"
       />
-      <Button type="submit" size="icon" className="rounded-l-none" aria-label="Search">
+      <Button
+        type="submit"
+        size="icon"
+        className="rounded-l-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-on-accent focus-visible:ring-inset"
+        aria-label="Search"
+      >
         <SearchIcon />
       </Button>
     </form>

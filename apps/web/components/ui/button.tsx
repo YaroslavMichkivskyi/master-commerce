@@ -10,7 +10,8 @@ export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary: 'bg-accent text-on-accent hover:bg-accent-hover',
-  secondary: 'border border-border-strong bg-surface text-text hover:bg-surface-2',
+  secondary:
+    'border border-border-strong bg-surface text-text hover:border-accent hover:bg-accent-soft hover:text-accent',
   ghost: 'text-text hover:bg-surface-2',
 };
 
@@ -24,7 +25,8 @@ const SIZES: Record<ButtonSize, string> = {
 export function buttonClass(variant: ButtonVariant = 'primary', size: ButtonSize = 'md') {
   return cx(
     'inline-flex items-center justify-center gap-2 rounded-md font-semibold whitespace-nowrap no-underline',
-    'transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+    // Tailwind's preflight gives <button> the default arrow; every control here is a pointer.
+    'cursor-pointer transition-colors disabled:cursor-not-allowed disabled:opacity-50',
     VARIANTS[variant],
     SIZES[size],
   );

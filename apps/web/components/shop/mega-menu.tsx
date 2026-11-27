@@ -1,4 +1,5 @@
 import type { StorefrontCategoryNodeDto } from '@master-commerce/dto';
+import { formatCount } from '../../lib/listing';
 import { CloseIcon, MenuIcon } from '../ui/icons';
 
 // The "Catalog" mega-menu (FR-007, R-6): a native <details>, so it opens and closes without
@@ -22,10 +23,12 @@ export function MegaMenu({ tree }: { tree: readonly StorefrontCategoryNodeDto[] 
               <li key={top.id}>
                 <a
                   href={`/c/${top.slug}`}
-                  className="flex items-baseline justify-between gap-2 font-semibold text-text no-underline hover:text-accent"
+                  className="inline-flex items-baseline gap-2 font-semibold text-text no-underline hover:text-accent"
                 >
                   {top.name}
-                  <span className="figures text-xs font-normal text-muted">{top.productCount}</span>
+                  <span className="figures text-xs font-normal text-muted">
+                    {formatCount(top.productCount)}
+                  </span>
                 </a>
                 {top.children.length > 0 ? (
                   <ul className="mt-2 flex flex-col gap-1 border-l border-border pl-3">

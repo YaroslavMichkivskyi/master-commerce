@@ -44,11 +44,14 @@ a maximum content width of 1440 px.
 ## R-3 Theme: device setting plus a switch (FR-005)
 
 **Decision.** `data-theme="light|dark"` on `<html>`. A tiny inline script at the top
-of `<head>` reads `localStorage.theme` (`light` | `dark` | absent = device) and sets
-the attribute before the first paint, so no page flashes the other theme. Without
-JavaScript the attribute is absent and CSS falls back to `prefers-color-scheme`. The
-switch is a small client component (three states: light, dark, device) shown only
-when JavaScript runs.
+of `<head>` reads `localStorage.theme` (`light` | `dark`) and sets the attribute before
+the first paint, so no page flashes the other theme. On the first visit (nothing stored)
+it takes the device's setting (`prefers-color-scheme`) and stores it, so later visits keep
+it even if the device changes. Without JavaScript the attribute is absent and CSS falls
+back to `prefers-color-scheme`. The switch is a small client component with two states
+(light ⇄ dark) shown only when JavaScript runs. *Changed 2026-11-28 at the owner's review:
+the first build had a third "device" state; the owner asked for two positions and the
+first visit's theme kept.*
 
 **Why not a cookie.** A cookie read on the server makes every page per-request and
 defeats the page cache (R-5); the inline script keeps pages static.

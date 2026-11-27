@@ -63,7 +63,11 @@ describe('filters', () => {
     const [visible, hidden] = chipset.split('Show all (12)');
     expect(visible!.match(/<li>/g)).toHaveLength(8);
     expect(hidden!.match(/<li>/g)).toHaveLength(4);
-    expect(chipset).toMatch(/<details class="group mt-1">/);
+    expect(chipset).toMatch(/<details class="group mt-1 flex flex-col">/);
+    // Open, the same summary reads "Show less" (and moves under the list).
+    expect(chipset).toMatch(
+      /<summary[^>]*group-open:order-last[^>]*>.*Show less<\/span><\/summary>/,
+    );
   });
 
   it('opens "Show all" when a selected value is hidden in it', () => {
@@ -72,7 +76,7 @@ describe('filters', () => {
       values: many.values!.map((v, i) => ({ ...v, selected: i === 10 })),
     };
     expect(render(<Filters path={P} params={{}} facets={[selected]} total={1} />)).toMatch(
-      /<details class="group mt-1" open="">/,
+      /<details class="group mt-1 flex flex-col" open="">/,
     );
   });
 
@@ -131,14 +135,28 @@ describe('list controls', () => {
     expect(html).toContain('<input type="hidden" name="brand" value="asus"/>');
     expect(html).not.toContain('name="page"');
     expect(html).not.toContain('type="hidden" name="sort"');
-    expect(html).toMatch(/<label for="sort"[^>]*>Sort<\/label><select[^>]* id="sort" name="sort"/);
+    expect(html).toMatch(
+      /<label for="sort"[^>]*>Sort<\/label><span[^>]*><select[^>]* id="sort" name="sort"/,
+    );
     expect(html).toContain('<option value="name" selected="">Name</option>');
     expect(html).not.toContain('Relevance');
   });
 
   it('the result count is a polite live region', () => {
     expect(render(<ResultCount total={1234} />)).toMatch(
-      /^<div role="status" aria-live="polite" aria-atomic="true"><h2[^>]*>1,234 products<\/h2>/,
+      /^<div role="status" aria-live="polite" aria-atomic="true"[^>]*><h2[^>]*>1,234 products<\/h2>/,
+    );
+  });
+
+  it('says which products the page shows, and the page past the first', () => {
+    const count = (page: number, shown: number) =>
+      render(<ResultCount total={35511} page={page} pageSize={24} pageCount={100} shown={shown} />);
+    expect(count(1, 24)).toContain('1–24 shown</p>');
+    expect(count(2, 24)).toContain('25–48 shown, page 2 of 100');
+    expect(count(100, 24)).toContain('2,377–2,400 shown, page 100 of 100');
+    // One page: the count says it all.
+    expect(render(<ResultCount total={3} pageSize={24} pageCount={1} shown={3} />)).not.toContain(
+      'shown',
     );
   });
 

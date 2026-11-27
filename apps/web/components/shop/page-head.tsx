@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { formatCount } from '../../lib/listing';
 import { type Crumb, Breadcrumbs } from './list-controls';
 
 // The top of a page (FR-010): breadcrumbs, the one `h1`, an optional line under it.
@@ -42,7 +43,7 @@ export function CategoryPills({
           >
             {c.name}
             {c.productCount !== undefined ? (
-              <span className="figures text-xs text-muted">{c.productCount}</span>
+              <span className="figures text-xs text-muted">{formatCount(c.productCount)}</span>
             ) : null}
           </a>
         </li>
