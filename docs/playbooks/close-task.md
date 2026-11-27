@@ -20,8 +20,11 @@
    on the branch before the PR: `gh workflow run ci.yml --ref task-<N>` (inputs `lint`,
    `typecheck`, `test`, `integration`, `scope`).
 4. **AI review of the branch.** Before the PR, run an AI code review of the whole branch
-   diff against `origin/dev` (Claude Code: `/code-review`). The review advises; the
-   owner decides, and it never replaces the owner's review.
+   diff against `origin/dev` (Claude Code: the `/code-review` skill itself — not a
+   subagent with a prompt of its own, and not a test-case run). The review advises; the
+   owner decides, and it never replaces the owner's review. **Nothing is changed before
+   the owner has seen the findings (step 2)** — in every round: a re-review of the fixes
+   is reported again; a "fix them all" covers only the round it was given for.
    1. **Verify every finding first** — a reviewer can be wrong. Read the code it points
       at and, where possible, prove it with a failing test, a run or a log. Verdict:
       *real*, or *false positive* (misread code, wrong assumption, already handled
