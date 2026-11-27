@@ -3,9 +3,11 @@ id: TASK-36
 title: >-
   Web: design system, storefront UI, performance and SEO rules, visual tests by
   test cases
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@YaroslavMichkivskyi'
 created_date: '2026-11-21T09:47:00Z'
+updated_date: '2026-11-27T01:01:00Z'
 labels:
   - mvp
   - speckit-full
@@ -46,3 +48,9 @@ Scope:
 - [ ] #3 Docs updated (ADR, docs/technologies.md, README / runbook) where needed
 - [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+speckit-full in specs/036-web-design/: spec, clarify, plan with styling ADR (Tailwind v4 + shadcn/ui vs CSS Modules) and rendering-strategy ADR, tasks, test-case table; then design tokens and font, components, page-by-page redesign of the TASK-6 storefront (responsive, filters drawer on phones), docs/web-guidelines.md linked from AGENTS.md, Playwright screenshot + axe tests at three widths in CI, Lighthouse measurements, keyboard walk-through, technologies.md rows. One reviewed commit per step.
+<!-- SECTION:PLAN:END -->
