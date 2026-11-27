@@ -50,7 +50,8 @@ export const LIMITS = {
 export const RESERVED = new Set(['brand', 'price', 'stock', 'sort', 'page', 'q', 'category']);
 
 /** `min-max`, either side optional; numbers with an optional fraction. */
-const RANGE = /^(-?\d+(?:\.\d+)?)?-(-?\d+(?:\.\d+)?)?$/;
+// At most 15 digits a side, so a value stays a finite number (a facet echoes it back).
+const RANGE = /^(-?\d{1,15}(?:\.\d{1,6})?)?-(-?\d{1,15}(?:\.\d{1,6})?)?$/;
 const PRICE = /^(\d{1,12}(?:\.\d{1,2})?)?-(\d{1,12}(?:\.\d{1,2})?)?$/;
 /** The largest price the `price_cents` column holds (PostgreSQL `integer`). */
 export const PRICE_CENTS_MAX = 2_147_483_647;
@@ -131,7 +132,7 @@ export function parseFilters(
   // A page past the paging limit answers the last page that may be shown (spec, edge
   // cases); only a page that is not a whole number from 1 is refused.
   const pageText = text(query, 'page') ?? '1';
-  const asked = /^\d{1,12}$/.test(pageText) ? Number(pageText) : NaN;
+  const asked = /^\d{1,100}$/.test(pageText) ? Number(pageText) : NaN;
   if (!(asked >= 1)) fail('page', 'page must be a whole number from 1');
   const page = Math.min(asked, STOREFRONT_PAGE_MAX);
 

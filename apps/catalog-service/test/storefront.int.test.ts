@@ -286,6 +286,7 @@ describe('storefront API', () => {
       const path = `/storefront/brands/${brandSlug}/products`;
       const all = await list(path);
       expect((await list(path, { brand: 'some-other-brand' })).total).toBe(all.total);
+      expect((await list(path, { brand: 'Not a slug!' })).total).toBe(all.total);
 
       const inner = categories.find((c) => categories.some((x) => x.parentId === c.id))!;
       const chosen = await list(path, { category: inner.slug });

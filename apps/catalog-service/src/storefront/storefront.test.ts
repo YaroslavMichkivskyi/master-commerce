@@ -93,6 +93,7 @@ describe('parseFilters (FR-002, R-7, R-9a)', () => {
   it('answers the last page that may be shown for a page past the limit', () => {
     expect(parseFilters({ page: '101' }, ATTRIBUTES, category).page).toBe(100);
     expect(parseFilters({ page: '999999999999' }, ATTRIBUTES, category).page).toBe(100);
+    expect(parseFilters({ page: '9'.repeat(40) }, ATTRIBUTES, category).page).toBe(100);
   });
 
   it('keeps a price the column can hold: a huge "to" is no limit, a huge "from" the most', () => {
@@ -120,6 +121,7 @@ describe('parseFilters (FR-002, R-7, R-9a)', () => {
     [{ brand: "asus' OR 1=1 --" }, ['brand']],
     [{ memory_size: '8-x' }, ['memory_size']],
     [{ memory_size: '16-8' }, ['memory_size']],
+    [{ memory_size: `${'9'.repeat(16)}-` }, ['memory_size']],
     [{ ray_tracing: 'maybe' }, ['ray_tracing']],
     [{ memory_type: 'x'.repeat(101) }, ['memory_type']],
     [{ memory_type: Array.from({ length: 51 }, (_, i) => `v${i}`).join(',') }, ['memory_type']],

@@ -141,11 +141,10 @@ export class StorefrontService {
       .where(and(eq(brand.slug, slug), isNull(brand.deletedAt)));
     const found = row ?? (await this.formerBrand(slug));
     if (!found) throw new NotFoundException(`No brand has the slug "${slug}"`);
-    // The page is the brand: a `brand` parameter is ignored (contracts/http.md).
-    const filters = {
-      ...parseFilters(query, [], { search: false, categoryFilter: true }),
-      brands: [],
-    };
+    // The page is the brand: a `brand` parameter is ignored (contracts/http.md), even a
+    // malformed one, so it is taken out before the query is read.
+    const rest = Object.fromEntries(Object.entries(query).filter(([name]) => name !== 'brand'));
+    const filters = parseFilters(rest, [], { search: false, categoryFilter: true });
     const page = await this.list(snapshot, {
       scope: { kind: 'brand', brandId: found.id },
       filters,

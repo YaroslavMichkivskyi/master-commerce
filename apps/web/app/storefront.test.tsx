@@ -8,6 +8,12 @@ import ProductPage from './p/[slug]/page';
 import HomePage from './page';
 import SearchPage from './search/page';
 
+// The error page asks for the router; redirect() and notFound() stay the real ones.
+vi.mock('next/navigation', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('next/navigation')>()),
+  useRouter: () => ({ refresh: () => {} }),
+}));
+
 // The storefront pages rendered on the server from a stubbed gateway (TASK-6 FR-030…FR-035).
 
 const C = '/api/v1/catalog';
