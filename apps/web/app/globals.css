@@ -1,4 +1,6 @@
 /* Tailwind and the design tokens (ADR 0024); everything else is utilities in components. */
+/* `legacy`: the TASK-6 styles until the pages are rebuilt (app/legacy.css). */
+@layer theme, base, legacy, components, utilities;
 @import 'tailwindcss';
 @import './theme.css';
 
@@ -15,6 +17,14 @@
   }
   a {
     color: var(--color-accent);
+  }
+  /* A <summary> styled as a button: no disclosure triangle (Safari draws its own). */
+  summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker {
+    display: none;
   }
   /* One visible focus ring for every focusable part (FR-020). */
   :focus-visible {

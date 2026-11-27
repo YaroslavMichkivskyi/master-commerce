@@ -33,11 +33,11 @@ phase — they are the regression suite for behaviour and SEO.
   focus ring token, 24 px minimum targets; Vitest render tests (roles, labels, states)
 
 ## Phase 4 — Shell (FR-005, FR-007, FR-013, US-3, US-4, R-3, R-6)
-- [ ] T008 header: logo (text + gradient mark), search form, "Catalog" `<details>`
+- [X] T008 header: logo (text + gradient mark), search form, "Catalog" `<details>`
   mega-menu from the tree (two levels, full-screen on phones), footer; landmarks
-- [ ] T009 theme: inline head script, `data-theme`, `prefers-color-scheme` fallback,
+- [X] T009 theme: inline head script, `data-theme`, `prefers-color-scheme` fallback,
   three-state switch island (hidden without JS)
-- [ ] T010 menu enhancer island: `Escape`, outside click, close on navigation, focus
+- [X] T010 menu enhancer island: `Escape`, outside click, close on navigation, focus
   return; Vitest for the server parts
 
 ## Phase 5 — Listing parts (FR-003, FR-012, FR-021, edge cases, R-6)
