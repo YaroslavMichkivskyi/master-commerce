@@ -91,7 +91,7 @@ phase — they are the regression suite for behaviour and SEO.
   of every name cited
 
 ## Phase 9 — Manual cases and close (FR-043, US-4, US-5)
-- [ ] T025 keyboard walk-through, screen-reader spot check, Lighthouse (3 runs each,
+- [X] T025 keyboard walk-through, screen-reader spot check, Lighthouse (3 runs each,
   medians), a slow connection (TC-32) → `test-cases.md` results
 - [ ] T026 run all test cases (`test-cases.md` playbook), report, then `close-task.md`
 

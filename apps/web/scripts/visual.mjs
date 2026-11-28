@@ -24,6 +24,8 @@ const compose = (...rest) =>
 
 let code = 1;
 try {
+  // A stack left by an interrupted run holds a filled database: start from nothing.
+  compose('down', '--volumes', '--remove-orphans');
   code = compose('build', 'prepare');
   if (code !== 0) throw new Error('the image did not build');
   if (serve) {

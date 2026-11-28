@@ -35,5 +35,16 @@ test.describe('dark', () => {
 test('out of stock', async ({ page }) => {
   await page.goto('/p/visual-out-of-stock');
   await expect(page.getByText('Out of stock', { exact: true })).toBeVisible();
+  const brand = await page.locator('main a[href^="/brands/"]').first().getAttribute('href');
   await look(page, 'product-out-of-stock');
+
+  // In its list the card says so too, and comes after every card in stock (TASK-6 FR-004).
+  await page.goto(`/c/graphics-cards?brand=${brand!.split('/').pop()}`);
+  const card = page.locator('article[data-slug="visual-out-of-stock"]');
+  await expect(card.getByText('Out of stock', { exact: true })).toBeVisible();
+  const stock = await page
+    .locator('article')
+    .evaluateAll((all) => all.map((a) => (a.textContent.includes('Out of stock') ? 'out' : 'in')));
+  expect(stock.indexOf('out')).toBeGreaterThan(-1);
+  expect(stock.slice(stock.indexOf('out'))).not.toContain('in');
 });
