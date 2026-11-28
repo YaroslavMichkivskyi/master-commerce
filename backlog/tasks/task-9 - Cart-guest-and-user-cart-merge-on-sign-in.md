@@ -4,7 +4,7 @@ title: 'Cart: guest and user cart, merge on sign-in'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-21T09:47:00Z'
+updated_date: '2026-11-28T09:09:00Z'
 labels:
   - mvp
   - speckit-full
@@ -33,6 +33,7 @@ Spec: `specs/009-cart/`
 - [ ] #1 A guest adds products, signs in, and the cart is kept
 - [ ] #2 A changed price is shown to the customer before checkout
 - [ ] #3 Quantity above available stock is refused
+- [ ] #4 The cart checks the current stock and price of every line when it is shown, whatever a cached product page said; a line no longer available is marked in plain words (out of stock, only N left) with a way on (remove, change the quantity) — ADR 0025
 <!-- AC:END -->
 
 ## Definition of Done

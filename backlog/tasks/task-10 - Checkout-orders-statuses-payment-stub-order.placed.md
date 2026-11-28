@@ -4,7 +4,7 @@ title: 'Checkout: orders, statuses, payment stub, order.placed'
 status: To Do
 assignee: []
 created_date: '2026-11-08T14:38:00Z'
-updated_date: '2026-11-08T15:32:00Z'
+updated_date: '2026-11-28T09:09:00Z'
 labels:
   - mvp
   - speckit-full
@@ -35,6 +35,7 @@ Spec: `specs/010-checkout/`
 - [ ] #1 A customer places an order and sees it in the history
 - [ ] #2 `order.placed` reaches the broker exactly once per order
 - [ ] #3 A failed payment leaves the order in a defined state
+- [ ] #4 Checkout checks stock again when the order is placed; if an item ran out meanwhile, nothing is charged and the customer is told which item and what to do, instead of a generic error — ADR 0025
 <!-- AC:END -->
 
 ## Definition of Done
