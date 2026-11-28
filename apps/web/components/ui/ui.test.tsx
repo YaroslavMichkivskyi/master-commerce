@@ -4,7 +4,7 @@ import { CountBadge, StockBadge } from './badge';
 import { Button, ButtonLink } from './button';
 import { CheckBox, Selected } from './check-box';
 import { SearchIcon } from './icons';
-import { Input, NumberInput, RangeFields } from './input';
+import { Input, NumberInput, RangeFields, Select } from './input';
 import { ImagePlaceholder } from './placeholder';
 import { Price } from './price';
 
@@ -62,6 +62,17 @@ describe('fields', () => {
     expect(html).toMatch(
       /placeholder="900"[^>]*name="price\.max"|name="price\.max"[^>]*placeholder="900"/,
     );
+  });
+
+  // Found by the AI review of TASK-36: of two width classes the later in Tailwind's CSS
+  // wins, so each field has exactly one.
+  it('a text field is full width, a select as wide as its options', () => {
+    const classes = (html: string, tag: string) =>
+      new RegExp(`<${tag}[^>]*class="([^"]*)"`).exec(html)![1]!.split(' ');
+    const input = classes(render(<Input aria-label="Name" />), 'input');
+    expect(input.filter((c) => /^w-/.test(c))).toEqual(['w-full']);
+    const select = classes(render(<Select aria-label="Sort" />), 'select');
+    expect(select.filter((c) => /^w-/.test(c))).toEqual(['w-auto']);
   });
 });
 

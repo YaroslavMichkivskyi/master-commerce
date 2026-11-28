@@ -19,8 +19,9 @@ import { FilterPanelEnhancer } from './filter-panel-enhancer';
 /** Values shown before "Show all (N)". */
 export const VISIBLE_VALUES = 8;
 
-const OPTION =
-  'flex min-h-8 items-center gap-2 rounded-sm text-sm text-text no-underline hover:text-accent';
+// No colour here: each option sets one (`cx` only joins classes, and of two text colours
+// the one later in Tailwind's CSS wins, whatever the order in the attribute).
+const OPTION = 'flex min-h-8 items-center gap-2 rounded-sm text-sm no-underline hover:text-accent';
 
 function ValueLink({
   path,
@@ -40,7 +41,8 @@ function ValueLink({
           [facet.code]: valueChange(facet, params, value.value, value.selected),
         })}
         rel="nofollow"
-        className={cx(OPTION, value.count === 0 && !value.selected && 'text-muted')}
+        // A value with no products left is greyed (still a link: it may be ticked off).
+        className={cx(OPTION, value.count === 0 && !value.selected ? 'text-muted' : 'text-text')}
       >
         <CheckBox checked={value.selected} />
         <span className="min-w-0 flex-1 wrap-break-word">
@@ -177,7 +179,7 @@ export function FacetGroups({
         <a
           href={href(path, params, { stock: inStock ? undefined : 'in' })}
           rel="nofollow"
-          className={OPTION}
+          className={cx(OPTION, 'text-text')}
         >
           <CheckBox checked={inStock} />
           <span>

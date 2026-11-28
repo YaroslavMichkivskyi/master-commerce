@@ -5,14 +5,16 @@ import { ChevronDownIcon } from './icons';
 // Text, number and select fields (FR-003, FR-020). A field always has a name for assistive
 // technology: a visible <label> through `label`, or `aria-label`.
 
+// No width here: a text field is full width, a select as wide as its options (`cx` only
+// joins classes; of `w-full` and `w-auto` together the later one in Tailwind's CSS wins).
 const FIELD =
-  'h-10 w-full rounded-md border border-border-strong bg-surface px-3 text-base text-text ' +
+  'h-10 rounded-md border border-border-strong bg-surface px-3 text-base text-text ' +
   'placeholder:text-muted disabled:cursor-not-allowed disabled:opacity-50';
 
 type Props = InputHTMLAttributes<HTMLInputElement> & { label?: ReactNode };
 
 export function Input({ label, className, ...rest }: Props) {
-  const input = <input className={cx(FIELD, className)} {...rest} />;
+  const input = <input className={cx(FIELD, 'w-full', className)} {...rest} />;
   return label ? (
     <label className="flex flex-col gap-1 text-sm font-medium text-text">
       {label}

@@ -104,6 +104,17 @@ describe('filters', () => {
     expect(bare).not.toContain('applied</span>');
   });
 
+  it('a value with no products is greyed: one text colour per value (found by the AI review)', () => {
+    const chipset = html.slice(html.indexOf('data-facet="chipset"'));
+    const link = (label: string) =>
+      new RegExp(`<a [^>]*class="([^"]*)"[^>]*>(?:(?!</a>)[^])*${label}<`).exec(chipset)![1]!;
+    // Chip 0 has a count of 0, Chip 1 a count of 1.
+    expect(link('Chip 0').split(' ')).toContain('text-muted');
+    expect(link('Chip 0').split(' ')).not.toContain('text-text');
+    expect(link('Chip 1').split(' ')).toContain('text-text');
+    expect(link('Chip 1').split(' ')).not.toContain('text-muted');
+  });
+
   it('every link to a filtered address is nofollow (found by the AI review)', () => {
     const ranged = render(
       <Filters path={P} params={{ price: '100-500' }} facets={listPage().facets} total={5} />,
