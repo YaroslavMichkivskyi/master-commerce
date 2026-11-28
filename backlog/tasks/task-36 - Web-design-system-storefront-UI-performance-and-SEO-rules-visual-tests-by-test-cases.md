@@ -7,7 +7,7 @@ status: Done
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-21T09:47:00Z'
-updated_date: '2026-11-28T10:48:00Z'
+updated_date: '2026-11-28T10:55:00Z'
 labels:
   - mvp
   - speckit-full
@@ -37,16 +37,16 @@ Scope:
 <!-- AC:BEGIN -->
 - [x] #1 The design system (tokens, fonts, components) exists, the styling choice is recorded in an ADR, and every TASK-6 page uses it on phone, tablet and desktop with the old ad-hoc styles removed
 - [x] #2 docs/web-guidelines.md states the rendering strategy (ADR), performance budgets and SEO rules; the storefront pages meet the budgets (measured, Lighthouse performance >= 90, SEO 100, accessibility >= 95 on the category and product pages)
-- [ ] #3 The storefront test-case table exists; Playwright screenshot and axe tests cover its automatable cases at three widths and run in CI for web changes; the manual cases were run and reported
+- [x] #3 The storefront test-case table exists; Playwright screenshot and axe tests cover its automatable cases at three widths and run in CI for web changes; the manual cases were run and reported
 - [x] #4 WCAG 2.2 AA checks pass (axe, keyboard-only walk-through of filters, sort and pagination)
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
 - [x] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
-- [ ] #2 Tests added / updated and green locally and in CI
+- [x] #2 Tests added / updated and green locally and in CI
 - [x] #3 Docs updated (ADR, docs/technologies.md, README / runbook) where needed
-- [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
+- [x] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
 
 ## Implementation Plan
