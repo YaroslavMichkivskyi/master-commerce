@@ -11,19 +11,10 @@
 
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { parseVisualArgs } from './visual-args.mjs';
 
 const E2E = fileURLToPath(new URL('../e2e/', import.meta.url));
-const argv = process.argv.slice(2);
-// Our flags come before `--`; what follows is Playwright's (`-- --grep chips`).
-const split = argv.includes('--') ? argv.indexOf('--') : argv.length;
-const ours = argv.slice(0, split);
-const passThrough = argv.slice(split + 1);
-const update = ours.includes('--update');
-const serve = ours.includes('--serve');
-const ports = {
-  web: process.env.VISUAL_PORT ?? '3300',
-  dead: process.env.VISUAL_DEAD_PORT ?? '3310',
-};
+const { update, serve, passThrough, ports } = parseVisualArgs(process.argv.slice(2), process.env);
 
 const files = ['-f', 'compose.yaml', ...(serve ? ['-f', 'compose.serve.yaml'] : [])];
 const compose = (...rest) =>

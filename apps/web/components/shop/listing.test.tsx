@@ -103,6 +103,15 @@ describe('filters', () => {
     const bare = render(<Filters path={P} params={{}} facets={[]} total={3} />);
     expect(bare).not.toContain('applied</span>');
   });
+
+  it('every link to a filtered address is nofollow (found by the AI review)', () => {
+    const ranged = render(
+      <Filters path={P} params={{ price: '100-500' }} facets={listPage().facets} total={5} />,
+    );
+    // "Clear" of a range, "Show N products" of the phone panel.
+    expect(ranged).toMatch(/<a href="\/c\/graphics-cards" rel="nofollow"[^>]*>Clear</);
+    expect(ranged).toMatch(/<a [^>]*rel="nofollow"[^>]*data-close-filters/);
+  });
 });
 
 describe('list controls', () => {
