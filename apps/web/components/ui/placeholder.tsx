@@ -1,8 +1,9 @@
 import { cx } from './cx';
 import { BoxIcon } from './icons';
 
-// Shapes that keep the layout still (research R-7): an image place of a fixed ratio, so a
-// photo arriving later (TASK-16) moves nothing, and skeleton blocks of the loading state.
+// A shape that keeps the layout still (research R-7): an image place of a fixed ratio, so
+// a photo arriving later (TASK-16) moves nothing. No loading skeletons: pages are never
+// streamed (ADR 0025, docs/web-guidelines.md).
 
 const RATIOS = { '4/3': 'aspect-4/3', '1/1': 'aspect-square' } as const;
 
@@ -25,15 +26,5 @@ export function ImagePlaceholder({
     >
       <BoxIcon className="size-1/4" />
     </div>
-  );
-}
-
-/** A grey block in place of content that is loading; hidden from assistive technology. */
-export function Skeleton({ className }: { className?: string }) {
-  return (
-    <div
-      aria-hidden="true"
-      className={cx('animate-pulse rounded-md bg-surface-2', className ?? 'h-4 w-full')}
-    />
   );
 }

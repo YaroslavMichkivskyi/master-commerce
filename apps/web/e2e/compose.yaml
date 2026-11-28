@@ -133,6 +133,8 @@ services:
     working_dir: /repo/apps/web
     entrypoint: ['node', 'node_modules/@playwright/test/cli.js', 'test']
     command: []
+    # Runs as root; on a Linux host scripts/visual.mjs gives e2e/ back to the caller after
+    # the run (what root wrote there would otherwise need sudo to remove).
     environment:
       CI: ${CI:-}
       VISUAL_SHOP_URL: http://web:3000

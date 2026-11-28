@@ -67,10 +67,18 @@ export function SiteHeader({ tree }: { tree: readonly StorefrontCategoryNodeDto[
         <div className="ml-auto md:ml-0">
           <MegaMenu tree={tree} />
         </div>
-        <div className="order-last w-full md:order-none md:w-auto md:flex-1">
+        {/* The switch is where it is seen, so Tab follows the screen (WCAG 2.4.3): on a
+            phone on the first row, before the search of the second; from 768 px after the
+            search. The hidden one (display: none) takes no focus. */}
+        <div className="md:hidden">
+          <ThemeSwitch />
+        </div>
+        <div className="w-full md:w-auto md:flex-1">
           <SearchForm />
         </div>
-        <ThemeSwitch />
+        <div className="hidden md:block">
+          <ThemeSwitch />
+        </div>
       </div>
     </header>
   );

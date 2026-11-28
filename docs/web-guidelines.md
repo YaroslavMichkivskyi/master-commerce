@@ -30,6 +30,9 @@ that breaks a rule changes this file and its ADR in the same PR.
   (`revalidate = 300`); anything with a query is `no-store`. A failed or timed-out call is
   never stored; a page that cannot reach the catalog throws `CatalogUnavailableError`, so
   the answer is a `5xx` with the designed error page.
+- The page and data caches live in memory only (`isrFlushToDisk: false` in
+  `apps/web/next.config.ts`, an LRU of 50 MB): any address, a made-up one too, makes a
+  cache entry, and a disk cache would grow without end.
 - No cookie or header is read while rendering a catalog page: one HTML for everyone keeps
   ISR and the data cache working. Per-visitor state (the theme) lives in the browser.
 - Prices and stock on a cached page may be up to 5 minutes old. On-demand revalidation
@@ -107,7 +110,7 @@ mounts.
 | What | Where | Run |
 |---|---|---|
 | Unit and render tests (Vitest, server rendering) | `apps/web/**/*.test.ts(x)` | `pnpm --filter web test` |
-| Visual (screenshots at phone 390, tablet 768, desktop 1280; dark for home, category, product), axe, no-JS, budgets | `apps/web/e2e/` | `pnpm --filter web test:visual` (Docker only); CI `web-visual.yml` on web PRs |
+| Visual (screenshots at phone 390, tablet 768, desktop 1280; dark for home, category, product), axe, no-JS, budgets | `apps/web/e2e/` | `pnpm --filter web test:visual` (Docker only); CI `web-visual.yml` on PRs that touch the apps, shared packages, the data generator or dependencies |
 
 The visual tests run wholly in Docker (`apps/web/e2e/compose.yaml`): their own Postgres,
 the generated catalog plus edge cases (`e2e/seed.mjs`), the services, the shop, and

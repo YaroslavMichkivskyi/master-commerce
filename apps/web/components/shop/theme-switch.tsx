@@ -14,8 +14,14 @@ export function ThemeSwitch() {
   const [theme, setTheme] = useState<Theme | null>(null);
 
   useEffect(() => {
-    const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setTheme(currentTheme(document.documentElement, dark));
+    const root = document.documentElement;
+    const read = () =>
+      setTheme(currentTheme(root, window.matchMedia('(prefers-color-scheme: dark)').matches));
+    read();
+    // Another switch on the page (the header has one per layout) may change the theme.
+    const watch = new MutationObserver(read);
+    watch.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => watch.disconnect();
   }, []);
 
   if (theme === null) return <span aria-hidden="true" className="size-10" />;

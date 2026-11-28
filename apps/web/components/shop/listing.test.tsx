@@ -191,14 +191,14 @@ describe('list view', () => {
       />,
     );
     expect(html).toContain('No products match these filters');
-    expect(html).toContain(`href="${P}">Clear all filters</a>`);
+    expect(html).toMatch(/href="\/c\/graphics-cards" rel="nofollow"[^>]*>Clear all filters<\/a>/);
   });
 
   it('hints at the paging limit', () => {
     const html = render(
       <ListView path={P} params={{}} list={listPage({ total: 5000, pageCount: 100 })} />,
     );
-    expect(html).toContain('Showing the first 2400 products');
+    expect(html).toContain('Showing the first 2,400 products');
   });
 });
 

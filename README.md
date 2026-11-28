@@ -98,7 +98,8 @@ ones. Each request's `X-Request-Id` is in every line it causes, in every service
 | `pnpm --filter <app> <script>` | one app only, e.g. `pnpm --filter catalog-service test` |
 
 CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same checks on
-every PR and push to `dev` / `main`; PRs that touch the web app also run the visual tests
+every PR and push to `dev` / `main`; PRs that touch the apps, shared packages, the data
+generator or dependencies also run the visual tests
 ([`web-visual.yml`](.github/workflows/web-visual.yml)). It can also be run by hand on any branch with a
 choice of checks: Actions → ci → Run workflow, or
 `gh workflow run ci.yml --ref <branch> -f test=true`.

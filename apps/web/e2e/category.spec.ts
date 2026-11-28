@@ -58,6 +58,30 @@ test('chips: one per applied filter, each removes only its own', async ({ page }
   await expect(page).toHaveURL(/\/c\/graphics-cards\?brand=asus&stock=in$/);
 });
 
+test('sort: a pick with the pointer applies, arrow keys do not leave the page', async ({
+  page,
+}) => {
+  test.skip(project() !== 'desktop', 'one width is enough (TC-20, WCAG 3.2.2)');
+  await page.goto('/c/graphics-cards');
+  const sort = page.locator('#sort');
+  await sort.focus();
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.waitForTimeout(500);
+  await expect(page).toHaveURL(/\/c\/graphics-cards$/);
+  await page.keyboard.press('Escape');
+
+  // The pointer: a pick is the choice, applied at once.
+  await sort.click();
+  await page.getByRole('option', { name: 'Name' }).click();
+  await expect(page).toHaveURL(/\/c\/graphics-cards\?sort=name$/);
+
+  // Picking the default again gives the address without a sort.
+  await page.locator('#sort').click();
+  await page.getByRole('option', { name: 'Newest' }).click();
+  await expect(page).toHaveURL(/\/c\/graphics-cards$/);
+});
+
 test('many facet values: 8 shown, the rest behind "Show all"', async ({ page }) => {
   test.skip(project() !== 'desktop', 'desktop column (TC-05)');
   await page.goto('/c/components');

@@ -4,7 +4,13 @@ import { JsonLd } from '../../../components/shop/json-ld';
 import { ListView } from '../../../components/shop/list-view';
 import { CategoryPills, PageHead } from '../../../components/shop/page-head';
 import { CatalogUnavailableError, catalog } from '../../../lib/catalog';
-import { href, normaliseRanges, type SearchParams, withoutRefused } from '../../../lib/query';
+import {
+  href,
+  normaliseRanges,
+  type SearchParams,
+  withoutDefaultSort,
+  withoutRefused,
+} from '../../../lib/query';
 import { breadcrumbList, listMetadata, noindex } from '../../../lib/seo';
 
 interface Props {
@@ -32,6 +38,8 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const path = `/c/${slug}`;
   const ranges = normaliseRanges(query);
   if (ranges) redirect(href(path, ranges, {}));
+  const plain = withoutDefaultSort(path, query);
+  if (plain) redirect(plain);
 
   const answer = await catalog.category(slug, query);
   if (answer.kind === 'not-found') notFound();

@@ -177,8 +177,11 @@ server component (NFR-002).
   shop caches the catalog for 5 minutes, so a page asked for earlier would miss them.
   The "unavailable" cases use a second shop with `GATEWAY_URL` pointing at a closed port.
 - **CI**: a new workflow `web-visual.yml` on pull requests to `dev` / `main` whose
-  changes touch `apps/web/**`, `shared/dto/**` or the workflow itself; uploads the
-  Playwright report on failure. The existing `ci.yml` is unchanged.
+  changes touch anything built into the test image — `apps/**`, `shared/**`,
+  `packages/**`, `tools/datagen/**`, the workspace and lockfile — or the workflow itself
+  (widened from `apps/web/**` + `shared/dto/**` after the AI review: a catalog or seed
+  change also changes the screenshots); uploads the Playwright report on failure. The
+  existing `ci.yml` is unchanged.
 
 ## R-9 Lighthouse (US-5, NFR-001)
 

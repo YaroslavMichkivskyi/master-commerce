@@ -76,6 +76,23 @@ export function normaliseRanges(params: SearchParams): Record<string, string> | 
   return flat;
 }
 
+/** The sort a list has when its address names none: relevance for search, else newest. */
+export const defaultSort = (search: boolean) => (search ? 'relevance' : 'new');
+
+/**
+ * The sort form sends `sort` even for the default one; the address of that list is the one
+ * without it (one address per state, indexable when unfiltered — FR-040). Answers that
+ * address, or `undefined` when the query names no default sort.
+ */
+export function withoutDefaultSort(
+  path: string,
+  params: SearchParams,
+  search = false,
+): string | undefined {
+  if (flatten(params).sort !== defaultSort(search)) return undefined;
+  return href(path, params, { sort: undefined }, { keepPage: true });
+}
+
 /** The selected range of a `min-max` parameter. */
 export function rangeOf(value: string | undefined): { min?: string; max?: string } {
   const m = value ? /^([^-]*)-([^-]*)$/.exec(value) : null;

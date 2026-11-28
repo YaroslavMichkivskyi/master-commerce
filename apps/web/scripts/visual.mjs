@@ -22,6 +22,27 @@ const files = ['-f', 'compose.yaml', ...(serve ? ['-f', 'compose.serve.yaml'] : 
 const compose = (...rest) =>
   spawnSync('docker', ['compose', ...files, ...rest], { cwd: E2E, stdio: 'inherit' }).status ?? 1;
 
+/**
+ * On Linux what the tests (root in the container) wrote into the bind-mounted e2e/ —
+ * screenshots, the report — is given back to the caller, so it is theirs to change or
+ * delete. Docker Desktop (Windows, macOS) maps owners itself.
+ */
+function giveBack() {
+  if (process.platform !== 'linux') return;
+  const owner = `${process.getuid()}:${process.getgid()}`;
+  compose(
+    'run',
+    '--rm',
+    '--no-deps',
+    '--entrypoint',
+    'chown',
+    'tests',
+    '-R',
+    owner,
+    '/repo/apps/web/e2e',
+  );
+}
+
 let code = 1;
 try {
   // A stack left by an interrupted run holds a filled database: start from nothing.
@@ -47,6 +68,7 @@ try {
 } catch (error) {
   console.error(`\n[visual] ${error instanceof Error ? error.message : error}`);
 } finally {
+  giveBack();
   // Containers, the network and the in-memory database go; the image stays as a cache.
   compose('down', '--volumes', '--remove-orphans');
 }

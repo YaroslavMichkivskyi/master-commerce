@@ -4,7 +4,14 @@ import { ListView } from '../../components/shop/list-view';
 import { CategoryPills, PageHead } from '../../components/shop/page-head';
 import { NothingFound } from '../../components/shop/states';
 import { CatalogUnavailableError, catalog } from '../../lib/catalog';
-import { flatten, href, normaliseRanges, type SearchParams, withoutRefused } from '../../lib/query';
+import {
+  flatten,
+  href,
+  normaliseRanges,
+  type SearchParams,
+  withoutDefaultSort,
+  withoutRefused,
+} from '../../lib/query';
 import { noindex } from '../../lib/seo';
 
 interface Props {
@@ -22,6 +29,8 @@ export default async function SearchPage({ searchParams }: Props) {
   const query = await searchParams;
   const ranges = normaliseRanges(query);
   if (ranges) redirect(href('/search', ranges, {}));
+  const plain = withoutDefaultSort('/search', query, true);
+  if (plain) redirect(plain);
   const q = flatten(query).q?.trim() ?? '';
 
   const answer = q ? await catalog.search(query) : undefined;

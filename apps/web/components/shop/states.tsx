@@ -47,7 +47,7 @@ export function NoResults({ clearHref, filtered }: { clearHref: string; filtered
       title={filtered ? 'No products match these filters' : 'No products here yet'}
       actions={
         filtered ? (
-          <ButtonLink href={clearHref} variant="secondary">
+          <ButtonLink href={clearHref} variant="secondary" rel="nofollow">
             Clear all filters
           </ButtonLink>
         ) : (

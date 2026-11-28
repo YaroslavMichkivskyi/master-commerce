@@ -132,7 +132,11 @@ function RangeFacet({
           Apply
         </Button>
         {selected.min || selected.max ? (
-          <a href={href(path, params, { [facet.code]: undefined })} className="text-sm">
+          <a
+            href={href(path, params, { [facet.code]: undefined })}
+            rel="nofollow"
+            className="text-sm"
+          >
             Clear<span className="sr-only"> {facet.name}</span>
           </a>
         ) : null}
@@ -239,6 +243,7 @@ export function Filters({
         <div className="fixed inset-x-0 bottom-0 border-t border-border bg-surface p-4 md:hidden">
           <ButtonLink
             href={href(path, params, {}, { keepPage: true })}
+            rel="nofollow"
             data-close-filters
             className="w-full"
           >

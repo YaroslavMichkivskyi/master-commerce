@@ -5,7 +5,7 @@ import { Button, ButtonLink } from './button';
 import { CheckBox, Selected } from './check-box';
 import { SearchIcon } from './icons';
 import { Input, NumberInput, RangeFields } from './input';
-import { ImagePlaceholder, Skeleton } from './placeholder';
+import { ImagePlaceholder } from './placeholder';
 import { Price } from './price';
 
 // The primitives render the roles, names and states assistive technology relies on
@@ -107,7 +107,6 @@ describe('placeholders and icons', () => {
     expect(render(<ImagePlaceholder />)).toContain('aspect-4/3');
     expect(render(<ImagePlaceholder ratio="1/1" />)).toContain('aspect-square');
     expect(render(<ImagePlaceholder />)).toMatch(/^<div aria-hidden="true"/);
-    expect(render(<Skeleton />)).toMatch(/^<div aria-hidden="true"/);
   });
 
   it('an icon is decorative unless it has a title, then it is a named image', () => {

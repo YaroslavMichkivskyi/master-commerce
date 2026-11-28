@@ -97,6 +97,17 @@ describe('a category page', () => {
     );
   });
 
+  it('sends the default sort of the sort form to the address without it', async () => {
+    const seen = stubGateway({ [`${C}/categories/graphics-cards/products`]: { body: listPage() } });
+    expect(
+      await thrown(() => category('graphics-cards', { brand: 'asus', sort: 'new', page: '2' })),
+    ).toBe('NEXT_REDIRECT;replace;/c/graphics-cards?brand=asus&page=2;307;');
+    // Decided before the catalog is asked.
+    expect(seen).toHaveLength(0);
+    // Another sort stays in the address.
+    expect(await thrown(() => category('graphics-cards', { sort: 'price-asc' }))).toBeUndefined();
+  });
+
   it('drops only the fields the catalog refused and keeps the other filters', async () => {
     stubGateway({
       [`${C}/categories/graphics-cards/products`]: {
@@ -206,6 +217,15 @@ describe('search', () => {
     expect(html).not.toContain('Nothing found');
     expect(html).toContain('No products match these filters');
     expect(html).toContain('href="/search?q=rtx"'); // the ticked brand unticks
+  });
+
+  it('sends sort=relevance, the default of a search, to the address without it', async () => {
+    stubGateway({});
+    expect(
+      await thrown(() =>
+        SearchPage({ searchParams: Promise.resolve({ q: 'ssd', sort: 'relevance' }) }),
+      ),
+    ).toBe('NEXT_REDIRECT;replace;/search?q=ssd;307;');
   });
 
   it('drops a refused filter of a search and keeps the query', async () => {

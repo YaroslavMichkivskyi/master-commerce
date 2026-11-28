@@ -5,10 +5,19 @@ import root from '../../eslint.config.mjs';
 // A `[` that opens a class (`[mask:none]`) or follows a utility (`w-[37px]`, `md:[…]`);
 // the attribute variants `data-[state=open]:` and `aria-[sort=asc]:` hold no raw value.
 const arbitrary = String.raw`/(^|[\s:!]|(?<!data|aria)-)\[/`;
-const arbitraryValues = ['Literal[value', 'TemplateElement[value.raw'].map((node) => ({
-  selector: `:matches(JSXAttribute[name.name='className'], CallExpression[callee.name='cx']) ${node}=${arbitrary}]`,
-  message: 'Arbitrary Tailwind values are not allowed: add a token to app/theme.css.',
-}));
+// Class strings live in `className`, in `cx()` calls, and in constants and objects of
+// classes (`const FIELD = '…' + '…'`, `VARIANTS = { primary: '…' }`). Arguments of other
+// calls are not checked: there `[data-…]` is a CSS selector (`closest('[data-x]')`).
+const arbitraryValues = ['Literal[value', 'TemplateElement[value.raw']
+  .flatMap((node) => [
+    `:matches(JSXAttribute[name.name='className'], CallExpression[callee.name='cx']) ${node}=${arbitrary}]`,
+    `:matches(VariableDeclarator, Property, BinaryExpression) > ${node}=${arbitrary}]`,
+    `:matches(VariableDeclarator, Property) > TemplateLiteral > ${node}=${arbitrary}]`,
+  ])
+  .map((selector) => ({
+    selector,
+    message: 'Arbitrary Tailwind values are not allowed: add a token to app/theme.css.',
+  }));
 
 export default [
   ...root,

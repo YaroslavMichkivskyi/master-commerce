@@ -1,5 +1,5 @@
 import type { ProductListPageDto } from '@master-commerce/dto';
-import { appliedFilters, clearFiltersHref } from '../../lib/listing';
+import { appliedFilters, clearFiltersHref, formatCount } from '../../lib/listing';
 import type { SearchParams } from '../../lib/query';
 import { Filters } from './filters';
 import { AppliedChips, Pagination, ResultCount, SortControl } from './list-controls';
@@ -47,7 +47,7 @@ export function ListView({
         <Pagination path={path} params={params} page={list.page} pageCount={list.pageCount} />
         {list.total > shown ? (
           <p className="text-center text-sm text-muted">
-            Showing the first {shown} products — narrow the filters to see the others.
+            Showing the first {formatCount(shown)} products — narrow the filters to see the others.
           </p>
         ) : null}
       </section>

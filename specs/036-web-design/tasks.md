@@ -29,7 +29,8 @@ phase — they are the regression suite for behaviour and SEO.
 ## Phase 3 — UI primitives (FR-003, FR-020)
 - [X] T007 [P] `components/ui/`: button (primary / secondary / ghost, sizes, disabled),
   input, number input, checkbox, range (from / to), badge (stock, count), price
-  (tabular, VAT note), skeleton, image placeholder (4:3, 1:1), icons (inline SVG);
+  (tabular, VAT note), skeleton (removed after the AI review: no loading state, ADR
+  0025), image placeholder (4:3, 1:1), icons (inline SVG);
   focus ring token, 24 px minimum targets; Vitest render tests (roles, labels, states)
 
 ## Phase 4 — Shell (FR-005, FR-007, FR-013, US-3, US-4, R-3, R-6)

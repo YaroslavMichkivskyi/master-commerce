@@ -76,6 +76,11 @@ loading skeleton was built and removed.
   background re-render fails and the kept page stays).
 - An unknown product slug is cached as a `404` for up to 5 minutes, so a product
   published at that slug appears within that time — the same bound as a price change.
+- Every address renders a cache entry, a made-up one too, so the cache is kept in memory
+  only (`experimental.isrFlushToDisk: false` in `apps/web/next.config.ts`): Next's LRU of
+  50 MB, oldest entries dropped first, nothing written to disk. A restart starts with an
+  empty cache. Limiting how fast one client may ask is the job of the gateway and the edge
+  (TASK-25, TASK-34). Added after the AI review of TASK-36 (2026-11-28).
 - Price and stock on product pages may be up to 5 minutes old, until TASK-18 revalidates
   pages on change (`revalidatePath` of the product address) — the next step of this
   decision: ISR kept, plus revalidation on price and stock change events (the event bus of

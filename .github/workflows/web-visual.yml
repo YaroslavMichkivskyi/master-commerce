@@ -2,15 +2,24 @@
 # the same Docker stack as locally (apps/web/e2e/compose.yaml) — the shop and its services
 # built in the official Playwright image, every case of test-cases.md compared with the
 # committed screenshots and checked with axe. Docker only: no Node or pnpm on the runner.
-# Runs on pull requests that touch the web app, the shared DTOs or this workflow.
+# Runs on pull requests that touch anything built into the test image: the apps, the
+# shared packages, the data generator, the dependencies, or this workflow.
 name: web-visual
 
 on:
   pull_request:
     branches: [dev, main]
     paths:
-      - apps/web/**
-      - shared/dto/**
+      - apps/**
+      - shared/**
+      - packages/**
+      - tools/datagen/**
+      - package.json
+      - pnpm-lock.yaml
+      - pnpm-workspace.yaml
+      - turbo.json
+      - tsconfig.base.json
+      - .dockerignore
       - .github/workflows/web-visual.yml
   workflow_dispatch:
 

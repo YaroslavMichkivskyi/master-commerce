@@ -97,7 +97,7 @@ apps/web/
   app/layout.tsx                # shell: theme script, header, footer
   app/{page,c,brands,p,search,not-found,error}  # rebuilt pages (rendering: ADR 0025)
   app/rendering.test.ts         # pins the rendering of each page (ADR 0025)
-  components/ui/                # button, input, checkbox, range, badge, price, icon, skeleton, cx
+  components/ui/                # button, input, select, checkbox, range, badge, price, icon, placeholder, cx
   components/shop/              # header, mega-menu, footer, product-card, filters, chips,
                                 # sort, pagination, breadcrumbs, states, theme-switch
   components/storefront.tsx     # removed (split into the above)
