@@ -63,7 +63,7 @@ phase — they are the regression suite for behaviour and SEO.
 - [X] T018 not-found and error pages rebuilt; `components/storefront.tsx`, `app/legacy.css`
   and every TASK-6 class removed (`git grep` of the old class names returns nothing); TASK-6
   Vitest suites green unchanged in behaviour (markup assertions updated only)
-- [ ] T019 **the stack is started with generated data and the pages are opened for the
+- [X] T019 **the stack is started with generated data and the pages are opened for the
   owner to see** at three widths, both themes
 
 ## Phase 7 — Visual, accessibility and budget tests (FR-040…FR-042, NFR-002, R-7, R-8)
@@ -94,7 +94,7 @@ phase — they are the regression suite for behaviour and SEO.
 ## Phase 9 — Manual cases and close (FR-043, US-4, US-5)
 - [X] T025 keyboard walk-through, screen-reader spot check, Lighthouse (3 runs each,
   medians), a slow connection (TC-32) → `test-cases.md` results
-- [ ] T026 run all test cases (`test-cases.md` playbook), report, then `close-task.md`
+- [X] T026 run all test cases (`test-cases.md` playbook), report, then `close-task.md`
 
 ## Dependencies
 Phase 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9. `[P]` items inside a phase are independent.

@@ -3,11 +3,11 @@ id: TASK-36
 title: >-
   Web: design system, storefront UI, performance and SEO rules, visual tests by
   test cases
-status: In Progress
+status: Done
 assignee:
   - '@YaroslavMichkivskyi'
 created_date: '2026-11-21T09:47:00Z'
-updated_date: '2026-11-27T01:01:00Z'
+updated_date: '2026-11-28T10:48:00Z'
 labels:
   - mvp
   - speckit-full
@@ -35,17 +35,17 @@ Scope:
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 The design system (tokens, fonts, components) exists, the styling choice is recorded in an ADR, and every TASK-6 page uses it on phone, tablet and desktop with the old ad-hoc styles removed
-- [ ] #2 docs/web-guidelines.md states the rendering strategy (ADR), performance budgets and SEO rules; the storefront pages meet the budgets (measured, Lighthouse performance >= 90, SEO 100, accessibility >= 95 on the category and product pages)
+- [x] #1 The design system (tokens, fonts, components) exists, the styling choice is recorded in an ADR, and every TASK-6 page uses it on phone, tablet and desktop with the old ad-hoc styles removed
+- [x] #2 docs/web-guidelines.md states the rendering strategy (ADR), performance budgets and SEO rules; the storefront pages meet the budgets (measured, Lighthouse performance >= 90, SEO 100, accessibility >= 95 on the category and product pages)
 - [ ] #3 The storefront test-case table exists; Playwright screenshot and axe tests cover its automatable cases at three widths and run in CI for web changes; the manual cases were run and reported
-- [ ] #4 WCAG 2.2 AA checks pass (axe, keyboard-only walk-through of filters, sort and pagination)
+- [x] #4 WCAG 2.2 AA checks pass (axe, keyboard-only walk-through of filters, sort and pagination)
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
+- [x] #1 Acceptance criteria checked with evidence (tests, run output, screenshots)
 - [ ] #2 Tests added / updated and green locally and in CI
-- [ ] #3 Docs updated (ADR, docs/technologies.md, README / runbook) where needed
+- [x] #3 Docs updated (ADR, docs/technologies.md, README / runbook) where needed
 - [ ] #4 PR from task-<N> / bug-<N> to dev opened (docs/playbooks/close-task.md)
 <!-- DOD:END -->
 
@@ -54,3 +54,9 @@ Scope:
 <!-- SECTION:PLAN:BEGIN -->
 speckit-full in specs/036-web-design/: spec, clarify, plan with styling ADR (Tailwind v4 + shadcn/ui vs CSS Modules) and rendering-strategy ADR, tasks, test-case table; then design tokens and font, components, page-by-page redesign of the TASK-6 storefront (responsive, filters drawer on phones), docs/web-guidelines.md linked from AGENTS.md, Playwright screenshot + axe tests at three widths in CI, Lighthouse measurements, keyboard walk-through, technologies.md rows. One reviewed commit per step.
 <!-- SECTION:PLAN:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Storefront redesigned on a design system: Tailwind CSS v4 with our own components (ADR 0024), tokens in one file with light and dark themes (device theme on the first visit, kept; light/dark switch), self-hosted Inter; every TASK-6 page rebuilt for phone, tablet and desktop, TASK-6 styles removed, everything works without JavaScript (islands only for the theme, menu, phone filter panel and sort). Rendering decided in ADR 0025: product pages ISR on demand (5 min), lists per request with the data cache, no streaming so statuses stay real, page and data caches in memory only. docs/web-guidelines.md holds the rules (rendering, caching, budgets, SEO, accessibility, components, tests), linked from AGENTS.md and README. Verified: 159 unit tests; 57 visual cases wholly in Docker (Playwright screenshots at 390/768/1280 px and dark, axe WCAG 2.0-2.2 AA zero violations, no-JS flows, JS 134 KB of 150 per route, CLS 0, own origin only); Lighthouse medians category 99/100/100, product 99/100/100; keyboard walk and slow-connection run; test-cases.md 30 pass, TC-21 (screen reader) accepted by the owner without a run, TC-30 (CI) runs on the PR. Three rounds of /code-review: real findings fixed with tests, false positives and declined ones recorded in the PR. Risks: prices and stock on product pages up to 5 minutes old until TASK-18 (cart and checkout re-check them, TASK-9/10); flood protection is TASK-25/34; isrFlushToDisk is an experimental Next flag to recheck on upgrades.
+<!-- SECTION:FINAL_SUMMARY:END -->
