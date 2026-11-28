@@ -7,6 +7,9 @@ test('storefront without JavaScript', async ({ page }) => {
   // No theme switch without JavaScript; the theme follows the device.
   await expect(page.getByRole('button', { name: /Switch to the/ })).toHaveCount(0);
   await expect(page.locator('html')).not.toHaveAttribute('data-theme', /.+/);
+  // Its place is kept at the button's size, so the header does not move when it mounts.
+  const place = await page.locator('header span.size-10').first().boundingBox();
+  expect([place!.width, place!.height]).toEqual([40, 40]);
 
   // The filters open from their <details>; a brand is a link.
   await page.locator('details[data-filter-toggle] summary').click();

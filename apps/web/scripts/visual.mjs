@@ -13,10 +13,17 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const E2E = fileURLToPath(new URL('../e2e/', import.meta.url));
-const args = process.argv.slice(2);
-const update = args.includes('--update');
-const serve = args.includes('--serve');
-const passThrough = args.includes('--') ? args.slice(args.indexOf('--') + 1) : [];
+const argv = process.argv.slice(2);
+// Our flags come before `--`; what follows is Playwright's (`-- --grep chips`).
+const split = argv.includes('--') ? argv.indexOf('--') : argv.length;
+const ours = argv.slice(0, split);
+const passThrough = argv.slice(split + 1);
+const update = ours.includes('--update');
+const serve = ours.includes('--serve');
+const ports = {
+  web: process.env.VISUAL_PORT ?? '3300',
+  dead: process.env.VISUAL_DEAD_PORT ?? '3310',
+};
 
 const files = ['-f', 'compose.yaml', ...(serve ? ['-f', 'compose.serve.yaml'] : [])];
 const compose = (...rest) =>
@@ -44,16 +51,18 @@ function giveBack() {
 }
 
 let code = 1;
+let built = false;
 try {
   // A stack left by an interrupted run holds a filled database: start from nothing.
   compose('down', '--volumes', '--remove-orphans');
   code = compose('build', 'prepare');
   if (code !== 0) throw new Error('the image did not build');
+  built = true;
   if (serve) {
     code = compose('up', '--wait', 'web', 'web-dead');
     if (code !== 0) throw new Error('the stack did not start');
     console.log(
-      '\n[visual] Shop http://localhost:3300, dead shop http://localhost:3310. Ctrl+C stops it.',
+      `\n[visual] Shop http://localhost:${ports.web}, dead shop http://localhost:${ports.dead}. Ctrl+C stops it.`,
     );
     await new Promise((resolve) => process.once('SIGINT', resolve));
   } else {
@@ -68,7 +77,8 @@ try {
 } catch (error) {
   console.error(`\n[visual] ${error instanceof Error ? error.message : error}`);
 } finally {
-  giveBack();
+  // Without the image there is nothing to give back, and compose would try to pull it.
+  if (built) giveBack();
   // Containers, the network and the in-memory database go; the image stays as a cache.
   compose('down', '--volumes', '--remove-orphans');
 }

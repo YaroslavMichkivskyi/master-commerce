@@ -80,6 +80,13 @@ test('sort: a pick with the pointer applies, arrow keys do not leave the page', 
   await page.locator('#sort').click();
   await page.getByRole('option', { name: 'Newest' }).click();
   await expect(page).toHaveURL(/\/c\/graphics-cards$/);
+
+  // The keyboard alone: open the list, step to the next option, Enter applies it.
+  await page.locator('#sort').focus();
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/c\/graphics-cards\?sort=price-asc$/);
 });
 
 test('many facet values: 8 shown, the rest behind "Show all"', async ({ page }) => {

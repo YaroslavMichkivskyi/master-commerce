@@ -35,9 +35,14 @@ export function AutoSubmit() {
       const select = target(e);
       if (!select) return;
       mode.set(select, 'keyboard');
-      if (e.key === 'Enter' && select.value !== initial(select)) {
+      if (e.key !== 'Enter') return;
+      if (select.value !== initial(select)) {
         e.preventDefault();
         select.form?.requestSubmit();
+      } else {
+        // In an open list (a customizable select) Enter picks the option after this
+        // event: read the value once the browser has applied it.
+        setTimeout(() => submitIfChanged(select), 0);
       }
     };
     const onChange = (e: Event) => {

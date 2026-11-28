@@ -24,7 +24,8 @@ export function ThemeSwitch() {
     return () => watch.disconnect();
   }, []);
 
-  if (theme === null) return <span aria-hidden="true" className="size-10" />;
+  // A block of the button's size wherever it is put, so nothing moves when it mounts.
+  if (theme === null) return <span aria-hidden="true" className="block size-10" />;
 
   const next = otherTheme(theme);
   const Icon = next === 'dark' ? MoonIcon : SunIcon;

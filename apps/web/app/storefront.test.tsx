@@ -295,6 +295,14 @@ describe('a product page (FR-033, AC #2)', () => {
     expect(html.match(/<th scope="row"[^>]*>Spec \d<\/th>/g)).toHaveLength(7);
   });
 
+  it('fails rather than be kept without its menu when the category tree is down', async () => {
+    stubGateway({
+      [`${C}/products/asus-tuf-6070`]: { body: productPage() },
+      [`${C}/categories`]: { status: 503, body: { status: 503 } },
+    });
+    await expect(product('asus-tuf-6070')).rejects.toBeInstanceOf(CatalogUnavailableError);
+  });
+
   it('redirects an old slug and answers 404 for an unknown product', async () => {
     stubGateway({ [`${C}/products/old-slug`]: { body: productPage() } });
     expect(await thrown(() => product('old-slug'))).toBe(

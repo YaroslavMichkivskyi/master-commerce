@@ -74,9 +74,14 @@ export function NothingFound({ query, suggestions }: { query: string; suggestion
       title={query ? `Nothing found for “${query}”` : 'Search'}
       actions={suggestions}
     >
+      {/* The categories are offered only when the catalog could list them. */}
       {query
-        ? 'Check the spelling, use fewer words, or browse the categories:'
-        : 'Type what you are looking for above, or browse the categories:'}
+        ? suggestions
+          ? 'Check the spelling, use fewer words, or browse the categories:'
+          : 'Check the spelling or use fewer words.'
+        : suggestions
+          ? 'Type what you are looking for above, or browse the categories:'
+          : 'Type what you are looking for above.'}
     </StatePanel>
   );
 }

@@ -50,7 +50,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /** A product page, complete server-rendered HTML (FR-033, AC #2). */
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const answer = await catalog.product(slug);
+  // The layout's category tree (the same request, one per render): this page is kept for
+  // 5 minutes, so it fails rather than be kept without its menu — a failed background
+  // re-render leaves the last whole page in place.
+  const [answer, tree] = await Promise.all([catalog.product(slug), catalog.tree()]);
+  if (tree.kind === 'unavailable') throw new CatalogUnavailableError();
   if (answer.kind === 'not-found' || answer.kind === 'invalid') notFound();
   if (answer.kind === 'unavailable') throw new CatalogUnavailableError();
   const p = answer.data;
@@ -83,7 +87,10 @@ export default async function ProductPage({ params }: Props) {
             {p.name}
           </h1>
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
-            <a href={`/brands/${p.brand.slug}`} className="font-semibold">
+            <a
+              href={`/brands/${p.brand.slug}`}
+              className="inline-flex min-h-6 items-center font-semibold"
+            >
               {p.brand.name}
             </a>
             <span>

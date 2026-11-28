@@ -70,13 +70,13 @@ export function SiteHeader({ tree }: { tree: readonly StorefrontCategoryNodeDto[
         {/* The switch is where it is seen, so Tab follows the screen (WCAG 2.4.3): on a
             phone on the first row, before the search of the second; from 768 px after the
             search. The hidden one (display: none) takes no focus. */}
-        <div className="md:hidden">
+        <div className="flex md:hidden">
           <ThemeSwitch />
         </div>
         <div className="w-full md:w-auto md:flex-1">
           <SearchForm />
         </div>
-        <div className="hidden md:block">
+        <div className="hidden md:flex">
           <ThemeSwitch />
         </div>
       </div>

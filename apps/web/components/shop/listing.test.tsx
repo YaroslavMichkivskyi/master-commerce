@@ -228,5 +228,10 @@ describe('states', () => {
     expect(html).toMatch(/<h1[^>]*>Nothing found for “zzz”<\/h1>/);
     expect(html).toContain('href="/c/storage"');
     expect(render(<NothingFound query="" />)).toMatch(/<h1[^>]*>Search<\/h1>/);
+    // No categories to offer (the catalog could not list them): no sentence that promises them.
+    expect(render(<NothingFound query="zzz" />)).toContain(
+      'Check the spelling or use fewer words.',
+    );
+    expect(html).toContain('or browse the categories:');
   });
 });

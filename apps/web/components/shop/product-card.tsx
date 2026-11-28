@@ -26,7 +26,7 @@ export function ProductCard({ card }: { card: ProductCardDto }) {
       </h3>
       <a
         href={`/brands/${card.brand.slug}`}
-        className="relative z-10 self-start text-sm text-muted no-underline hover:text-accent"
+        className="relative z-10 inline-flex min-h-6 items-center self-start text-sm text-muted no-underline hover:text-accent"
       >
         {card.brand.name}
       </a>

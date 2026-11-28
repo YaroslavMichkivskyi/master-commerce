@@ -79,7 +79,8 @@ describe('footer', () => {
 
 describe('theme', () => {
   it('the switch renders only a place of its size on the server (hidden without JS)', () => {
-    expect(render(<ThemeSwitch />)).toBe('<span aria-hidden="true" class="size-10"></span>');
+    // A block: an inline span would ignore its size and the header would move on mount.
+    expect(render(<ThemeSwitch />)).toBe('<span aria-hidden="true" class="block size-10"></span>');
   });
 
   it('the switch has two positions: light ⇄ dark', () => {

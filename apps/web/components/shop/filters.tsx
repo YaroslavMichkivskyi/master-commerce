@@ -135,7 +135,7 @@ function RangeFacet({
           <a
             href={href(path, params, { [facet.code]: undefined })}
             rel="nofollow"
-            className="text-sm"
+            className="inline-flex min-h-8 items-center text-sm"
           >
             Clear<span className="sr-only"> {facet.name}</span>
           </a>
