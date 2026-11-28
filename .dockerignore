@@ -1,0 +1,15 @@
+# What a Docker build of this repo never needs: installed packages and builds of the host
+# (rebuilt for Linux inside the image), local secrets, git, and test output.
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/*.tsbuildinfo
+**/coverage
+**/test-reports
+.git
+.env
+.env.*
+!.env.example
+apps/web/e2e/.results
+apps/web/e2e/.report

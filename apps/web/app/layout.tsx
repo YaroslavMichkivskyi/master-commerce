@@ -1,7 +1,12 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
+import { SiteFooter } from '../components/shop/footer';
+import { SiteHeader } from '../components/shop/header';
+import { MenuEnhancer } from '../components/shop/menu-enhancer';
 import { catalog } from '../lib/catalog';
 import { siteUrl } from '../lib/seo';
+import { themeScript } from '../lib/theme';
+import { inter } from './fonts';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -14,31 +19,23 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const tree = await catalog.tree();
   const top = tree.kind === 'ok' ? tree.data.items : [];
   return (
-    <html lang="en">
-      <body>
-        <header className="site">
-          <a href="/" className="logo">
-            master-commerce
-          </a>
-          <form method="get" action="/search" role="search" className="search">
-            <input
-              type="search"
-              name="q"
-              placeholder="Search products"
-              aria-label="Search products"
-              maxLength={200}
-            />
-            <button type="submit">Search</button>
-          </form>
-          <nav aria-label="Categories" className="top">
-            {top.map((c) => (
-              <a key={c.id} href={`/c/${c.slug}`}>
-                {c.name}
-              </a>
-            ))}
-          </nav>
-        </header>
-        {children}
+    // The theme script sets `data-theme` before React hydrates (R-3).
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body className="flex flex-col">
+        <SiteHeader tree={top} />
+        {/* The one <main> of every page, the skip link's target; a page brings its content. */}
+        <main
+          id="main"
+          tabIndex={-1}
+          className="mx-auto w-full max-w-page flex-1 px-4 py-6 outline-none md:py-8"
+        >
+          {children}
+        </main>
+        <SiteFooter tree={top} />
+        <MenuEnhancer />
       </body>
     </html>
   );

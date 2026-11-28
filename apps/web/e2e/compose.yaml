@@ -1,0 +1,149 @@
+# The visual-test stack, all in Docker (specs/036-web-design R-8, test-cases.md TC-00):
+# a fresh Postgres in memory, the catalog generated and seeded, catalog-service, the gateway,
+# the shop (a production build), a second shop on a dead gateway (TC-16), and the tests.
+# No port is published and no volume kept: nothing on the host is used or left behind,
+# except e2e/ itself, mounted so reference screenshots (`--update`) and reports come back.
+# Started by apps/web/scripts/visual.mjs; the credentials are local, throw-away test values.
+name: master-commerce-visual
+
+x-app: &app
+  image: master-commerce-visual
+  environment: &env
+    LOG_LEVEL: warn
+    CATALOG_APP_PASSWORD: catalog_app_visual
+    CATALOG_MIGRATION_URL: postgres://catalog:catalog_visual@postgres:5432/catalog
+    CATALOG_DATABASE_URL: postgres://catalog_app:catalog_app_visual@postgres:5432/catalog
+
+# A health check of an app: its address answers with an accepted status.
+x-health: &health
+  interval: 1s
+  timeout: 3s
+  retries: 120
+
+services:
+  postgres:
+    image: postgres:17.11-alpine
+    environment:
+      POSTGRES_DB: catalog
+      POSTGRES_USER: catalog
+      POSTGRES_PASSWORD: catalog_visual
+    tmpfs: /var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U catalog -d catalog']
+      interval: 1s
+      timeout: 3s
+      retries: 60
+
+  # Migrations, then datagen --scale 300 --seed visual (the same catalog on every run).
+  prepare:
+    <<: *app
+    build:
+      context: ../../..
+      dockerfile: apps/web/e2e/Dockerfile
+    command:
+      - sh
+      - -c
+      - >-
+        node apps/catalog-service/dist/migrate.js &&
+        node tools/datagen/dist/main.js --scale 300 --seed visual --database-url
+        "$$CATALOG_MIGRATION_URL"
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  catalog:
+    <<: *app
+    command: node apps/catalog-service/dist/main.js
+    environment: { <<: *env, CATALOG_PORT: '3002' }
+    healthcheck:
+      <<: *health
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:3002/health/ready').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))",
+        ]
+    depends_on:
+      prepare: { condition: service_completed_successfully }
+
+  gateway:
+    <<: *app
+    command: node apps/api-gateway/dist/main.js
+    environment: { <<: *env, GATEWAY_PORT: '3001', CATALOG_SERVICE_URL: 'http://catalog:3002' }
+    healthcheck:
+      <<: *health
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:3001/health/ready').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))",
+        ]
+    depends_on:
+      catalog: { condition: service_healthy }
+
+  # The edge cases (e2e/seed.mjs), in before the shop starts: it caches the catalog.
+  seed:
+    <<: *app
+    command: node apps/web/e2e/seed.mjs http://gateway:3001
+    depends_on:
+      gateway: { condition: service_healthy }
+
+  web:
+    <<: *app
+    working_dir: /repo/apps/web
+    command: node scripts/next.mjs start
+    environment:
+      WEB_PORT: '3000'
+      GATEWAY_URL: http://gateway:3001
+      SITE_URL: http://web:3000
+    healthcheck:
+      <<: *health
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:3000/').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))",
+        ]
+    depends_on:
+      seed: { condition: service_completed_successfully }
+
+  # Port 9 (discard) is closed: every catalog call of this shop fails (TC-16).
+  web-dead:
+    <<: *app
+    working_dir: /repo/apps/web
+    command: node scripts/next.mjs start
+    environment:
+      WEB_PORT: '3000'
+      GATEWAY_URL: http://localhost:9
+      SITE_URL: http://web-dead:3000
+    healthcheck:
+      <<: *health
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:3000/').then(r => process.exit(r.status >= 500 ? 0 : 1), () => process.exit(1))",
+        ]
+
+  tests:
+    <<: *app
+    working_dir: /repo/apps/web
+    entrypoint: ['node', 'node_modules/@playwright/test/cli.js', 'test']
+    command: []
+    # Runs as root; on a Linux host scripts/visual.mjs gives e2e/ back to the caller after
+    # the run (what root wrote there would otherwise need sudo to remove).
+    environment:
+      CI: ${CI:-}
+      VISUAL_SHOP_URL: http://web:3000
+      VISUAL_DEAD_URL: http://web-dead:3000
+    # Specs, reference screenshots and reports live on the host.
+    volumes:
+      - .:/repo/apps/web/e2e
+    ipc: host
+    depends_on:
+      web: { condition: service_healthy }
+      web-dead: { condition: service_healthy }
+    profiles: [tests]

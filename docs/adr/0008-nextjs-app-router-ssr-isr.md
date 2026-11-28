@@ -1,6 +1,6 @@
 # 0008. Next.js App Router with SSR / ISR for SEO
 
-- Status: accepted
+- Status: accepted; amended by [0025](0025-rendering-strategy.md) (which page is ISR, which per request)
 - Date: 2026-11-08
 - Deciders: project owner
 

@@ -5,6 +5,7 @@ import {
   href,
   isFiltered,
   normaliseRanges,
+  withoutDefaultSort,
   withoutRefused,
   pageHref,
   rangeOf,
@@ -12,6 +13,25 @@ import {
 } from './query';
 
 // Addresses of the storefront (TASK-6 FR-031, research R-7).
+
+describe('the default sort has no parameter (one address per state)', () => {
+  it('drops `sort` when it names the default, keeping the rest and the page', () => {
+    expect(withoutDefaultSort('/c/x', { sort: 'new', brand: 'asus', page: '2' })).toBe(
+      '/c/x?brand=asus&page=2',
+    );
+    expect(withoutDefaultSort('/c/x', { sort: 'new' })).toBe('/c/x');
+    expect(withoutDefaultSort('/search', { q: 'ssd', sort: 'relevance' }, true)).toBe(
+      '/search?q=ssd',
+    );
+  });
+
+  it('leaves any other sort, and a list without one, alone', () => {
+    expect(withoutDefaultSort('/c/x', { sort: 'price-asc' })).toBeUndefined();
+    expect(withoutDefaultSort('/c/x', {})).toBeUndefined();
+    // "new" is not the default of a search.
+    expect(withoutDefaultSort('/search', { q: 'ssd', sort: 'new' }, true)).toBeUndefined();
+  });
+});
 
 describe('addresses', () => {
   const params = { brand: 'asus', memory_type: ['GDDR6', 'GDDR7'], page: '3', empty: '' };

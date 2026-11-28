@@ -82,7 +82,7 @@ MinIO and Mailpit.
 | 0005 | Drizzle ORM, hand-written SQL for hot-path queries |
 | 0006 | RabbitMQ + Transactional Outbox / Inbox for events |
 | 0007 | Choreography (not orchestration) for the stock-reservation saga |
-| 0008 | Next.js App Router, SSR / ISR for SEO |
+| 0008 | Next.js App Router, SSR / ISR for SEO (amended by 0025) |
 | 0009 | Search on PostgreSQL FTS, no Elasticsearch |
 | 0010 | AWS Lambda for asynchronous work only; IaC with AWS CDK |
 | 0011 | Deployment: VM + Docker Compose, web on Amplify |
@@ -98,3 +98,5 @@ MinIO and Mailpit.
 | 0021 | The gateway declares each service endpoint it exposes and forwards it |
 | 0022 | Service database conventions: UUIDv7, money in cents, soft delete, versions, cursor paging, least-privilege roles (amended by 0023) |
 | 0023 | Derived data a database computes from its own rows is kept by triggers |
+| 0024 | Styling: Tailwind CSS v4 with our own components and design tokens |
+| 0025 | Rendering strategy: product pages by ISR, lists per request with a data cache |

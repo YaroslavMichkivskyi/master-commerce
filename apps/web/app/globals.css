@@ -1,311 +1,87 @@
-/* A plain, readable storefront; no images yet (TASK-16). */
-:root {
-  --ink: #1d2330;
-  --muted: #5d6677;
-  --line: #e2e6ee;
-  --accent: #1f5fd1;
-  --good: #1d7a3e;
-  --bad: #b3261e;
-  --bg: #f6f7fa;
-  font-family:
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
-  color: var(--ink);
-  background: var(--bg);
-}
-* {
-  box-sizing: border-box;
-}
-body {
-  margin: 0;
-}
-a {
-  color: var(--accent);
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
-}
-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 16px;
-}
-h1 {
-  margin: 8px 0 16px;
-  font-size: 1.6rem;
-}
+/* Tailwind and the design tokens (ADR 0024); everything else is utilities in components. */
+@import 'tailwindcss';
+@import './theme.css';
 
-header.site {
-  background: #fff;
-  border-bottom: 1px solid var(--line);
-  padding: 12px 16px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 24px;
-  align-items: center;
-}
-header.site .logo {
-  font-weight: 700;
-  font-size: 1.2rem;
-  color: var(--ink);
-}
-header.site .search {
-  display: flex;
-  flex: 1 1 280px;
-  max-width: 520px;
-}
-header.site .search input {
-  flex: 1;
-  padding: 8px 10px;
-  border: 1px solid var(--line);
-  border-radius: 6px 0 0 6px;
-}
-header.site .search button,
-.range button {
-  padding: 8px 12px;
-  border: 0;
-  background: var(--accent);
-  color: #fff;
-  border-radius: 0 6px 6px 0;
-  cursor: pointer;
-}
-header.site nav.top {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  width: 100%;
-}
-
-.crumbs ol {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 0;
-  margin: 0 0 4px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-.crumbs li + li::before {
-  content: '›';
-  margin-right: 6px;
-}
-.subcategories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0 0 16px;
-  padding: 0;
-  list-style: none;
-}
-.subcategories a {
-  display: inline-block;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 4px 12px;
-}
-
-.list {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 24px;
-  align-items: start;
-}
-@media (max-width: 760px) {
-  .list {
-    grid-template-columns: 1fr;
+@layer base {
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
   }
-}
-.facets {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 12px;
-}
-.facet + .facet {
-  border-top: 1px solid var(--line);
-  margin-top: 10px;
-  padding-top: 10px;
-}
-.facet h3 {
-  font-size: 0.95rem;
-  margin: 0 0 6px;
-}
-.facet ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 240px;
-  overflow: auto;
-}
-.facet a {
-  color: var(--ink);
-  display: block;
-  padding: 2px 0;
-  font-size: 0.92rem;
-}
-.facet a.on {
-  font-weight: 600;
-}
-.facet a.empty {
-  color: var(--muted);
-}
-.facet .count {
-  color: var(--muted);
-}
-.range {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  font-size: 0.85rem;
-}
-.range input {
-  width: 72px;
-  padding: 4px;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  margin-left: 4px;
-}
-.range button {
-  border-radius: 6px;
-  padding: 4px 10px;
-}
-
-.results-head {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 12px;
-  color: var(--muted);
-}
-.sort a,
-.sort strong {
-  margin-left: 10px;
-}
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
-}
-.card {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.card-name {
-  font-weight: 600;
-  color: var(--ink);
-}
-.card-brand {
-  font-size: 0.85rem;
-}
-.card-highlights {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  color: var(--muted);
-  font-size: 0.85rem;
-  flex: 1;
-}
-.card-foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-.price {
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-.stock {
-  font-size: 0.8rem;
-}
-.stock.in {
-  color: var(--good);
-}
-.stock.out {
-  color: var(--bad);
-}
-.pages {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-  margin: 20px 0;
-}
-.pages .gap {
-  margin-right: 8px;
-  color: var(--muted);
-}
-.hint,
-.empty-state {
-  color: var(--muted);
-}
-
-.product {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 24px;
-}
-@media (max-width: 760px) {
-  .product {
-    grid-template-columns: 1fr;
+  body {
+    min-height: 100dvh;
   }
-}
-.buy {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.buy .price {
-  font-size: 1.6rem;
-}
-.specs {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-}
-.specs th,
-.specs td {
-  text-align: left;
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--line);
-  vertical-align: top;
-}
-.specs th {
-  width: 40%;
-  color: var(--muted);
-  font-weight: 500;
-}
-.home-categories {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-  margin-bottom: 24px;
-}
-.home-categories a {
-  display: block;
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 14px;
-  color: var(--ink);
-}
-.home-categories small {
-  display: block;
-  color: var(--muted);
+  a {
+    color: var(--color-accent);
+  }
+  /* A <summary> styled as a button: no disclosure triangle (Safari draws its own). */
+  summary {
+    list-style: none;
+    cursor: pointer;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  /*
+   * The list of a `Select`, where the browser lets it be styled (customizable <select>;
+   * Chromium today): rounded and coloured like the field. Elsewhere the system list, with
+   * our arrow (components/ui/input.tsx) in place of the browser's.
+   */
+  select.select {
+    appearance: none;
+  }
+  @supports (appearance: base-select) {
+    select.select,
+    select.select::picker(select) {
+      appearance: base-select;
+    }
+    select.select {
+      display: inline-flex;
+      align-items: center;
+    }
+    select.select::picker-icon {
+      display: none;
+    }
+    select.select::picker(select) {
+      margin-block: 0.25rem;
+      padding: 0.25rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background-color: var(--color-surface);
+      box-shadow: var(--shadow-pop);
+    }
+    select.select option {
+      padding: 0.375rem 0.75rem;
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+      cursor: pointer;
+    }
+    select.select option:hover,
+    select.select option:focus-visible {
+      background-color: var(--color-accent-soft);
+      color: var(--color-accent);
+    }
+    select.select option:checked {
+      font-weight: 600;
+    }
+    select.select option::checkmark {
+      display: none;
+    }
+  }
+  /* One visible focus ring for every focusable part (FR-020). */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }

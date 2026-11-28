@@ -59,8 +59,8 @@ describe('a category page', () => {
   it('renders breadcrumbs, facets as links, cards and numbered pages', async () => {
     const seen = stubGateway({ [`${C}/categories/graphics-cards/products`]: { body: listPage() } });
     const html = render(await category('graphics-cards', { brand: 'asus' }));
-    expect(html).toContain('<a href="/c/components">Components</a>');
-    expect(html).toContain('<h1>Graphics cards</h1>');
+    expect(html).toMatch(/<a href="\/c\/components"[^>]*>Components<\/a>/);
+    expect(html).toMatch(/<h1[^>]*>Graphics cards<\/h1>/);
     expect(html).toContain('50 products');
     // A ticked value unticks; another value is added to the list; both reset the page.
     expect(html).toContain('href="/c/graphics-cards"');
@@ -95,6 +95,17 @@ describe('a category page', () => {
     expect(await thrown(() => category('graphics-cards', { page: 'abc' }))).toBe(
       'NEXT_REDIRECT;replace;/c/graphics-cards;307;',
     );
+  });
+
+  it('sends the default sort of the sort form to the address without it', async () => {
+    const seen = stubGateway({ [`${C}/categories/graphics-cards/products`]: { body: listPage() } });
+    expect(
+      await thrown(() => category('graphics-cards', { brand: 'asus', sort: 'new', page: '2' })),
+    ).toBe('NEXT_REDIRECT;replace;/c/graphics-cards?brand=asus&page=2;307;');
+    // Decided before the catalog is asked.
+    expect(seen).toHaveLength(0);
+    // Another sort stays in the address.
+    expect(await thrown(() => category('graphics-cards', { sort: 'price-asc' }))).toBeUndefined();
   });
 
   it('drops only the fields the catalog refused and keeps the other filters', async () => {
@@ -169,7 +180,7 @@ describe('a brand page', () => {
         searchParams: Promise.resolve({}),
       }),
     );
-    expect(html).toContain('<h1>ASUS</h1>');
+    expect(html).toMatch(/<h1[^>]*>ASUS<\/h1>/);
     expect(html).toContain('href="/brands/asus?category=ssds"');
     expect(
       await thrown(() =>
@@ -191,7 +202,7 @@ describe('search', () => {
     });
     const html = render(await SearchPage({ searchParams: Promise.resolve({ q: 'RTX 60' }) }));
     expect(html).toContain('Results for “rtx 60”');
-    expect(html).toContain('<strong>Relevance</strong>');
+    expect(html).toContain('<option value="relevance" selected="">Relevance</option>');
   });
 
   it('keeps the list and its facets when filters narrow a search to nothing', async () => {
@@ -204,8 +215,17 @@ describe('search', () => {
       await SearchPage({ searchParams: Promise.resolve({ q: 'rtx', brand: 'asus' }) }),
     );
     expect(html).not.toContain('Nothing found');
-    expect(html).toContain('No products match these filters.');
+    expect(html).toContain('No products match these filters');
     expect(html).toContain('href="/search?q=rtx"'); // the ticked brand unticks
+  });
+
+  it('sends sort=relevance, the default of a search, to the address without it', async () => {
+    stubGateway({});
+    expect(
+      await thrown(() =>
+        SearchPage({ searchParams: Promise.resolve({ q: 'ssd', sort: 'relevance' }) }),
+      ),
+    ).toBe('NEXT_REDIRECT;replace;/search?q=ssd;307;');
   });
 
   it('drops a refused filter of a search and keeps the query', async () => {
@@ -238,8 +258,8 @@ describe('search', () => {
     expect(
       render(await SearchPage({ searchParams: Promise.resolve({ q: 'zzz', utm_source: 'mail' }) })),
     ).toContain('Nothing found for “zzz”');
-    expect(render(await SearchPage({ searchParams: Promise.resolve({}) }))).toContain(
-      '<h1>Search</h1>',
+    expect(render(await SearchPage({ searchParams: Promise.resolve({}) }))).toMatch(
+      /<h1[^>]*>Search<\/h1>/,
     );
   });
 });
@@ -250,13 +270,37 @@ describe('a product page (FR-033, AC #2)', () => {
   it('renders the whole product: breadcrumbs, price with VAT, stock, specs', async () => {
     stubGateway({ [`${C}/products/asus-tuf-6070`]: { body: productPage() } });
     const html = render(await product('asus-tuf-6070'));
-    expect(html).toContain('<a href="/c/graphics-cards">Graphics cards</a>');
+    expect(html).toMatch(/<a href="\/c\/graphics-cards"[^>]*>Graphics cards<\/a>/);
     expect(html).toContain('€649.99');
-    expect(html).toContain('VAT included');
+    expect(html).toContain('incl. VAT');
     expect(html).toContain('In stock');
-    expect(html).toContain('<th scope="row">Memory size</th><td>12 GB</td>');
-    expect(html).toContain('<td>Yes</td>');
-    expect(html).toContain('<td>HDMI 2.1, USB-C</td>');
+    expect(html).toMatch(/<th scope="row"[^>]*>Memory size<\/th><td[^>]*>12 GB<\/td>/);
+    expect(html).toMatch(/<td[^>]*>Yes<\/td>/);
+    expect(html).toMatch(/<td[^>]*>HDMI 2.1, USB-C<\/td>/);
+    // One heading and one <main> (the layout's) per page (FR-020).
+    expect(html.match(/<h1/g)).toHaveLength(1);
+    expect(html).not.toContain('<main');
+  });
+
+  it('shows at most five specs above the fold and all of them in the table (FR-014)', async () => {
+    const specs = Array.from({ length: 7 }, (_, i) => ({
+      code: `s${i}`,
+      name: `Spec ${i}`,
+      type: 'text' as const,
+      value: `v${i}`,
+    }));
+    stubGateway({ [`${C}/products/asus-tuf-6070`]: { body: productPage({ specs }) } });
+    const html = render(await product('asus-tuf-6070'));
+    expect(html.match(/<dt[^>]*>Spec \d<\/dt>/g)).toHaveLength(5);
+    expect(html.match(/<th scope="row"[^>]*>Spec \d<\/th>/g)).toHaveLength(7);
+  });
+
+  it('fails rather than be kept without its menu when the category tree is down', async () => {
+    stubGateway({
+      [`${C}/products/asus-tuf-6070`]: { body: productPage() },
+      [`${C}/categories`]: { status: 503, body: { status: 503 } },
+    });
+    await expect(product('asus-tuf-6070')).rejects.toBeInstanceOf(CatalogUnavailableError);
   });
 
   it('redirects an old slug and answers 404 for an unknown product', async () => {

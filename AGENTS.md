@@ -44,6 +44,10 @@ read by every agent runtime.
 - The MVP is an ordinary e-commerce system; write it as a real shop would be
   written, following the principles in `docs/mvp-plan.md` §2. No speculative features.
 - Data access: Drizzle ORM; hot-path queries may be hand-written SQL (ADR 0005).
+- **Web changes keep `docs/web-guidelines.md`**: how pages are rendered and cached (no
+  streaming), the budgets, SEO, accessibility, tokens only (no raw values in class
+  names), everything working without JavaScript; a visible change updates the reference
+  screenshots (`pnpm --filter web test:visual --update`) in the same PR.
 - Features are specified with spec-kit (`docs/playbooks/speckit-run.md`); decisions
   that outlive a task go to `docs/adr/` (`docs/playbooks/write-adr.md`).
 - **A technology, framework, library or tool applied for the first time** (or used in
@@ -59,6 +63,7 @@ read by every agent runtime.
 |---|---|
 | `docs/mvp-plan.md` | what the MVP contains; engineering principles |
 | `docs/technologies.md` | every technology applied: link, where used, why |
+| `docs/web-guidelines.md` | rules of the web app: rendering and caching, budgets, SEO, accessibility, components, visual tests |
 | `docs/roadmap.md` | order of work, task modes, ADR list |
 | `docs/adr/` | architecture decisions (MADR), index in its `README.md` |
 | `shared/` | contracts shared by apps: DTOs / interfaces, events, protobuf (ADR 0016) — types only, no logic |
