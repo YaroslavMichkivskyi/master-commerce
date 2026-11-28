@@ -1,0 +1,7 @@
+# Added only by `test:visual --serve`: the two shops of the visual-test stack on the host's
+# loopback, for Lighthouse and a look by hand (quickstart.md). The tests never need it.
+services:
+  web:
+    ports: ['127.0.0.1:${VISUAL_PORT:-3300}:3000']
+  web-dead:
+    ports: ['127.0.0.1:${VISUAL_DEAD_PORT:-3310}:3000']

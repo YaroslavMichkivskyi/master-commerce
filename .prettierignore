@@ -2,6 +2,8 @@ pnpm-lock.yaml
 **/dist
 **/.next
 **/.turbo
+apps/web/e2e/.results
+apps/web/e2e/.report
 backlog
 .specify
 .claude

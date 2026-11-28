@@ -12,6 +12,8 @@ const arbitraryValues = ['Literal[value', 'TemplateElement[value.raw'].map((node
 
 export default [
   ...root,
+  // What Playwright writes (results, the HTML report): generated, never linted.
+  { ignores: ['e2e/.results/**', 'e2e/.report/**'] },
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {

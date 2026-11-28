@@ -66,16 +66,20 @@ phase — they are the regression suite for behaviour and SEO.
   owner to see** at three widths, both themes
 
 ## Phase 7 — Visual, accessibility and budget tests (FR-040…FR-042, NFR-002, R-7, R-8)
-- [ ] T020 `@playwright/test`, `@axe-core/playwright` pinned; `playwright.config.ts`
-  (phone / tablet / desktop + a no-JS project); `e2e/global-setup.ts` (datagen
-  `--scale 300 --seed visual --reset`, edge-case products through the admin API)
-- [ ] T021 `e2e/*.spec.ts`: every automatable case of `test-cases.md` — screenshot +
+- [X] T020 `@playwright/test`, `@axe-core/playwright` pinned; `playwright.config.ts`
+  (phone / tablet / desktop + a no-JS project); edge-case products and an empty category
+  through the admin API in `e2e/seed.mjs`, a step of the stack after datagen and before
+  the shop starts
+- [X] T021 `e2e/*.spec.ts`: every automatable case of `test-cases.md` — screenshot +
   axe; theme persistence; no-JS flows; JS budget per route; CLS; no third-party
   requests
-- [ ] T022 `scripts/visual.mjs` (stack up, web build + start, a second web on a dead
-  gateway, tests in `mcr.microsoft.com/playwright:v1.65.1-noble`, `--update`);
-  `test:visual` script; baselines committed; `.gitignore` for reports
-- [ ] T023 `.github/workflows/web-visual.yml` (PRs touching `apps/web/**`,
+- [X] T022 everything in Docker: `e2e/Dockerfile` (the repo built in
+  `mcr.microsoft.com/playwright:v1.65.1-noble`), `e2e/compose.yaml` (Postgres in memory,
+  datagen, seed, catalog-service, gateway, shop, a shop on a dead gateway, the tests; no
+  port published), `e2e/compose.serve.yaml` (`--serve`); `scripts/visual.mjs` wrapper
+  (`--update`, `--serve`); `test:visual` script; `.dockerignore`; baselines committed;
+  `.gitignore` for reports
+- [X] T023 `.github/workflows/web-visual.yml` (PRs touching `apps/web/**`,
   `shared/dto/**`, the workflow), report artifact on failure
 
 ## Phase 8 — Rules and docs (FR-031, FR-044, R-10)

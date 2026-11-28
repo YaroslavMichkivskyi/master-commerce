@@ -156,20 +156,26 @@ server component (NFR-002).
   every case; dark for home, category and product.
 - **@axe-core/playwright 4.14.1** with tags `wcag2a`, `wcag2aa`, `wcag21aa`, `wcag22aa`:
   zero violations per case.
-- **Reproducible screenshots**: fonts and anti-aliasing differ per OS, so the tests
-  always run inside the official image `mcr.microsoft.com/playwright:v1.65.1-noble` —
-  in CI and locally (Windows / macOS / Linux, Docker required). The app runs on the
-  host; the container reaches it through `host.docker.internal` (on Linux with
-  `--add-host=host.docker.internal:host-gateway`). One Node script
-  (`apps/web/scripts/visual.mjs`) starts it the same way on every OS, with `--update`
-  to rewrite the baselines.
-- **Data**: the real stack — `postgres-catalog` from Compose, catalog-service and the
-  gateway built and started, datagen `--scale 300 --seed visual --reset`, the web app as
-  a production build (`next build && next start`). A global setup adds the edge-case
-  products through the TASK-4 admin API (a 200-character name, a product out of stock,
-  a price `€12,999.99`), so the cases do not depend on what the seed happens to produce.
-  The "unavailable" cases use a second `next start` on another port with `GATEWAY_URL`
-  pointing at a closed port.
+- **Everything in Docker** *(owner's decision at the review of phase 7, 2026-11-28:
+  nothing of the test stack runs on, or is bound to, the host)*: `apps/web/e2e/compose.yaml`
+  with one image (`apps/web/e2e/Dockerfile`) — the official
+  `mcr.microsoft.com/playwright:v1.65.1-noble` (Chromium and its fonts, so screenshots are
+  the same on Windows, macOS, Linux and in CI) with the repo installed (`pnpm fetch` +
+  `install --offline`, a build cache for the store) and built for Linux inside. That image
+  runs every app and the tests; Postgres is the stock image on `tmpfs`. No port is
+  published, no volume kept; only `apps/web/e2e/` is mounted into the test container, so
+  `--update` writes the reference screenshots and the report back. `scripts/visual.mjs`
+  is a thin wrapper (`compose build`, `run --rm tests`, `down --volumes`); `--serve`
+  adds `compose.serve.yaml`, the only file that publishes ports (127.0.0.1:3300 / 3310),
+  for Lighthouse and a look by hand. A first attempt in phase 7 kept the apps on the host
+  and only Chromium in the image (`run-server`); it was replaced by this before commit.
+- **Data**: the real stack — a fresh Postgres, migrations, datagen
+  `--scale 300 --seed visual`, catalog-service and the gateway, the web app as a
+  production build (`next build && next start`). `e2e/seed.mjs` adds the edge-case
+  products and an empty category through the TASK-4 admin API (a 200-character name, a
+  product out of stock, a price `€12,999.99`, `empty-shelf`) before the shop starts — the
+  shop caches the catalog for 5 minutes, so a page asked for earlier would miss them.
+  The "unavailable" cases use a second shop with `GATEWAY_URL` pointing at a closed port.
 - **CI**: a new workflow `web-visual.yml` on pull requests to `dev` / `main` whose
   changes touch `apps/web/**`, `shared/dto/**` or the workflow itself; uploads the
   Playwright report on failure. The existing `ci.yml` is unchanged.

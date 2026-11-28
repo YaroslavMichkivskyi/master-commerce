@@ -10,3 +10,7 @@ coverage/
 *.tsbuildinfo
 next-env.d.ts
 test-reports/
+# Playwright results and reports (apps/web/scripts/visual.mjs); the reference
+# screenshots in e2e/__screenshots__ are committed.
+apps/web/e2e/.results/
+apps/web/e2e/.report/
