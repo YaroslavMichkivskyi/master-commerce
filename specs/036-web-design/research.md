@@ -201,5 +201,5 @@ a rule line) and from `apps/web` README.
 - Storybook — the visual cases cover the components on real pages; not in the MVP.
 - `next-themes` — 20 lines of our own do the same without a dependency.
 - Icon library — about ten inline SVG icons (search, menu, close, filter, chevron,
-  sun, moon, monitor, check, cart placeholder) as components.
+  sun, moon, check, box) as components.
 - Visual testing SaaS (Chromatic, Percy) — screenshots stay in the repo.

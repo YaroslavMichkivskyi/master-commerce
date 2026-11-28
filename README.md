@@ -64,6 +64,12 @@ the public, read-only catalog API of the gateway under `/api/v1/catalog/...`: th
 category tree with counts, category and brand lists with facets, search, a product by
 slug, the newest products, the sitemap
 ([`specs/006-storefront-browse/quickstart.md`](specs/006-storefront-browse/quickstart.md)).
+Its look comes from one set of design tokens with a light and a dark theme (the device's
+on the first visit, then the header switch), built with Tailwind CSS and our own
+components; product pages are kept and refreshed in the background (ISR), lists are
+rendered per request, and everything works without JavaScript. The rules a web change
+keeps — rendering and caching, budgets, SEO, accessibility, components, visual tests —
+are in [`docs/web-guidelines.md`](docs/web-guidelines.md).
 
 To fill the catalog with a realistic hardware catalog — about 20 categories with their
 attributes, about 50 brands, products with specs, prices and stock — run
@@ -87,11 +93,13 @@ ones. Each request's `X-Request-Id` is in every line it causes, in every service
 | `pnpm test` | unit tests |
 | `pnpm --filter catalog-service test:nfr` | storefront speed on 100 000 generated products (on demand, a few minutes; P95 per NFR) |
 | `pnpm test:integration` | integration tests on a throwaway PostgreSQL (needs Docker; ADR [0019](docs/adr/0019-test-tooling-vitest-testcontainers.md)) |
+| `pnpm --filter web test:visual [--update]` | storefront screenshots, accessibility (axe) and budgets, all in Docker; `--update` rewrites the reference screenshots ([`docs/web-guidelines.md`](docs/web-guidelines.md)) |
 | `pnpm format` / `pnpm format:check` | Prettier |
 | `pnpm --filter <app> <script>` | one app only, e.g. `pnpm --filter catalog-service test` |
 
 CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs the same checks on
-every PR and push to `dev` / `main`. It can also be run by hand on any branch with a
+every PR and push to `dev` / `main`; PRs that touch the web app also run the visual tests
+([`web-visual.yml`](.github/workflows/web-visual.yml)). It can also be run by hand on any branch with a
 choice of checks: Actions → ci → Run workflow, or
 `gh workflow run ci.yml --ref <branch> -f test=true`.
 
@@ -100,6 +108,7 @@ choice of checks: Actions → ci → Run workflow, or
 | File | What |
 |---|---|
 | [`docs/technologies.md`](docs/technologies.md) | every technology, framework, library and tool applied, with links |
+| [`docs/web-guidelines.md`](docs/web-guidelines.md) | rules of the web app: rendering, caching, budgets, SEO, accessibility, components, visual tests |
 | [`docs/mvp-plan.md`](docs/mvp-plan.md) | what the MVP contains: product, architecture, events, deployment, CI |
 | [`docs/roadmap.md`](docs/roadmap.md) | order of work and how it is sliced into tasks |
 | [`docs/adr/`](docs/adr/README.md) | architecture decision records |

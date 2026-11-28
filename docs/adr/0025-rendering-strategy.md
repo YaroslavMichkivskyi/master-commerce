@@ -61,6 +61,14 @@ shell plus the streamed payload) and needs a catalog at build time for
 product pages is not worth those costs while prices refresh within 5 minutes (TASK-6
 FR-035) and on change later (TASK-18).
 
+For the same reason **no page is streamed**: no `loading.tsx` and no `<Suspense>` around
+the data a page decides its status on. A streamed response sends `200` with its first
+byte, before the page knows it is a `404` or a redirect. The cost: on a slow catalog the
+visitor keeps seeing the previous page (with the browser's loading indicator) until the
+next one arrives whole, instead of a shell with a skeleton; a page that arrives is never
+reshaped afterwards. Added at the owner's review of TASK-36 phase 6 (2026-11-28), when a
+loading skeleton was built and removed.
+
 ## Consequences
 
 - Product pages cost one render per 5 minutes per product instead of one per visit; a
@@ -69,7 +77,13 @@ FR-035) and on change later (TASK-18).
 - An unknown product slug is cached as a `404` for up to 5 minutes, so a product
   published at that slug appears within that time — the same bound as a price change.
 - Price and stock on product pages may be up to 5 minutes old, until TASK-18 revalidates
-  pages on change (`revalidatePath` of the product address).
+  pages on change (`revalidatePath` of the product address) — the next step of this
+  decision: ISR kept, plus revalidation on price and stock change events (the event bus of
+  TASK-8, stock of TASK-11). Whatever
+  a cached page says, the cart and checkout check stock again before an order and tell the
+  customer plainly when an item is gone (to be specified in TASK-9 and TASK-10).
+- A slow or failing catalog is seen as a slow page or the error page, never as a page
+  shell with a skeleton that later turns into a 404 (no streaming, above).
 - Lists stay per request: they follow the address, and their statuses stay real.
 - Revisit Cache Components when Next.js can set the status of a prerendered route
   before streaming (or when a list's redirects and 404s move to the proxy), and for

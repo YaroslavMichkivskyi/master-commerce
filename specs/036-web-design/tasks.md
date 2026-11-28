@@ -83,9 +83,10 @@ phase — they are the regression suite for behaviour and SEO.
   `shared/dto/**`, the workflow), report artifact on failure
 
 ## Phase 8 — Rules and docs (FR-031, FR-044, R-10)
-- [ ] T024 ADR 0025: a paragraph on why pages are not streamed (no `loading.tsx`: the
-  status would be sent before 404 / 308 is known); `docs/web-guidelines.md`; `AGENTS.md` Map row + rule line; README web
-  section; `docs/technologies.md` rows (Tailwind CSS, Inter / Fontsource, Playwright,
+- [X] T024 ADR 0025: a paragraph on why pages are not streamed (no `loading.tsx`: the
+  status would be sent before 404 / 308 is known) and the next step (revalidation on
+  events, TASK-18; stock checked again in cart and checkout); `docs/web-guidelines.md`;
+  `AGENTS.md` Map row + rule line; README web section; `docs/technologies.md` rows (Tailwind CSS, Inter / Fontsource, Playwright,
   axe-core, Lighthouse; Next.js ISR row: on demand for product pages); reference check
   of every name cited
 
